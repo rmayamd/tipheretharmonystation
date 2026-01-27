@@ -1,0 +1,18 @@
+# Sitemap for Tipheret Center Cartagena
+# https://tipherethcenter.com/sitemap.xml
+
+User-agent: *
+Allow: /
+Allow: /landing
+Allow: /maya-bio-mirror
+Allow: /shop
+Allow: /knowledge
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /test-supabase
+
+Sitemap: https://tipherethcenter.com/sitemap.xml
+
+# Optimized for Google, Bing, Yandex
+# Contact: contacto@tipherethcenter.com

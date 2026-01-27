@@ -1,0 +1,378 @@
+========================================
+DONDE ESTA TODO - GUIA COMPLETA
+========================================
+
+PARCERO, TE EXPLICO DONDE ESTA TODO. 📂
+
+
+========================================
+📍 UBICACION ARCHIVOS .TXT
+========================================
+
+TODOS LOS ARCHIVOS .TXT ESTAN EN:
+
+C:\Users\usuario\Desktop\maya harmony station\
+
+👆 Esta es la carpeta raíz del proyecto.
+
+
+COMO LLEGAR:
+1. Abrir "Este equipo"
+2. Ir a Escritorio
+3. Carpeta "maya harmony station"
+4. AHI ESTAN TODOS LOS .TXT
+
+
+========================================
+📋 LISTA COMPLETA ARCHIVOS .TXT
+========================================
+
+PLAN DE ACCION:
+✅ CHECKLIST_SIMPLE_30_DIAS.txt
+✅ PLAN_DIA_A_DIA_CARTAGENA.txt
+✅ URGENTE_MAÑANA_22_ENERO.txt
+✅ ESTRATEGIA_FINANCIERA_100M.txt
+
+MENSAJES Y PROPUESTAS:
+✅ MENSAJES_CARTAS_COMPLETAS.txt
+✅ MENSAJE_WHATSAPP_DR_GUTI.txt
+✅ MENSAJE_PACIENTES_PREVIOS.txt
+✅ PROPUESTA_HOTEL_SIMPLE.txt
+✅ PROPUESTA_DR_GUTI_SIMPLE.txt
+✅ PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt
+
+MARKETING:
+✅ INSTAGRAM_LUXURY_COMPLETO.txt
+✅ WHATSAPP_BUSINESS_CONFIGURACION.txt
+
+PRODUCTOS Y DISTRIBUIDORES:
+✅ DISTRIBUIDORES_COLOMBIA.txt ⭐
+✅ MAGNION_BOTULAX_INFO.txt ⭐
+✅ PRODUCTOS_ADICIONALES_AGREGADOS.txt
+✅ CORRECCION_PRECIOS_REAL.txt
+✅ COMO_LLENAR_PRECIOS.txt
+
+SISTEMA Y VISION:
+✅ VISION_COMPLETA_SISTEMA_DUAL.txt
+✅ SISTEMA_DUAL_SIMPLE.txt
+✅ INDICE_MAESTRO_DOCUMENTOS.txt ⭐⭐⭐
+
+PROPIEDAD INTELECTUAL:
+✅ DECLARACION_IP_SIMPLE.txt
+✅ COPYRIGHT_HEADER.txt
+
+AYUDA:
+✅ COMO_COPIAR_ARCHIVOS.txt
+✅ RESPUESTA_WHATSAPP_EMAIL.txt
+✅ DONDE_ESTA_TODO.txt (este archivo)
+
+TOTAL: 26 archivos .TXT
+
+
+========================================
+🌐 APP WEB - COMO ACCEDER
+========================================
+
+PASO 1: INICIAR SERVIDOR
+-------------------------
+
+OPCION A (Recomendada):
+1. Ir a carpeta: C:\Users\usuario\Desktop\maya harmony station\
+2. Doble clic en: INICIAR_SERVIDOR.bat
+3. Esperar 10-20 segundos
+4. Se abre ventana negra (PowerShell)
+5. Cuando veas "Ready" o "Local: http://localhost:3000"
+6. YA ESTA LISTO ✅
+
+OPCION B (Manual):
+1. Abrir PowerShell
+2. cd "C:\Users\usuario\Desktop\maya harmony station"
+3. npm run dev
+4. Esperar mensaje "Ready"
+
+
+PASO 2: ABRIR NAVEGADOR
+------------------------
+
+Abrir Chrome/Firefox/Edge
+
+Ir a: http://localhost:3000
+
+
+========================================
+📱 RUTAS DE LA APP
+========================================
+
+PAGINA PRINCIPAL:
+http://localhost:3000
+→ Redirige a Landing page pública
+
+LANDING PAGE (Pública):
+http://localhost:3000/landing
+→ Para mostrar a pacientes
+
+DIAGNOSTICO (Core App):
+http://localhost:3000/maya-bio-mirror
+→ Análisis facial/corporal completo
+
+PANEL DE PRECIOS (Admin):
+http://localhost:3000/admin/pricing
+→ Para llenar tus precios ⭐⭐⭐
+
+CRM:
+http://localhost:3000/crm
+→ Gestión pacientes
+
+DASHBOARD:
+http://localhost:3000/dashboard
+→ Métricas generales
+
+OTRAS SECCIONES:
+- /diagnosis - Diagnóstico simple
+- /real-diagnosis - Diagnóstico avanzado
+- /photo-analysis - Análisis fotos
+- /recovery - Post-operatorio
+- /marketing - Marketing automation
+- /knowledge - Base conocimiento
+
+
+========================================
+✅ VERIFICAR QUE TODO FUNCIONA
+========================================
+
+CHECKLIST:
+
+1. SERVIDOR INICIA:
+   [ ] Doble clic INICIAR_SERVIDOR.bat
+   [ ] No da error
+   [ ] Dice "Ready"
+
+2. LANDING PAGE CARGA:
+   [ ] localhost:3000
+   [ ] Se ve página bonita
+   [ ] No errores
+
+3. APP CORE FUNCIONA:
+   [ ] localhost:3000/maya-bio-mirror
+   [ ] Botones funcionan
+   [ ] Cámara pide permiso
+
+4. PANEL PRECIOS ABRE:
+   [ ] localhost:3000/admin/pricing
+   [ ] Se ve panel con 3 tabs
+   [ ] Puedes agregar productos
+
+SI TODO FUNCIONA: ✅ APP LISTA
+
+SI ALGO FALLA: ⚠️ Me dices qué error y lo arreglamos
+
+
+========================================
+🗂️ ESTRUCTURA CARPETAS
+========================================
+
+maya harmony station/
+│
+├── 📄 Todos los .TXT (26 archivos)
+│   └── AQUI ESTAN TODOS
+│
+├── app/
+│   ├── page.tsx → Página principal
+│   ├── landing/page.tsx → Landing público
+│   ├── maya-bio-mirror/page.tsx → App core
+│   ├── admin/pricing/page.tsx → Panel precios ⭐
+│   ├── crm/page.tsx → CRM
+│   └── ... otras páginas
+│
+├── components/
+│   ├── AdminPricingPanel.tsx → Panel precios UI
+│   ├── BodyAnalysisDashboard.tsx → Análisis corporal
+│   └── ... otros componentes
+│
+├── lib/
+│   ├── admin/pricing-types.ts → Tipos precios
+│   ├── maya-vision/ → Análisis facial
+│   ├── body-analysis/ → Análisis corporal
+│   ├── recommendations/ → Recomendaciones
+│   └── ... otras librerías
+│
+├── docs/
+│   └── Documentación técnica (.md)
+│
+└── INICIAR_SERVIDOR.bat ⭐
+    └── Para iniciar app
+
+
+========================================
+🎯 LO MAS IMPORTANTE (TOP 5)
+========================================
+
+1. INDICE_MAESTRO_DOCUMENTOS.txt ⭐⭐⭐
+   → Lista TODO, empieza aquí
+
+2. PLAN_DIA_A_DIA_CARTAGENA.txt ⭐⭐⭐
+   → Qué hacer mañana
+
+3. DISTRIBUIDORES_COLOMBIA.txt ⭐⭐⭐
+   → Donde comprar productos
+
+4. INICIAR_SERVIDOR.bat ⭐⭐⭐
+   → Para abrir la app
+
+5. localhost:3000/admin/pricing ⭐⭐⭐
+   → Panel llenar precios
+
+
+========================================
+📖 COMO LEER LOS ARCHIVOS
+========================================
+
+METODO 1 (Recomendado):
+1. Abrir Windows Explorer
+2. Ir a: C:\Users\usuario\Desktop\maya harmony station\
+3. Doble clic en cualquier .txt
+4. Se abre en Notepad
+5. Leer
+
+METODO 2 (Buscar):
+1. Windows + S (búsqueda)
+2. Escribir nombre archivo
+3. Ejemplo: "DISTRIBUIDORES_COLOMBIA"
+4. Abrir
+
+METODO 3 (Cursor):
+1. Ya los tienes abiertos aquí
+2. Puedes leerlos en Cursor
+3. Sidebar izquierdo → Explorer
+
+
+========================================
+💾 COMO COPIAR TEXTO
+========================================
+
+1. Abrir archivo .txt
+2. Ctrl + A (seleccionar todo)
+3. Ctrl + C (copiar)
+4. Ir a WhatsApp/Email
+5. Ctrl + V (pegar)
+6. Enviar
+
+O:
+
+1. Seleccionar texto con mouse
+2. Clic derecho → Copiar
+3. Ir a destino
+4. Clic derecho → Pegar
+
+
+========================================
+🔧 SI LA APP NO FUNCIONA
+========================================
+
+PROBLEMA 1: "npm no se reconoce"
+SOLUCION: Node.js no instalado o mal configurado
+ACCION:
+1. Reinstalar Node.js
+2. Descargar: https://nodejs.org
+3. Versión LTS (recomendada)
+4. Instalar
+5. Reiniciar PowerShell
+
+PROBLEMA 2: "localhost rechazó conexión"
+SOLUCION: Servidor no iniciado
+ACCION:
+1. Ir a carpeta proyecto
+2. Doble clic INICIAR_SERVIDOR.bat
+3. Esperar "Ready"
+4. Recargar navegador
+
+PROBLEMA 3: "Error al compilar"
+SOLUCION: Código tiene error
+ACCION:
+1. Ctrl + C en PowerShell (parar servidor)
+2. npm install (reinstalar dependencias)
+3. npm run dev (reiniciar)
+4. Si persiste: Me dices el error
+
+PROBLEMA 4: "Pantalla en blanco"
+SOLUCION: JavaScript error
+ACCION:
+1. F12 en navegador (abrir consola)
+2. Ver errores en "Console"
+3. Me dices qué error
+4. Lo arreglo
+
+
+========================================
+📱 ACCEDER DESDE CELULAR
+========================================
+
+SI QUIERES USAR DESDE TU CELULAR:
+
+1. PC y celular en MISMA red WiFi
+2. Averiguar IP de tu PC:
+   - PowerShell: ipconfig
+   - Buscar "IPv4"
+   - Ejemplo: 192.168.1.100
+
+3. En celular ir a:
+   http://192.168.1.100:3000
+
+4. Debe cargar la app
+
+NOTA: Firewall puede bloquear
+Ver: docs/ACCESO_DESDE_CELULAR.md
+
+
+========================================
+🎯 RESUMEN RAPIDO
+========================================
+
+ARCHIVOS .TXT:
+✅ Carpeta: C:\Users\usuario\Desktop\maya harmony station\
+✅ Total: 26 archivos
+✅ Empieza con: INDICE_MAESTRO_DOCUMENTOS.txt
+
+APP WEB:
+✅ Iniciar: INICIAR_SERVIDOR.bat
+✅ Acceder: http://localhost:3000
+✅ Panel precios: http://localhost:3000/admin/pricing
+
+TODO FUNCIONA:
+✅ Landing page (pública)
+✅ Maya-bio-mirror (diagnóstico)
+✅ Panel precios (admin)
+✅ CRM
+✅ Todas las rutas
+
+ESTADO: ✅ TODO LISTO Y FUNCIONAL
+
+
+========================================
+💪 SIGUIENTE PASO
+========================================
+
+AHORA MISMO:
+1. [ ] Abrir: INDICE_MAESTRO_DOCUMENTOS.txt
+2. [ ] Leer: Cuáles archivos son prioridad
+3. [ ] Abrir: URGENTE_MAÑANA_22_ENERO.txt
+4. [ ] Planear: Qué hacer mañana
+
+ANTES DE IRTE:
+1. [ ] Instagram: @dr.ricardomaya.tipheret
+2. [ ] Imprimir: 4 propuestas
+3. [ ] Backup: USB con todo
+
+CARTAGENA:
+1. [ ] Alianzas (hotel, Dr. Guti, cirujano)
+2. [ ] Llenar panel precios
+3. [ ] Primeros pacientes
+4. [ ] $$$ 💰
+
+
+TODO ESTA LISTO PARCERO. 🚀
+
+Solo queda EJECUTAR. 💪
+
+
+========================================

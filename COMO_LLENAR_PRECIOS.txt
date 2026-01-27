@@ -1,0 +1,231 @@
+========================================
+COMO LLENAR TUS PRECIOS - RAPIDO
+========================================
+
+PARCERO, YA ESTA LISTO EL PANEL. 💰
+
+
+========================================
+🚀 ACCESO INMEDIATO
+========================================
+
+1. Abrir navegador (Chrome, Firefox, etc)
+
+2. Ir a:
+   http://localhost:3000/admin/pricing
+
+3. Ya estás en el panel ✅
+
+
+========================================
+📋 QUE VES
+========================================
+
+3 TABS:
+
+1. 📦 PRODUCTOS/INSUMOS
+   → Lo que TU COMPRAS (Botox, rellenos, etc)
+
+2. 💉 PROCEDIMIENTOS
+   → Lo que TU VENDES (consultas, botox, cirugías)
+
+3. 🎯 ESTRATEGIA
+   → Premium, Competitivo, o Penetración
+
+
+========================================
+⚡ LLENAR RAPIDO (15 MINUTOS)
+========================================
+
+TAB 1: PRODUCTOS
+-----------------
+
+Click en botones rápidos:
+- "Botox" → Pone costo → Agregar
+- "Dysport" → Pone costo → Agregar
+- "Juvederm" → Pone costo → Agregar
+
+O click "➕ Agregar Producto"
+Llenas:
+- Nombre: Botox
+- Marca: Allergan
+- Unidades: 100
+- Costo por unidad: 5000 (ejemplo)
+- Proveedor: Quien sea
+
+Click "✅ Agregar"
+
+Repite con todos tus insumos.
+
+
+TAB 2: PROCEDIMIENTOS
+----------------------
+
+Click en botones rápidos:
+- "Botox - Frente"
+- "Relleno Labial"
+- "Liposucción HD"
+- etc
+
+Llenas:
+- Duración: 15 minutos
+- Costo mano obra: 200000
+- Costos indirectos: 100000
+- PRECIO BASE: 800000 ← LO QUE COBRAS
+- Precio premium: 1000000
+- Precio turismo: 900000
+
+Sistema te muestra:
+→ Costo total: $300,000
+→ Margen: $500,000
+→ % Margen: 166%
+
+Click "✅ Agregar Procedimiento"
+
+Repites con todos tus procedimientos.
+
+
+GUARDAR
+-------
+
+Click "💾 Guardar Cambios" (abajo)
+
+LISTO ✅
+
+
+========================================
+💰 EJEMPLO REAL
+========================================
+
+BOTOX FRENTE:
+
+Costos:
+- Botox (20U): $100,000
+- Anestesia: $10,000
+- Material: $5,000
+TOTAL: $115,000
+
+Precios:
+- Base: $800,000
+- Premium: $1,000,000
+- Turismo: $900,000
+
+Margen: $685,000 (595%)
+
+¿Buen negocio? ✅ SÍ
+
+
+========================================
+🎯 PARA QUE SIRVE
+========================================
+
+Una vez lleno:
+
+✅ WhatsApp Business usa estos precios
+✅ App móvil usa estos precios
+✅ Proyecciones financieras automáticas
+✅ Reportes automáticos
+✅ No más actualizar manual
+
+TODO AUTOMATICO. 🤖
+
+
+========================================
+📱 ACCEDER DESDE CELULAR
+========================================
+
+Si configuraste acceso red:
+
+http://[TU_IP]:3000/admin/pricing
+
+Ej: http://192.168.1.100:3000/admin/pricing
+
+Funciona igual. 📲
+
+
+========================================
+⏰ CUANDO HACERLO
+========================================
+
+OPCION A (Recomendada):
+→ Cuando llegues a Cartagena
+→ Primer día después setup
+→ 30 minutos tranquilo
+→ Llenas todo bien
+
+OPCION B:
+→ Ahora antes de irte
+→ Llenas lo básico
+→ Completas después
+
+
+========================================
+💪 BENEFICIO
+========================================
+
+SIN PANEL:
+❌ Me dices precios uno por uno
+❌ Yo actualizo 10 archivos
+❌ Puede haber errores
+❌ Si cambias: repetir todo
+
+CON PANEL:
+✅ Llenas una vez (30 min)
+✅ Sistema usa automático
+✅ Cambias cuando quieras
+✅ Todo se actualiza solo
+
+AHORRO: HORAS 🚀
+
+
+========================================
+📚 GUIA COMPLETA
+========================================
+
+Si quieres más detalles:
+
+docs/PANEL_PRECIOS_GUIA.md
+
+Tiene:
+- Ejemplos detallados
+- Tips estrategia
+- FAQ
+- Todo explicado
+
+
+========================================
+🎯 ACCION
+========================================
+
+1. ✅ Inicia servidor: INICIAR_SERVIDOR.bat
+
+2. ✅ Abre navegador: localhost:3000/admin/pricing
+
+3. ✅ Llena productos (5-10 min)
+
+4. ✅ Llena procedimientos (10-15 min)
+
+5. ✅ Guarda
+
+6. ✅ OLVIDATE - Sistema hace el resto
+
+TIEMPO: 30 minutos
+BENEFICIO: Para siempre ⚡
+
+
+========================================
+💎 RESUMEN
+========================================
+
+YA NO TIENES QUE DECIRME PRECIOS.
+
+Los pones en el panel.
+El sistema los usa automático.
+En TODO.
+
+FACIL. RAPIDO. PROFESIONAL.
+
+DALE PARCERO. 💪🚀
+
+
+========================================

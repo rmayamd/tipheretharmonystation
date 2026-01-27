@@ -1,0 +1,72 @@
+# ===================================
+# MAYA HARMONY STATION - CONFIGURACIÓN REAL
+# ===================================
+# Copia este archivo como .env.local y llena tus valores reales
+
+# 📊 SUPABASE (Base de Datos)
+# Obtén estos valores de: https://supabase.com/dashboard/project/_/settings/api
+NEXT_PUBLIC_SUPABASE_URL=tu_url_aqui
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key_aqui
+
+# 🔥 FIREBASE (Notificaciones Push)
+# Obtén estos valores de: https://console.firebase.google.com
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=
+
+# 💪 INBODY H30 (Composición Corporal)
+INBODY_API_URL=
+INBODY_API_KEY=
+
+# ⚛️ QUANTUM ANALYZER (Bioenergía)
+QUANTUM_ANALYZER_PORT=COM3
+QUANTUM_ANALYZER_BAUDRATE=9600
+
+# 📱 WHATSAPP BUSINESS API
+WHATSAPP_API_URL=
+WHATSAPP_API_TOKEN=
+WHATSAPP_BUSINESS_PHONE=+573001234567
+
+# 🔐 NEXTAUTH (Autenticación)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=genera_un_secreto_aleatorio_aqui
+
+# 💳 PAGOS (Wompi - Bancolombia)
+# Obtén tus llaves de: https://dashboard.wompi.co/
+# Para pruebas, usa las llaves de test (pub_test_...).
+# Para producción en Cartagena, cambia a tus llaves reales (pub_prod_...).
+NEXT_PUBLIC_WOMPI_PUBLIC_KEY=pub_test_Q5yDA9xoKdePzhS8qn96XPr65SAsm56y
+WOMPI_PRIVATE_KEY=prv_test_...
+WOMPI_INTEGRITY_SECRET=test_integrity_...
+
+# 🧬 GOOGLE WORKSPACE - TIPHERETH CENTER
+# Para acceder a la biblioteca médica en Google Drive
+# Crea un Service Account en: https://console.cloud.google.com/
+GOOGLE_CLIENT_EMAIL=tipheret-drive-brain@burnished-block-485300-u1.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDiXa61pV7Lzexv\n21gfkL4ysh3+H1kAbA6LK6qjiEnfaZL0wSezyZRrJN15J7hsgrYz07Yf287eqAqv\nMrqNuxVvbOfqxzISlCzyeQurHGPZJjhfZuCPXMyTS9beFl7P6jlxdjEoM+EfAsu4\nkCgZfzsuhorH5bT2SMNWD3V0oAjFs6iANHGXUde5K60R4USomp3IiNhjAbqRqSM6\nhFU4++jcFTzOncko8NJLmSyZQQdemXJkFuXhHUlzhdmXf92lAk71Ef9zLGfsre6m\n1EC4WNEG7iXJOXYrugbh26/gnMUbblpmTvOdl+jnRatGSc8zQ9iQWqq2nqE6Trgs\nV84LBGoTAgMBAAECggEAHxhEWBJr164lVOY6EDf3UIp0IUTYGn09cDOi4IznrOdZ\nNwLTe9hsaV1qiOqCZHF+KtdhtLWikKZftVpQEwkIdEJvByquv6uYEwS6rBodwyYD\nZ2N/5GGYfoFT9jT3eDMSCfp03TNnMLXXGza+M2ZtUEJODRCKT6yGHKvJ9CfJnLKD\ngGypBO+E25ABC8mNIEKQY2i5JYIKngmBZuPuAGE7KjBdT/ELPtIxRC0wqUopxCfx\nntArPDeG9OOT2r3GU0X1R6syLp/McS7QScOotczg6C8v+cXNWJn3CEwSB0g441uL\n/heqi0zL75hd1UDIk6mxAqa7B5uL/2kGWxaZGLyHRQKBgQD32/fN5uQ4CajaFD5o\ncZIMqdYkn/qZXvrfdzBfqTW1umOCEu3RNRGoZaYuBit/f35eGzIYC4U8hl+k0YGE\n6YpjWvVSIK1n8e9fTm2johgVQeJ/1Aj75AidZ/68VFlvMcbu7vC8+u5GHTIvSPdc\nrQVZsb5YgCYgdh93AyiCr/iNHwKBgQDpzP79lq2GzSGyMfTm8OAGv5pjKoRuh2dn\nDkNXVPX4y9uS4oWFjmXO569gfxHcYDdHykzdv3LZvjMUuwcPfhvIzmhSjtMkSyCR\nO+/2fhnBWw9P4ajnLjggWBA2k7hyWNQZDZ9JXKDBycwf9ymIMc7yxGZFuDIwzdLt\nf1ICl1tQjQKBgAbkCKmix6l/K0CU239P2P2dIyT1haQJ7fOUfrXKIIIi4m1VVWNB\nlHIYEVyqMz9iLgMzwlrExzl9it8sK+ukCoLknnlgCzIemccOiSHJed3tbPycynsm\nRc8KexyFQ89BlQRDhFHcsA8m9KQ35RigfsuVk3MmbOjuH8XRQqkPd1uFAoGAVUBr\nplpAEgxQgiKXM3KXrb5F9Gz3dzomaTyZL4oKWtsyyH+Swl1nICf5Gg2bnKj031eT\n6bO6lE03YRLFg0+vn+wrvBbaRLykNnENkervR0MF9VHKfemri5ew6cW5lvBu/meq\nMlz1PVRw+yLr4P6QgJM+26NLoeIbTICFje5U3K0CgYACj5xS8LPdaOMse6YWS69p\nW/kKSIWCd9bdbatBbKAIOM7rGTDGXYad6TbCe1nlO/Zdk2AK3Dps4HmiXc+b8WkL\nDQRal72yDxGxMhMZkB030Ag6hy9lMMta7IWj6qd2/LMhjcvggJOLkPKTJaSrWHcR\nWXDDI6pqTw4QQUU2EetK7A==\n-----END PRIVATE KEY-----\n"
+
+# 📂 ID DE LA CARPETA DE DRIVE (Biblioteca Médica)
+# Esta es la carpeta donde están tus 600+ libros PDF
+GOOGLE_DRIVE_FOLDER_ID=1HzMCXiH5OcRZ2ZO58xOXjRejDvgco2hO
+
+# ===================================
+# NOTAS PARA DR. RICARDO:
+# ===================================
+# 1. Las llaves de Wompi son de PRUEBA (pub_test_...). 
+#    Para cobrar dinero real en Cartagena, debes:
+#    - Ir a https://dashboard.wompi.co/
+#    - Obtener tus llaves de PRODUCCIÓN (pub_prod_...)
+#    - Reemplazar NEXT_PUBLIC_WOMPI_PUBLIC_KEY
+#
+# 2. La Google Private Key debe estar entre comillas dobles.
+#    Los saltos de línea deben ser \n (no espacios).
+#
+# 3. Para verificar que todo funciona:
+#    - Abre localhost:3001/shop
+#    - Agrega un producto Mesoestetic al carrito
+#    - Presiona "PAGAR CON WOMPI"
+#    - Debería abrir el widget de pago de Bancolombia

@@ -1,0 +1,609 @@
+========================================
+WHATSAPP BUSINESS - CONFIGURACION COMPLETA
+Dr. Ricardo Maya - Tipheret Center
+========================================
+
+========================================
+📱 NUMEROS DISPONIBLES
+========================================
+
+NUMERO 1: +57 311 793 6211
+NUMERO 2: +57 301 499 3452
+
+RECOMENDACION: 
+Usar NUMERO 1 como principal para Tipheret Center
+Usar NUMERO 2 como backup o personal
+
+
+========================================
+🎯 CONFIGURACION WHATSAPP BUSINESS
+========================================
+
+NUMERO PRINCIPAL TIPHERET:
++57 311 793 6211
+
+PASOS CONFIGURACION:
+
+1. DESCARGAR WHATSAPP BUSINESS
+   - Play Store / App Store
+   - Buscar: "WhatsApp Business"
+   - Instalar
+
+2. REGISTRAR NUMERO
+   - Abrir app
+   - Ingresar: +57 311 793 6211
+   - Verificar código SMS
+
+3. CONFIGURAR PERFIL NEGOCIO:
+
+NOMBRE:
+Tipheret Center - Dr. Ricardo Maya
+
+DESCRIPCION:
+Medicina Estética Avanzada | Golden Ratio + Neuroscience | Cartagena, Colombia | Consultas: +57 311 793 6211
+
+CATEGORIA:
+Salud / Médico
+
+DIRECCION:
+Getsemaní, Cartagena de Indias, Colombia
+(Actualizar cuando tengas dirección exacta)
+
+HORARIO:
+Lunes - Viernes: 9:00 AM - 6:00 PM
+Sábado: 9:00 AM - 1:00 PM
+Domingo: Cerrado
+
+EMAIL:
+[Tu email profesional]
+
+SITIO WEB:
+Instagram: @dr.ricardomaya.tipheret
+(Cuando tengas): www.tipheretcenter.com
+
+FOTO PERFIL:
+Tu foto profesional (misma de Instagram)
+
+
+========================================
+✨ MENSAJE DE BIENVENIDA AUTOMATICO
+========================================
+
+ACTIVAR EN: Herramientas Empresariales > Mensaje de Bienvenida
+
+TEXTO RECOMENDADO:
+
+"¡Hola! 👋 Bienvenido a Tipheret Center
+
+Soy el Dr. Ricardo Maya, especialista en medicina estética avanzada.
+
+Trabajamos con:
+✨ Golden Ratio + Neuroscience
+🔬 Protocolos internacionales
+🌍 Turismo médico
+
+¿En qué puedo ayudarte hoy?
+
+1️⃣ Agendar consulta
+2️⃣ Información procedimientos
+3️⃣ Precios/paquetes
+4️⃣ Resultados before/after
+
+Respondo personalmente en menos de 1 hora.
+
+Dr. Ricardo Maya
+Tipheret Center Cartagena 🌴"
+
+
+========================================
+⏰ MENSAJE DE AUSENCIA AUTOMATICO
+========================================
+
+ACTIVAR EN: Herramientas Empresariales > Mensaje de Ausencia
+
+TEXTO RECOMENDADO:
+
+"Gracias por tu mensaje 🙏
+
+En este momento estoy:
+• En consulta con pacientes
+• En procedimiento
+• Fuera de horario
+
+Horario atención:
+Lun-Vie: 9am-6pm
+Sab: 9am-1pm
+
+Te responderé lo antes posible (máximo 2 horas en horario laboral).
+
+Si es urgente, déjame tu:
+📱 Número de contacto
+📧 Email
+📝 Consulta específica
+
+Gracias por tu paciencia.
+
+Dr. Ricardo Maya
+Tipheret Center"
+
+
+========================================
+💬 RESPUESTAS RAPIDAS - CONFIGURAR
+========================================
+
+ACTIVAR EN: Herramientas Empresariales > Respuestas Rápidas
+
+CREAR ESTOS ATAJOS:
+
+/hola
+"¡Hola! 👋 Soy el Dr. Ricardo Maya de Tipheret Center. ¿En qué puedo ayudarte hoy?"
+
+/consulta
+"Consulta inicial diagnóstica: $200.000
+Incluye:
+✓ Análisis facial completo
+✓ Evaluación Golden Ratio
+✓ Plan personalizado
+✓ Tecnología de punta
+
+¿Cuándo te gustaría agendar? 📅"
+
+/botox
+"BOTOX - Toxina Botulínica
+
+💉 Zonas:
+• Frente
+• Entrecejo
+• Patas de gallo
+• Masseteros
+
+💰 Precio: $800.000 - $1.200.000
+⏱️ Duración: 4-6 meses
+🕐 Tiempo procedimiento: 15-20 min
+
+¿Te interesa agendar? 📲"
+
+/rellenos
+"RELLENOS FACIALES - Ácido Hialurónico
+
+💉 Zonas:
+• Labios
+• Pómulos
+• Ojeras
+• Surcos nasogenianos
+• Mentón
+
+💰 Precio: $1.500.000 - $2.500.000
+⏱️ Duración: 8-12 meses
+🕐 Tiempo: 30-45 min
+
+¿Qué zona te interesa? ✨"
+
+/cirugia
+"CIRUGÍAS ESTÉTICAS
+
+Ofrecemos:
+🔹 Liposucción HD
+🔹 Aumento mamario
+🔹 Abdominoplastia
+🔹 Rinoplastia
+🔹 Lifting facial
+🔹 Implantes glúteos
+
+💰 Desde: $15.000.000
+📋 Incluye: Evaluación completa + cirugía + post-operatorio
+
+¿Qué procedimiento te interesa? 📲"
+
+/precios
+"TABLA DE PRECIOS 💰
+
+CONSULTAS:
+• Diagnóstica: $200.000
+• Seguimiento: $100.000
+
+NO INVASIVOS:
+• Botox: $800k - $1.2M
+• Rellenos: $1.5M - $2.5M
+• Hilos tensores: $2M - $3M
+• HIFU: $2M - $4M
+
+CIRUGÍAS:
+• Lipo: $15M - $20M
+• Aumento senos: $18M - $25M
+• Abdominoplastia: $20M - $30M
+
+Precios finales según evaluación personalizada.
+
+¿Agenda tu consulta? 📅"
+
+/turismo
+"PAQUETES TURISMO MÉDICO 🌍
+
+ALL INCLUSIVE:
+✓ Consulta diagnóstica
+✓ Cirugía completa
+✓ Hotel boutique 10 días
+✓ Traslados aeropuerto
+✓ Post-operatorio
+✓ Enfermería 24/7
+✓ Seguimiento
+
+💰 Desde: $35.000.000
+📍 Getsemaní, Cartagena
+
+Ideal para:
+🇺🇸 USA
+🇪🇸 Europa
+🇲🇽 Latinoamérica
+
+¿Te interesa más info? ✈️"
+
+/ubicacion
+"📍 UBICACION
+
+Tipheret Center
+Getsemaní, Cartagena de Indias
+Colombia
+
+(Dirección exacta próximamente)
+
+🏛️ En el corazón de Cartagena
+🌊 A 5 min de la playa
+🎨 Zona turística premium
+
+¿Cómo prefieres llegar? 🚕"
+
+/horario
+"⏰ HORARIO DE ATENCION
+
+Lunes - Viernes: 9:00 AM - 6:00 PM
+Sábado: 9:00 AM - 1:00 PM
+Domingo: CERRADO
+
+📱 WhatsApp: Respondemos en horario laboral
+📧 Email: 24/7 (respuesta en 24 horas)
+
+¿Cuándo te gustaría tu cita? 📅"
+
+/instagram
+"📱 SIGUENOS EN INSTAGRAM
+
+@dr.ricardomaya.tipheret
+
+Allí encuentras:
+✨ Resultados antes/después
+📚 Educación estética
+🎥 Videos procedimientos
+💡 Tips de belleza
+🌴 Vida en Cartagena
+
+¡Síguenos para contenido exclusivo! 🔔"
+
+
+========================================
+🎨 CATALOGO WHATSAPP BUSINESS
+========================================
+
+CREAR CATALOGO DE SERVICIOS:
+
+PRODUCTO 1:
+Nombre: Consulta Diagnóstica
+Precio: $200.000
+Descripción: Análisis facial completo con tecnología Golden Ratio
+Imagen: Tu consultorio
+
+PRODUCTO 2:
+Nombre: Botox
+Precio: Desde $800.000
+Descripción: Toxina botulínica para rejuvenecimiento facial
+Imagen: Procedimiento
+
+PRODUCTO 3:
+Nombre: Rellenos Faciales
+Precio: Desde $1.500.000
+Descripción: Ácido hialurónico para volumen y definición
+Imagen: Resultado
+
+PRODUCTO 4:
+Nombre: Liposucción HD
+Precio: Desde $15.000.000
+Descripción: Cirugía corporal de alta definición
+Imagen: Before/After
+
+PRODUCTO 5:
+Nombre: Aumento Mamario
+Precio: Desde $18.000.000
+Descripción: Cirugía aumento senos con implantes premium
+Imagen: Before/After
+
+PRODUCTO 6:
+Nombre: Paquete Turismo Médico
+Precio: Desde $35.000.000
+Descripción: All inclusive: cirugía + hotel + recuperación
+Imagen: Hotel + quirófano
+
+
+========================================
+📊 ETIQUETAS PARA ORGANIZAR
+========================================
+
+CREAR ESTAS ETIQUETAS:
+
+🟢 LEAD CALIENTE (interesado, listo para agendar)
+🟡 LEAD TIBIO (interesado, necesita más info)
+🔵 SEGUIMIENTO (paciente previo, post-operatorio)
+🟣 PACIENTE VIP (internacional, alto valor)
+🟠 CONSULTA AGENDADA
+🔴 NO INTERESADO
+⚫ SPAM
+
+USO:
+Cada contacto etiquetarlo para organizar seguimiento
+
+
+========================================
+📈 ESTADOS DE WHATSAPP
+========================================
+
+PUBLICAR ESTADOS DIARIOS:
+
+LUNES:
+"Nueva semana, nuevas transformaciones ✨
+Consultas disponibles esta semana
+WhatsApp: +57 311 793 6211"
+
+MARTES:
+"¿Sabías que el Golden Ratio define la belleza universal? 📐
+Descubre el tuyo en Tipheret Center
+Agenda: +57 311 793 6211"
+
+MIERCOLES:
+"Mitad de semana, mitad del camino a tu mejor versión 💪
+Procedimientos disponibles
+Info: +57 311 793 6211"
+
+JUEVES:
+"Resultados que hablan por sí solos 🦋
+Before/After reales
+Pregunta por tu transformación: +57 311 793 6211"
+
+VIERNES:
+"Termina la semana radiante ✨
+Consultas fin de semana disponibles
+Agenda ya: +57 311 793 6211"
+
+
+========================================
+🔗 LINK DIRECTO WHATSAPP
+========================================
+
+Para compartir en Instagram, web, etc:
+
+LINK NUMERO 1:
+https://wa.me/573117936211
+
+LINK CON MENSAJE PRE-CARGADO:
+https://wa.me/573117936211?text=Hola%20Dr.%20Maya,%20me%20interesa%20información%20sobre%20Tipheret%20Center
+
+Puedes personalizar el mensaje cambiando el texto después de "text="
+
+
+========================================
+📱 WHATSAPP MULTI-DISPOSITIVO
+========================================
+
+ACTIVAR PARA USAR EN:
+- Celular
+- Computador (WhatsApp Web)
+- Tablet
+
+PASOS:
+1. WhatsApp > Configuración > Dispositivos vinculados
+2. "Vincular dispositivo"
+3. Escanear QR desde computador (web.whatsapp.com)
+
+BENEFICIO:
+Responder desde PC es MÁS RÁPIDO para textos largos
+
+
+========================================
+⚠️ IMPORTANTE - PRIVACIDAD
+========================================
+
+CONFIGURAR EN: Ajustes > Cuenta > Privacidad
+
+FOTO DE PERFIL: Todos
+INFORMACIÓN: Todos
+ESTADO: Contactos
+ÚLTIMA VEZ: Nadie
+RECIBOS DE LECTURA: Activado (profesionalismo)
+CONFIRMACIÓN DE LECTURA: Activado
+
+
+========================================
+💎 TIPS PROFESIONALISMO WHATSAPP
+========================================
+
+✅ HACER:
+• Responder en máximo 2 horas (horario laboral)
+• Usar emojis moderadamente (2-3 por mensaje)
+• Ortografía perfecta
+• Saludos formales pero cálidos
+• Despedidas profesionales
+• Confirmar citas 24h antes
+• Agradecer siempre
+
+❌ EVITAR:
+• Dejar en visto más de 30 minutos
+• Respuestas monosílabas ("ok", "si")
+• Audio muy largos (máximo 1 minuto)
+• Enviar muchos mensajes seguidos
+• Escribir TODO EN MAYUSCULAS
+• Emojis excesivos 😂🤣😍💯🔥❤️
+• Lenguaje muy informal
+• Responder fuera de horario (salvo emergencias)
+
+
+========================================
+📅 SISTEMA DE CITAS POR WHATSAPP
+========================================
+
+CUANDO ALGUIEN PIDA CITA:
+
+RESPUESTA TEMPLATE:
+
+"Perfecto, agendemos tu consulta 📅
+
+¿Qué día te viene mejor?
+• Lunes 24 Enero - 10am o 3pm
+• Martes 25 Enero - 9am, 11am o 4pm
+• Miércoles 26 Enero - 10am o 2pm
+
+Necesito:
+📝 Nombre completo
+📞 Celular
+📧 Email
+🎂 Edad
+📍 Ciudad actual
+
+Consulta diagnóstica: $200.000
+(Se abona si decides hacer procedimiento)
+
+¿Confirmas? ✅"
+
+
+CONFIRMACION 24H ANTES:
+
+"Hola [Nombre] 👋
+
+Te confirmo tu cita:
+📅 [Día] a las [hora]
+📍 Tipheret Center, Getsemaní
+👨‍⚕️ Dr. Ricardo Maya
+
+Por favor confirma que sí asistes respondiendo SÍ
+
+Si necesitas cambiar, avísame con mínimo 12 horas.
+
+Nos vemos mañana ✨"
+
+
+========================================
+💰 PAGOS POR WHATSAPP
+========================================
+
+METODOS DE PAGO:
+
+1. TRANSFERENCIA BANCARIA
+2. NEQUI: [Tu número]
+3. DAVIPLATA: [Si tienes]
+4. EFECTIVO (presencial)
+
+TEXTO PARA COBRAR:
+
+"Para confirmar tu cita, abona $100.000 (se descuenta del total)
+
+Datos transferencia:
+🏦 Banco: [Tu banco]
+💳 Cuenta: [Tu cuenta]
+👤 Ricardo Maya Romo
+
+O Nequi: [Tu número]
+
+Envíame captura de pago ✅"
+
+
+========================================
+🎯 KPIs WHATSAPP BUSINESS
+========================================
+
+MEDIR SEMANALMENTE:
+
+📱 Mensajes recibidos
+✅ Mensajes respondidos (meta: 100%)
+⏱️ Tiempo promedio respuesta (meta: <2h)
+📅 Citas agendadas
+💰 Conversión mensaje → cita (meta: >30%)
+💵 Conversión cita → procedimiento (meta: >50%)
+
+
+========================================
+🚀 INTEGRACION CON INSTAGRAM
+========================================
+
+EN BIO INSTAGRAM:
+No poner número directo, usar:
+"📲 WhatsApp" (con link wa.me/573117936211)
+
+EN POSTS INSTAGRAM:
+"Más info por WhatsApp +57 311 793 6211"
+
+EN STORIES INSTAGRAM:
+Sticker "Enviar mensaje" (se vincula automático)
+
+
+========================================
+📱 NUMERO BACKUP: +57 301 499 3452
+========================================
+
+USAR ESTE NUMERO PARA:
+
+1. WhatsApp personal (amigos/familia)
+2. Backup si se cae el principal
+3. Otra línea negocio (futuro)
+
+RECOMENDACION:
+No mezclar. Mantén Tipheret solo en +57 311 793 6211
+
+
+========================================
+✅ CHECKLIST CONFIGURACION
+========================================
+
+[ ] Descargar WhatsApp Business
+[ ] Registrar +57 311 793 6211
+[ ] Configurar perfil completo
+[ ] Subir foto profesional
+[ ] Activar mensaje bienvenida
+[ ] Activar mensaje ausencia
+[ ] Crear 10 respuestas rápidas
+[ ] Crear catálogo servicios (6 productos)
+[ ] Crear etiquetas organización
+[ ] Vincular computador (multi-dispositivo)
+[ ] Configurar privacidad
+[ ] Publicar primer estado
+[ ] Poner número en Instagram bio
+[ ] Poner número en estados Instagram
+
+TIEMPO TOTAL: 1 hora
+IMPACTO: PROFESIONALISMO TOTAL
+
+
+========================================
+💪 MENSAJE FINAL
+========================================
+
+Ricardo,
+
+WhatsApp Business bien configurado = 30-40% más conversión
+
+Es tu herramienta de ventas #1.
+
+TODO está escrito arriba:
+- Mensajes automáticos ✅
+- Respuestas rápidas ✅
+- Catálogo ✅
+- Etiquetas ✅
+- Scripts ✅
+
+Solo copia, pega, configura.
+
+1 hora hoy = Miles de pesos mañana.
+
+VAMOS. 🚀
+
+Número principal: +57 311 793 6211
+Tu Instagram luxury + WhatsApp profesional = IMPARABLE
+
+========================================

@@ -1,0 +1,15 @@
+/**
+ * Tipheret Harmony Station - Sistema Integral de Diagnóstico Estético
+ * 
+ * Copyright (c) 2026 [TU NOMBRE/EMPRESA]
+ * Todos los derechos reservados.
+ * 
+ * Este software y su código fuente están protegidos por leyes de propiedad intelectual.
+ * El uso, copia, modificación o distribución no autorizados están estrictamente prohibidos.
+ * 
+ * Para licencias comerciales, contactar: [TU EMAIL]
+ * 
+ * @version 5.1.0
+ * @author [TU NOMBRE]
+ * @license Proprietary
+ */

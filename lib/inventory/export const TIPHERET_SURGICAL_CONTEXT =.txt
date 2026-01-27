@@ -1,0 +1,24 @@
+export const TIPHERET_SURGICAL_CONTEXT = {
+  // BLINDAJE POR ESTRATOS
+  antibiotics: {
+    skin: "Cefadroxilo 500mg (Gram+)",
+    deep: "Ciprofloxacino 500mg o TMP/SMX (Gram-)",
+    rationale: "Protección total desde la piel hasta el hueso/grasa profunda."
+  },
+
+  // ANALGESIA MULTIMODAL (Opioid-Sparing)
+  pain_management: {
+    base: "Acetaminofén 1g",
+    anti_inflammatory: "Celecoxib 200mg (Seguro para hemostasia)",
+    neuromodulation: "Pregabalina 75mg (Noche)",
+    rescue: "Ibuprofeno + Codeína (Solo si el dolor > 6)"
+  },
+
+  // PROTOCOLO CALM NIGHT (Basado en su Ficha Técnica)
+  sleep_support: {
+    product: "Tiphereth Calm Night",
+    components: ["Pasiflora", "Tintura de Valeriana 1:5"],
+    dosage: "1 tableta de chocolate 30 min antes de dormir",
+    benefits: "Biodisponibilidad 35% superior para sueño reparador sin opioides."
+  }
+};

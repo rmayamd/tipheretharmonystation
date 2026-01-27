@@ -1,0 +1,136 @@
+========================================
+DECLARACION DE PROPIEDAD INTELECTUAL
+========================================
+
+AUTOR Y PROPIETARIO UNICO:
+
+Nombre: Ricardo Maya Romo Correa Restrepo Saldarriaga
+Cedula: [Tu numero de cedula]
+Fecha nacimiento: 12 de diciembre de 1977
+Lugar: Popayan, Cauca, Colombia
+Direccion: [Tu direccion]
+Email: [Tu email]
+Telefono: [Tu telefono]
+
+========================================
+OBRA PROTEGIDA:
+========================================
+
+Nombre: TIPHERET HARMONY STATION
+Tipo: Software/Aplicacion Web de Diagnostico Medico Estetico
+Fecha creacion: Enero 2026
+Lugar: Cali, Valle del Cauca, Colombia
+
+========================================
+DESCRIPCION:
+========================================
+
+Sistema integrado de analisis estetico facial y corporal 
+mediante algoritmos de Golden Ratio (Phi = 1.618), que incluye:
+
+1. Software de analisis fotografico con deteccion facial
+2. Sistema de recomendaciones personalizadas
+3. Calculadora de implantes (mamarios, gluteos, pantorrillas)
+4. Simulador de procedimientos
+5. Base de conocimiento medica integrada
+6. Dashboard de gestion de pacientes
+7. Sistema de reportes PDF automatizados
+8. Landing page profesional
+9. Integracion con hardware medico
+10. Filosofia Tipheret (Cabala + Geometria Sagrada)
+
+Tecnologias: Next.js 14, React, TypeScript, Tailwind CSS
+
+========================================
+DECLARACION:
+========================================
+
+Yo, RICARDO MAYA ROMO CORREA RESTREPO SALDARRIAGA, declaro que:
+
+1. Soy el UNICO AUTOR Y CREADOR INTELECTUAL de la obra 
+   "TIPHERET HARMONY STATION".
+
+2. La obra fue creada ORIGINALMENTE por mi entre 
+   diciembre 2025 y enero 2026.
+
+3. Utilice herramientas de asistencia de codigo (Cursor AI) 
+   como HERRAMIENTAS, de la misma manera que un arquitecto 
+   usa AutoCAD - la herramienta no es coautora.
+
+4. TODAS LAS DECISIONES CREATIVAS fueron tomadas por mi:
+   - El nombre "Tipheret"
+   - La filosofia Cabala + Golden Ratio
+   - Los algoritmos medicos
+   - La estrategia de negocio
+   - El diseno de interfaces
+
+5. Soy el UNICO PROPIETARIO de todos los derechos:
+   - Propiedad intelectual
+   - Derechos de autor (copyright)
+   - Derechos patrimoniales
+   - Derechos morales
+   - Derechos de explotacion comercial
+   - Marca "Tipheret Center"
+   - Marca "Tipheret Harmony Station"
+
+6. NINGUNA OTRA PERSONA tiene derechos sobre esta obra.
+
+7. Me reservo el derecho exclusivo de:
+   - Uso comercial
+   - Modificacion
+   - Distribucion
+   - Licenciamiento
+   - Venta
+   - Franquicia
+
+========================================
+REGISTRO:
+========================================
+
+Esta declaracion sera registrada ante:
+- Direccion Nacional de Derecho de Autor (DNDA) - Colombia
+- Superintendencia de Industria y Comercio (SIC)
+
+========================================
+TESTIGOS:
+========================================
+
+Testigo 1:
+Nombre: ___________________________
+Cedula: ___________________________
+Firma:  ___________________________
+
+Testigo 2:
+Nombre: ___________________________
+Cedula: ___________________________
+Firma:  ___________________________
+
+========================================
+DECLARANTE:
+========================================
+
+Ricardo Maya Romo Correa Restrepo Saldarriaga
+Cedula: ___________________________
+Firma:  ___________________________
+
+Fecha: ___________________________
+Lugar: Cali, Valle del Cauca, Colombia
+
+========================================
+NOTA LEGAL:
+========================================
+
+Este documento tiene validez legal en Colombia bajo:
+- Ley 23 de 1982
+- Decision Andina 351 de 1993
+
+El derecho de autor se adquiere AUTOMATICAMENTE con 
+la creacion de la obra. El registro formal es 
+OPCIONAL pero recomendado para efectos probatorios.
+
+========================================
+
+Copyright 2026 Ricardo Maya Romo
+Todos los derechos reservados
+
+========================================

@@ -1,0 +1,104 @@
+========================================
+COMO COPIAR LOS ARCHIVOS .TXT
+========================================
+
+OPCION 1: DESDE CURSOR (Recomendada)
+========================================
+
+1. En la columna izquierda de Cursor, busca estos archivos:
+   - MENSAJE_WHATSAPP_DR_GUTI.txt
+   - MENSAJE_PACIENTES_PREVIOS.txt
+   - PROPUESTA_HOTEL_SIMPLE.txt
+   - PROPUESTA_DR_GUTI_SIMPLE.txt
+   - PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt
+
+2. Haz DOBLE CLIC en el archivo para abrirlo
+
+3. Presiona CTRL + A (seleccionar todo)
+
+4. Presiona CTRL + C (copiar)
+
+5. Abre Notepad (Bloc de notas) o Word
+
+6. Presiona CTRL + V (pegar)
+
+7. Ya tienes el contenido para imprimir o usar
+
+
+========================================
+OPCION 2: ABRIR CON NOTEPAD
+========================================
+
+1. Abre el Explorador de archivos de Windows
+
+2. Ve a: C:\Users\usuario\Desktop\maya harmony station
+
+3. Busca los archivos .txt:
+   - MENSAJE_WHATSAPP_DR_GUTI.txt
+   - MENSAJE_PACIENTES_PREVIOS.txt
+   - PROPUESTA_HOTEL_SIMPLE.txt
+   - PROPUESTA_DR_GUTI_SIMPLE.txt
+   - PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt
+
+4. Haz CLIC DERECHO en el archivo
+
+5. Selecciona "Abrir con" > "Bloc de notas"
+
+6. Presiona CTRL + A (seleccionar todo)
+
+7. Presiona CTRL + C (copiar)
+
+8. Pegar donde necesites
+
+
+========================================
+OPCION 3: IMPRIMIR DIRECTO
+========================================
+
+1. Abre el archivo .txt (doble clic)
+
+2. Se abrira en Notepad automaticamente
+
+3. Menu > Archivo > Imprimir
+
+4. O presiona CTRL + P
+
+
+========================================
+ARCHIVOS IMPORTANTES CREADOS:
+========================================
+
+PARA ENVIAR WHATSAPP:
+- MENSAJE_WHATSAPP_DR_GUTI.txt (enviar a 3113299059)
+- MENSAJE_PACIENTES_PREVIOS.txt (enviar a pacientes antiguos)
+
+PARA REUNIONES:
+- PROPUESTA_HOTEL_SIMPLE.txt (mostrar a dueña hotel)
+- PROPUESTA_DR_GUTI_SIMPLE.txt (mostrar a Dr. Guti)
+- PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt (mostrar a cirujano)
+
+OTROS DOCUMENTOS (opcional leer):
+- PLAN_NEGOCIO_DR_MAYA_100M.md (plan completo)
+- PLAN_ARRANQUE_2.3M_CARTAGENA.md (primeros pasos)
+- VISION_TIERRA_BOMBA_SHA_CARIBE.md (sueño largo plazo)
+
+
+========================================
+SI NADA FUNCIONA:
+========================================
+
+Dime y te envio los textos por partes aqui en el chat
+para que los copies directamente.
+
+
+========================================
+URGENTE HACER HOY:
+========================================
+
+1. Copiar MENSAJE_WHATSAPP_DR_GUTI.txt
+2. Enviar a WhatsApp 3113299059
+3. Esperar respuesta
+4. Agendar reunion
+
+
+========================================

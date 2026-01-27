@@ -1,0 +1,19 @@
+// components/Surgical/TotalShieldPrescription.tsx
+export const TotalShieldPrescription = ({ hasBoneWork }: { hasBoneWork: boolean }) => (
+  <div className="space-y-4">
+    <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+      <p className="text-emerald-500 text-[10px] font-black uppercase">Capa 1: Protección de Piel</p>
+      <p className="text-white font-bold uppercase text-xs">Cefadroxilo 500mg - Cada 12h</p>
+    </div>
+    {hasBoneWork && (
+      <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-2xl">
+        <p className="text-blue-500 text-[10px] font-black uppercase">Capa 2: Protección de Hueso/Grasa Profunda</p>
+        <p className="text-white font-bold uppercase text-xs">Ciprofloxacino 500mg - Cada 12h</p>
+      </div>
+    )}
+    <div className="p-4 bg-purple-500/5 border border-purple-500/20 rounded-2xl">
+      <p className="text-purple-500 text-[10px] font-black uppercase">Manejo de Hemostasia</p>
+      <p className="text-white font-bold uppercase text-xs">Celecoxib 200mg - 1 al día</p>
+    </div>
+  </div>
+);

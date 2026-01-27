@@ -1,0 +1,11 @@
+ID_Paciente,Fecha,Tipo,Edad,Género,Procedimiento,Q_Score_Manual,Q_Score_Sistema,Simetria,Calidad_Piel,Laxitud,Edad_Biologica,Prediccion_Mejora_%,Mejora_Real_%,Accuracy_%,Satisfaccion_Real_100,Cumplio_Expectativas,Recomendaria,Notas
+P001,,,,,,,,,,,,,,,,,,,
+P002,,,,,,,,,,,,,,,,,,,
+P003,,,,,,,,,,,,,,,,,,,
+P004,,,,,,,,,,,,,,,,,,,
+P005,,,,,,,,,,,,,,,,,,,
+P006,,,,,,,,,,,,,,,,,,,
+P007,,,,,,,,,,,,,,,,,,,
+P008,,,,,,,,,,,,,,,,,,,
+P009,,,,,,,,,,,,,,,,,,,
+P010,,,,,,,,,,,,,,,,,,,

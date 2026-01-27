@@ -1,0 +1,355 @@
+========================================
+UBICACION DE TODOS LOS ARCHIVOS .TXT
+Guía de navegación rápida
+========================================
+
+📍 TODOS los archivos .txt están en:
+C:\Users\usuario\Desktop\maya harmony station\
+
+(La carpeta raíz del proyecto)
+
+
+========================================
+📂 MAPA VISUAL DE UBICACION
+========================================
+
+C:\Users\usuario\Desktop\
+    └── maya harmony station\         ← AQUI ESTAS
+        ├── 📄 DECLARACION_IP_SIMPLE.txt
+        ├── 📄 MENSAJE_WHATSAPP_DR_GUTI.txt
+        ├── 📄 MENSAJE_PACIENTES_PREVIOS.txt
+        ├── 📄 PROPUESTA_HOTEL_SIMPLE.txt
+        ├── 📄 PROPUESTA_DR_GUTI_SIMPLE.txt
+        ├── 📄 PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt
+        ├── 📄 COMO_COPIAR_ARCHIVOS.txt
+        ├── 📄 PLAN_DIA_A_DIA_CARTAGENA.txt
+        ├── 📄 MENSAJES_CARTAS_COMPLETAS.txt
+        ├── 📄 CHECKLIST_SIMPLE_30_DIAS.txt
+        ├── 📄 ESTRATEGIA_FINANCIERA_100M.txt
+        ├── 📄 INDICE_MAESTRO_DOCUMENTOS.txt
+        ├── 📄 URGENTE_MAÑANA_22_ENERO.txt
+        ├── 📄 RESPUESTA_WHATSAPP_EMAIL.txt
+        ├── 📄 INSTAGRAM_LUXURY_COMPLETO.txt
+        ├── 📄 WHATSAPP_BUSINESS_CONFIGURACION.txt
+        ├── 📄 VISION_COMPLETA_SISTEMA_DUAL.txt
+        ├── 📄 SISTEMA_DUAL_SIMPLE.txt
+        ├── 📄 CORRECCION_PRECIOS_REAL.txt
+        ├── 📄 COMO_LLENAR_PRECIOS.txt
+        ├── 📄 DISTRIBUIDORES_COLOMBIA.txt
+        ├── 📄 PRODUCTOS_ADICIONALES_AGREGADOS.txt
+        ├── 📄 MAGNION_BOTULAX_INFO.txt
+        ├── 📄 PRECIOS_REALES_MAGNION_HYALSENSE.txt ← NUEVO
+        ├── 📄 DONDE_ESTAN_LOS_TXT.txt ← ESTAS AQUI
+        ├── 📄 MAPA_VISUAL_APP.txt ← NUEVO
+        │
+        ├── 📁 docs\          ← Documentación técnica
+        ├── 📁 app\           ← Código de la aplicación
+        ├── 📁 components\    ← Componentes React
+        └── 📁 lib\           ← Bibliotecas y utilidades
+
+
+========================================
+📋 ARCHIVOS POR CATEGORIA
+========================================
+
+🏥 CARTAGENA - ALIANZAS Y CONTACTOS:
+------------------------------------
+✅ MENSAJE_WHATSAPP_DR_GUTI.txt
+✅ MENSAJE_PACIENTES_PREVIOS.txt
+✅ PROPUESTA_HOTEL_SIMPLE.txt
+✅ PROPUESTA_DR_GUTI_SIMPLE.txt
+✅ PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt
+
+
+📅 PLANES Y ESTRATEGIAS:
+------------------------
+✅ PLAN_DIA_A_DIA_CARTAGENA.txt
+✅ CHECKLIST_SIMPLE_30_DIAS.txt
+✅ ESTRATEGIA_FINANCIERA_100M.txt
+✅ URGENTE_MAÑANA_22_ENERO.txt
+
+
+📱 REDES SOCIALES:
+------------------
+✅ INSTAGRAM_LUXURY_COMPLETO.txt
+✅ WHATSAPP_BUSINESS_CONFIGURACION.txt
+
+
+💻 SISTEMA TIPHERET:
+--------------------
+✅ VISION_COMPLETA_SISTEMA_DUAL.txt
+✅ SISTEMA_DUAL_SIMPLE.txt
+✅ MAPA_VISUAL_APP.txt ← NUEVO
+
+
+💰 PRECIOS Y PRODUCTOS:
+-----------------------
+✅ CORRECCION_PRECIOS_REAL.txt
+✅ COMO_LLENAR_PRECIOS.txt
+✅ DISTRIBUIDORES_COLOMBIA.txt
+✅ PRODUCTOS_ADICIONALES_AGREGADOS.txt
+✅ MAGNION_BOTULAX_INFO.txt
+✅ PRECIOS_REALES_MAGNION_HYALSENSE.txt ← NUEVO
+
+
+📄 DOCUMENTOS LEGALES:
+----------------------
+✅ DECLARACION_IP_SIMPLE.txt
+
+
+📖 GUIAS Y AYUDA:
+-----------------
+✅ COMO_COPIAR_ARCHIVOS.txt
+✅ INDICE_MAESTRO_DOCUMENTOS.txt
+✅ RESPUESTA_WHATSAPP_EMAIL.txt
+✅ DONDE_ESTAN_LOS_TXT.txt ← ESTAS AQUI
+
+
+📋 COMPILACIONES:
+-----------------
+✅ MENSAJES_CARTAS_COMPLETAS.txt
+
+
+========================================
+🔍 COMO ACCEDER A LOS ARCHIVOS
+========================================
+
+METODO 1: EXPLORADOR DE WINDOWS
+--------------------------------
+1. Abre el Explorador de Windows (Win + E)
+2. Navega a: C:\Users\usuario\Desktop\
+3. Abre la carpeta: maya harmony station
+4. Verás TODOS los archivos .txt ahí
+
+
+METODO 2: DESDE CURSOR (donde estás ahora)
+-------------------------------------------
+1. Mira el panel izquierdo de Cursor
+2. Sección "EXPLORER"
+3. Ahí ves todos los archivos del proyecto
+4. Los .txt están en la raíz
+
+
+METODO 3: BUSQUEDA RAPIDA
+--------------------------
+1. Presiona Ctrl + P (en Cursor)
+2. Escribe el nombre del archivo
+3. Ejemplo: "DISTRIBUIDORES"
+4. Te aparece: DISTRIBUIDORES_COLOMBIA.txt
+5. Enter para abrir
+
+
+========================================
+💾 COMO COPIAR EL CONTENIDO
+========================================
+
+1. ABRIR ARCHIVO:
+   - Doble clic en el archivo .txt
+   - O clic derecho → "Abrir con" → Bloc de notas
+
+2. SELECCIONAR TODO:
+   - Presiona Ctrl + A (selecciona todo)
+   - O clic en el texto + Ctrl + A
+
+3. COPIAR:
+   - Presiona Ctrl + C
+   - O clic derecho → Copiar
+
+4. PEGAR:
+   - Abre WhatsApp / Email / Word
+   - Presiona Ctrl + V
+   - O clic derecho → Pegar
+
+
+========================================
+📱 ARCHIVOS PARA WHATSAPP
+========================================
+
+Para enviar por WhatsApp, ESTOS archivos son copiables:
+
+✅ MENSAJE_WHATSAPP_DR_GUTI.txt
+✅ MENSAJE_PACIENTES_PREVIOS.txt
+✅ PROPUESTA_HOTEL_SIMPLE.txt
+✅ PROPUESTA_DR_GUTI_SIMPLE.txt
+✅ PROPUESTA_CIRUJANO_PLASTICO_SIMPLE.txt
+
+COMO ENVIAR:
+1. Abre el archivo .txt
+2. Copia el contenido (Ctrl + A, luego Ctrl + C)
+3. Abre WhatsApp Web (web.whatsapp.com)
+4. Busca el contacto (Dr. Guti: 3113299059)
+5. Pega el mensaje (Ctrl + V)
+6. Revisa que se vea bien
+7. Enviar
+
+
+========================================
+📧 ARCHIVOS PARA EMAIL
+========================================
+
+Para enviar por email:
+
+✅ DECLARACION_IP_SIMPLE.txt
+✅ PROPUESTA_HOTEL_SIMPLE.txt
+✅ ESTRATEGIA_FINANCIERA_100M.txt
+
+COMO ENVIAR:
+1. Abre Gmail / Outlook
+2. Nuevo mensaje
+3. Copia contenido del .txt
+4. Pega en el email
+5. Formatea si es necesario
+6. Enviar
+
+O ADJUNTA ARCHIVO:
+1. Nuevo mensaje
+2. Clic en "Adjuntar"
+3. Navega a: C:\Users\usuario\Desktop\maya harmony station\
+4. Selecciona el archivo .txt
+5. Adjuntar
+6. Enviar
+
+
+========================================
+🖨️ COMO IMPRIMIR
+========================================
+
+SI QUIERES IMPRIMIR:
+
+1. Abre el archivo .txt
+2. Archivo → Imprimir
+3. O presiona Ctrl + P
+4. Selecciona impresora
+5. Imprimir
+
+ARCHIVOS IMPORTANTES PARA IMPRIMIR:
+✅ CHECKLIST_SIMPLE_30_DIAS.txt
+✅ URGENTE_MAÑANA_22_ENERO.txt
+✅ PLAN_DIA_A_DIA_CARTAGENA.txt
+
+
+========================================
+💾 COMO HACER BACKUP
+========================================
+
+PARA NO PERDER NADA:
+
+OPCION 1: USB
+-------------
+1. Conecta USB
+2. Copia carpeta completa: maya harmony station
+3. Pega en USB
+4. Listo
+
+OPCION 2: GOOGLE DRIVE
+-----------------------
+1. Abre drive.google.com
+2. Sube carpeta: maya harmony station
+3. Ahora está en la nube
+4. Accesible desde cualquier lugar
+
+OPCION 3: EMAIL A TI MISMO
+---------------------------
+1. Abre Gmail
+2. Nuevo mensaje
+3. Para: tu propio email
+4. Adjunta todos los .txt
+5. Enviar
+6. Ahora están en tu email
+
+
+========================================
+🔗 ARCHIVOS RELACIONADOS
+========================================
+
+SI BUSCAS...                    ARCHIVO CORRECTO:
+-------------                   -----------------
+
+- WhatsApp Dr. Guti      →      MENSAJE_WHATSAPP_DR_GUTI.txt
+- Plan diario            →      PLAN_DIA_A_DIA_CARTAGENA.txt
+- Urgente mañana         →      URGENTE_MAÑANA_22_ENERO.txt
+- Instagram              →      INSTAGRAM_LUXURY_COMPLETO.txt
+- Precios productos      →      PRECIOS_REALES_MAGNION_HYALSENSE.txt
+- Distribuidores         →      DISTRIBUIDORES_COLOMBIA.txt
+- Sistema dual app       →      VISION_COMPLETA_SISTEMA_DUAL.txt
+- Propiedad intelectual  →      DECLARACION_IP_SIMPLE.txt
+- Indice completo        →      INDICE_MAESTRO_DOCUMENTOS.txt
+- Mapa de la app         →      MAPA_VISUAL_APP.txt
+
+
+========================================
+❓ PREGUNTAS FRECUENTES
+========================================
+
+P: ¿Por qué no puedo copiar desde el chat de Cursor?
+R: Limitación del chat. Por eso creamos archivos .txt
+
+P: ¿Los .txt se actualizan automáticamente?
+R: NO. Son capturas en el momento que los creé.
+
+P: ¿Puedo editar los .txt?
+R: SÍ. Ábrelos con Bloc de notas y edita.
+
+P: ¿Se pierden si cierro Cursor?
+R: NO. Están guardados en tu disco duro.
+
+P: ¿Puedo compartirlos?
+R: SÍ, pero son CONFIDENCIALES. Cuidado con quién.
+
+P: ¿Dónde está el código de la app?
+R: En las carpetas: app/, components/, lib/
+   (No son .txt, son archivos .tsx y .ts)
+
+
+========================================
+🚨 IMPORTANTE
+========================================
+
+ESTOS ARCHIVOS SON:
+✅ Tuyos
+✅ Confidenciales
+✅ Propiedad intelectual
+✅ No compartir públicamente
+
+CONTIENEN:
+- Tu estrategia de negocio
+- Contactos privados
+- Precios sensibles
+- Información financiera
+- Planes confidenciales
+
+MANEJA CON CUIDADO. 🔒
+
+
+========================================
+📞 RESUMEN
+========================================
+
+UBICACION:
+C:\Users\usuario\Desktop\maya harmony station\
+
+CANTIDAD:
+~20 archivos .txt + este
+
+COMO ACCEDER:
+1. Explorador Windows
+2. Panel izquierdo Cursor
+3. Búsqueda Ctrl + P
+
+COMO COPIAR:
+Ctrl + A (seleccionar)
+Ctrl + C (copiar)
+Ctrl + V (pegar)
+
+BACKUP:
+- USB
+- Google Drive
+- Email
+
+TODO LISTO. 💪
+TODOS TUS DOCUMENTOS ESTAN SEGUROS.
+
+VAMOS. 🚀
+
+
+========================================

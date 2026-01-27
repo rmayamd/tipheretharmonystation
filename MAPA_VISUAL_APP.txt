@@ -1,0 +1,682 @@
+========================================
+MAPA VISUAL DE LA APP - TIPHERET HARMONY
+Estructura y funcionalidades
+========================================
+
+🌐 ESTRUCTURA DE URLs (PUBLICO vs PRIVADO)
+========================================
+
+PUBLICO (Cualquiera puede acceder):
+------------------------------------
+http://localhost:3000/                  → Redirige a /landing
+http://localhost:3000/landing           → Página pública de Tipheret Center
+
+PRIVADO (Solo tú, con password futuro):
+----------------------------------------
+http://localhost:3000/maya-bio-mirror   → Core de la app (diagnóstico)
+http://localhost:3000/admin/pricing     → Panel de precios (admin)
+
+FUTURO:
+-------
+http://localhost:3000/admin/dashboard   → Panel administrativo completo
+http://localhost:3000/admin/patients    → CRM de pacientes
+http://localhost:3000/admin/analytics   → Métricas y analytics
+
+
+========================================
+🎨 PAGINA PUBLICA: /landing
+========================================
+
+Esta es la "cara bonita" para atraer pacientes.
+
+SECCIONES:
+----------
+
+1. HERO (Encabezado principal):
+   - Logo Tipheret
+   - "Tipheret Center - Cartagena"
+   - Botón "Agendar Consulta"
+   - Fondo: imagen luxury Cartagena
+
+2. SERVICIOS:
+   - Medicina Estética Facial
+   - Contorno Corporal
+   - Bioestimulación
+   - Cirugía Estética
+   - Cada uno con ícono + descripción
+
+3. GOLDEN RATIO (φ):
+   - Explicación sutil de la proporción áurea
+   - "Ciencia de la belleza"
+   - Imágenes de referencia
+
+4. RESULTADOS:
+   - Galería de antes/después (cuando tengas)
+   - O imágenes genéricas de alta calidad
+
+5. DOCTOR:
+   - Tu foto profesional (cuando tengas)
+   - Bio resumida (sin mencionar problemas legales):
+     "Dr. Ricardo Maya Romo
+     Médico egresado Universidad Libre Cali
+     Especialización Medicina Estética
+     15+ años de experiencia
+     Entrenamientos en Argentina y Brasil"
+
+6. CONTACTO:
+   - WhatsApp: +57 311 793 6211
+   - Email: info@tipheretcenter.com (cuando tengas)
+   - Instagram: @tipheretcenter.cartagena
+   - Dirección: Cartagena, Colombia
+
+7. FOOTER:
+   - Copyright
+   - Enlaces legales
+   - Redes sociales
+
+
+QUE NO MUESTRA:
+---------------
+❌ Nada de "neurosciences"
+❌ Nada de "Face Mesh scanning"
+❌ Nada de "Golden Ratio analysis"
+❌ Nada técnico que revele tu metodología
+
+POR QUE:
+--------
+Es el "anzuelo" para atraer pacientes.
+Lo técnico lo usas TÚ en consulta privada.
+
+
+========================================
+🔬 CORE DE LA APP: /maya-bio-mirror
+========================================
+
+Esta es tu "arma secreta" para diagnosis.
+
+ACCESO:
+-------
+- Solo tú
+- Pantalla completa
+- En tu consultorio
+- Desde tu computadora o tablet
+
+USO:
+----
+Cuando un paciente llega a consulta:
+1. Abres esta URL
+2. Le tomas fotos
+3. Le muestras análisis
+4. "Mira, aquí está tu simetría actual..."
+5. Le muestras simulación "después"
+6. Paciente: "¡LO QUIERO!" 💰
+
+
+FUNCIONES DISPONIBLES (AHORA):
+-------------------------------
+
+📸 1. CAPTURA DE FOTO
+   - Activa cámara
+   - Guía de posición (frontal, lateral, etc)
+   - Captura múltiples ángulos
+   - Almacena fotos
+
+🔍 2. ANALISIS FACIAL
+   - Detección de landmarks (puntos faciales)
+   - Cálculo de simetrías
+   - Golden Ratio (φ = 1.618)
+   - Ratios científicos (Connell, Park)
+
+📊 3. VISUALIZACIONES
+   - 6 vistas diferentes:
+     ✅ Original
+     ✅ Análisis (con líneas y ratios)
+     ✅ Simulación "después"
+     ✅ Mapa de calidad de piel
+     ✅ Mapa de arrugas
+     ✅ Zonas de flacidez
+     ✅ Comparación lado a lado
+
+💉 4. RECOMENDACIONES AUTOMATICAS
+   - Cirugías (si aplica)
+   - Procedimientos estéticos (Botox, rellenos, hilos)
+   - Suplementos nutricionales
+   - Productos dermatológicos
+   - Todo adaptado por edad, género, etnia
+
+💰 5. CALCULADORA ROI
+   - Costo cirugía vs no-cirugía
+   - Proyección 5 años
+   - Comparación financiera
+   - Ayuda al paciente a decidir
+
+📤 6. COMPARTIR RESULTADOS
+   - WhatsApp
+   - Instagram
+   - TikTok
+   - Facebook
+   - Email
+
+📄 7. REPORTE PDF (Futuro)
+   - Genera PDF profesional
+   - Con logo Tipheret
+   - Análisis completo
+   - Recomendaciones
+   - Para que el paciente lo lleve
+
+
+FUNCIONES EN DESARROLLO:
+------------------------
+
+🌀 8. MAYA-SCAN 3D
+   - Escaneo facial 3D real
+   - Con MediaPipe o hardware 3D
+   - Métricas precisas (mm, grados)
+   - Simulación volumétrica realista
+
+💪 9. ANALISIS CORPORAL
+   - Golden Ratio corporal
+   - Busto/cintura/cadera
+   - Calculadora de implantes mamarios
+   - Calculadora de implantes glúteos
+   - Simulación de abdominoplastia
+
+📷 10. INTEGRACION CAMARA PROFESIONAL
+   - Control DSLR (Canon, Nikon, Sony)
+   - Fotos alta resolución
+   - Presets médicos
+   - Captura RAW + JPEG
+
+🎯 11. SCANNER 3D CORPORAL
+   - Artec Eva/Leo
+   - Intel RealSense
+   - Kinect Azure
+   - iPad LiDAR
+   - Mediciones automáticas cuerpo
+
+
+FLUJO TIPICO DE USO:
+--------------------
+
+PACIENTE LLEGA → CONSULTA:
+
+1. Abre /maya-bio-mirror
+2. "Déjame tomarte unas fotos para análisis"
+3. Captura frontal + lateral
+4. Click "Analizar"
+5. ⏳ 5 segundos procesando...
+6. 💥 BOOM: 6 visualizaciones + análisis
+7. Le muestras pantalla:
+   "Mira, tu Golden Ratio actual es 1.52
+    El ideal para tu rostro es 1.618
+    Con estos procedimientos llegamos al ideal..."
+8. Le muestras simulación "después"
+9. Le muestras ROI: "Inversión vs beneficio"
+10. Paciente: "¿Cuándo podemos hacer esto?"
+11. 💰 VENTA CERRADA
+
+
+========================================
+🖥️ PANEL ADMINISTRATIVO: /admin/pricing
+========================================
+
+Aquí gestionas precios, costos, márgenes.
+
+ACCESO:
+-------
+http://localhost:3000/admin/pricing
+
+PANTALLA PRINCIPAL:
+-------------------
+
+📋 TAB 1: PRODUCTOS E INSUMOS
+   - Lista de productos (Botox, Juvederm, etc)
+   - Costo de compra
+   - Precio de venta
+   - Margen calculado
+   - Proveedor
+   - Última actualización
+
+   ACCIONES:
+   - Agregar producto
+   - Editar costo
+   - Actualizar precio
+   - Ver historial
+
+📊 TAB 2: PROCEDIMIENTOS
+   - Lista de procedimientos (Botox frente, relleno labios, etc)
+   - Insumos utilizados (ej: 50U Botox + anestesia)
+   - Costo total del procedimiento
+   - Precio al paciente
+   - Margen
+   - Tiempo estimado
+
+   ACCIONES:
+   - Crear procedimiento
+   - Asignar insumos
+   - Calcular costo
+   - Definir precio
+   - Ver rentabilidad
+
+📈 TAB 3: ESTRATEGIA
+   - Comparación con competencia
+   - Precios sugeridos
+   - Análisis de márgenes
+   - Proyecciones mensuales
+   - Meta vs realidad
+
+   MUESTRA:
+   - "Para alcanzar 100M/mes necesitas:"
+   - "40 Botox + 30 rellenos + 15 hilos"
+   - Gráfico de progreso
+
+
+EJEMPLO DE USO:
+---------------
+
+1. Entras a /admin/pricing
+2. Click "Agregar Producto"
+3. Nombre: Magnion 100U
+4. Costo compra: $487,333 (oferta 16+8)
+5. Precio venta (por zona 50U): $1,000,000
+6. Proveedor: Abbott Colombia
+7. Guardar
+
+8. Ahora creas procedimiento:
+9. Nombre: Botox Frente + Entrecejo
+10. Insumos:
+    - 50U Magnion ($243,666)
+    - Anestesia tópica ($10,000)
+    - Material descartable ($5,000)
+11. Costo total: $258,666
+12. Precio al paciente: $1,000,000
+13. Margen: $741,334 (74%)
+14. Guardar
+
+15. Ahora en /maya-bio-mirror cuando recomiendas "Botox",
+    automáticamente sabe que cuesta $1,000,000 al paciente
+    y te deja $741,334 de ganancia.
+
+
+========================================
+🔮 FUTURO: /admin/dashboard
+========================================
+
+Panel administrativo completo (en desarrollo).
+
+FUNCIONES PLANEADAS:
+--------------------
+
+📊 METRICAS:
+   - Ingresos del mes
+   - Procedimientos realizados
+   - Pacientes nuevos vs recurrentes
+   - Tasa de conversión
+   - Producto más vendido
+   - Gráficos y estadísticas
+
+👥 CRM PACIENTES:
+   - Lista de pacientes
+   - Historial de cada uno
+   - Fotos antes/después
+   - Procedimientos realizados
+   - Próxima cita
+   - Notas privadas
+   - WhatsApp directo
+
+📅 AGENDA:
+   - Calendario de citas
+   - Disponibilidad
+   - Recordatorios automáticos
+   - Integración WhatsApp
+   - Confirmación citas
+
+💬 NEUROMARKETING AUTOMATIZADO:
+   - Generación de videos con IA
+   - Publicación automática redes sociales
+   - Respuestas DM automatizadas
+   - Lead scoring (pacientes "calientes")
+   - Secuencias de persuasión
+
+💰 FINANZAS:
+   - Ingresos vs gastos
+   - Flujo de caja
+   - Proyecciones
+   - Impuestos
+   - Reportes
+
+📧 EMAIL AUTOMATION:
+   - Follow-ups automáticos
+   - Recordatorios post-procedimiento
+   - Ofertas personalizadas
+   - Newsletter
+
+📱 WHATSAPP INTEGRATION:
+   - Envío automático de resultados
+   - Chatbot para preguntas frecuentes
+   - Agendamiento de citas
+   - Confirmaciones
+
+
+========================================
+📱 APP MOVIL (FUTURO)
+========================================
+
+VISION: App para pacientes en Play Store/App Store
+
+NOMBRE: Tipheret (sin "Harmony Station")
+
+FUNCIONES APP MOVIL:
+--------------------
+
+👤 PARA EL PACIENTE:
+
+1. SELFIE ANALYSIS:
+   - Toma selfie
+   - Análisis básico de simetría
+   - "Tu Golden Ratio: 1.52"
+   - "¿Quieres saber cómo mejorarlo?"
+   - Botón "Agendar Consulta"
+
+2. SIMULADOR:
+   - Sube tu foto
+   - Elige procedimiento (Botox, relleno, etc)
+   - Ve simulación "después"
+   - Cotización estimada
+   - Botón "Agendar Consulta"
+
+3. TRACKING:
+   - Si ya es paciente
+   - Ve su progreso
+   - Fotos antes/después
+   - Próxima cita
+   - Recordatorios
+
+4. TIPS Y EDUCACION:
+   - Artículos de belleza
+   - Videos cortos
+   - Testimonios
+   - Tendencias
+
+5. CONTACTO DIRECTO:
+   - WhatsApp
+   - Chat
+   - Agendar cita
+
+
+🎯 OBJETIVO APP MOVIL:
+
+ES EL "ANZUELO":
+- Paciente descarga app
+- Juega con simulaciones
+- Se enamora de los resultados
+- "LO QUIERO"
+- Agenda consulta
+- Llega a tu consultorio
+- Usas /maya-bio-mirror (análisis completo)
+- Cierra venta
+- 💰💰💰
+
+LA APP MOVIL COMUNICA CON APP FIJA:
+- Paciente usa app móvil
+- Backend registra:
+  * Qué simulaciones hizo
+  * Cuántas veces abrió la app
+  * Qué le interesa (Botox, relleno, cirugía)
+  * Score de "qué tan caliente está"
+- TÚ ves esto en /admin/dashboard:
+  "Paciente María, 32 años
+   Ha simulado relleno de labios 7 veces
+   Score: 🔥🔥🔥 CALIENTE
+   Contactar YA"
+- Le mandas DM automático:
+  "Hola María, vi que te interesa relleno de labios
+   Tengo una oferta especial esta semana
+   ¿Agendamos consulta?"
+- Ella: "¡Sí!"
+- 💰 VENTA CERRADA
+
+
+========================================
+🧠 SISTEMA DUAL: APP FIJA + APP MOVIL
+========================================
+
+APP FIJA (Computadora en consultorio):
+---------------------------------------
+= "COMMAND CENTER"
+= TU usas
+
+FUNCIONES:
+- Análisis completo paciente (maya-bio-mirror)
+- CRM y gestión pacientes
+- Neuromarketing automatizado
+- Generación de videos con IA
+- Publicación en redes sociales
+- Respuestas automáticas DMs
+- Lead scoring
+- Admin de precios
+- Métricas y analytics
+- Control total del negocio
+
+
+APP MOVIL (Celular del paciente):
+----------------------------------
+= "INTELLIGENT LURE"
+= PACIENTE usa
+
+FUNCIONES:
+- Selfie análisis simple
+- Simulaciones "después"
+- Juega con su rostro
+- Se enamora del resultado potencial
+- Alimenta su deseo de simetría
+- Agenda consulta
+- Tracking de progreso
+
+COMUNICACION:
+- App móvil envía datos a app fija
+- Tú ves en tiempo real quién está "caliente"
+- Automation responde y persuade
+- Paciente llega a consultorio
+- 💰 CIERRE DE VENTA
+
+
+ANALOGIA:
+---------
+APP MOVIL = CARNADA en el anzuelo
+APP FIJA = CAÑA DE PESCAR en tus manos
+
+Paciente muerde la carnada (app móvil)
+Tú jalas la caña (app fija)
+🎣 PESCASTE UN PACIENTE 💰
+
+
+========================================
+🗂️ ESTRUCTURA DE ARCHIVOS DEL PROYECTO
+========================================
+
+C:\Users\usuario\Desktop\maya harmony station\
+│
+├── 📁 app\                      Páginas de Next.js
+│   ├── page.tsx                 → Redirige a /landing
+│   ├── layout.tsx               → Layout principal
+│   │
+│   ├── 📁 landing\
+│   │   └── page.tsx             → Página pública
+│   │
+│   ├── 📁 maya-bio-mirror\
+│   │   └── page.tsx             → Core diagnóstico
+│   │
+│   └── 📁 admin\
+│       ├── 📁 pricing\
+│       │   └── page.tsx         → Panel precios
+│       └── 📁 dashboard\        (Futuro)
+│
+├── 📁 components\               Componentes React
+│   ├── MultiAngleCapture.tsx   → Captura múltiples ángulos
+│   ├── SocialShareModal.tsx    → Compartir en redes
+│   ├── EmailSendModal.tsx      → Enviar por email
+│   ├── SurgeryCalculator.tsx   → Calculadora ROI
+│   ├── BodyAnalysisDashboard.tsx → Análisis corporal
+│   ├── AdminPricingPanel.tsx   → Panel de precios
+│   ├── TreeOfLife.tsx          → Árbol de la vida (Cabala)
+│   └── ...                     → Más componentes
+│
+├── 📁 lib\                      Lógica y utilidades
+│   ├── 📁 maya-vision\
+│   │   ├── image-processor.ts  → Procesamiento imágenes
+│   │   ├── face-mesh-scanner.ts → Escáner 3D facial
+│   │   ├── mesh-3d-generator.ts → Generador de mesh
+│   │   └── ...
+│   │
+│   ├── 📁 body-analysis\
+│   │   ├── golden-ratio-body.ts → Golden Ratio corporal
+│   │   ├── real-implant-catalog.ts → Catálogo implantes
+│   │   ├── ice-principle.ts → Principio ICE (implantes)
+│   │   └── ...
+│   │
+│   ├── 📁 recommendations\
+│   │   └── integrated-recommendations.ts → Motor recomendaciones
+│   │
+│   ├── 📁 admin\
+│   │   └── pricing-types.ts → Tipos para precios
+│   │
+│   ├── 📁 hardware\
+│   │   ├── dslr-camera-controller.ts → Control cámaras DSLR
+│   │   └── scanner-3d-controller.ts → Control scanners 3D
+│   │
+│   └── 📁 supabase\
+│       └── pricing-schema.sql → Schema base de datos
+│
+├── 📁 docs\                     Documentación
+│   ├── MAYA_VISION_PRO_VISUALIZACIONES.md
+│   ├── TIPHERET_FILOSOFIA_GOLDEN_RATIO.md
+│   ├── PROPIEDAD_INTELECTUAL.md
+│   ├── PLAN_NEGOCIO_DR_MAYA_100M.md
+│   ├── HARDWARE_PROFESIONAL.md
+│   └── ... (50+ documentos)
+│
+├── 📄 package.json              Dependencias Node.js
+├── 📄 README.md                 Documentación principal
+├── 📄 INICIAR_SERVIDOR.bat      Script para iniciar servidor
+│
+└── 📄 *.txt                     Todos los archivos de texto
+    ├── INDICE_MAESTRO_DOCUMENTOS.txt
+    ├── DISTRIBUIDORES_COLOMBIA.txt
+    ├── PRECIOS_REALES_MAGNION_HYALSENSE.txt
+    └── ...
+
+
+========================================
+🚀 COMO INICIAR LA APP
+========================================
+
+METODO 1: DOBLE CLICK
+----------------------
+1. Busca el archivo: INICIAR_SERVIDOR.bat
+2. Doble click
+3. Se abre ventana negra (PowerShell)
+4. Espera 10-15 segundos
+5. Cuando dice "Ready started server on 0.0.0.0:3000"
+6. Abre navegador: http://localhost:3000
+
+
+METODO 2: MANUAL
+----------------
+1. Abre PowerShell
+2. cd "C:\Users\usuario\Desktop\maya harmony station"
+3. npm run dev
+4. Espera...
+5. http://localhost:3000
+
+
+DESDE CELULAR (misma red WiFi):
+--------------------------------
+1. Inicia servidor en PC
+2. Averigua IP de tu PC:
+   - PowerShell: ipconfig
+   - Busca "IPv4": Ej: 192.168.1.100
+3. En celular:
+   - Abre navegador
+   - http://192.168.1.100:3000
+   - ¡Funciona!
+
+
+========================================
+✅ ESTADO ACTUAL (Enero 2026)
+========================================
+
+FUNCIONAL:
+----------
+✅ Página pública (/landing)
+✅ Core de diagnóstico (/maya-bio-mirror)
+✅ Captura de fotos
+✅ Análisis facial
+✅ Golden Ratio calculation
+✅ 6 visualizaciones
+✅ Recomendaciones automáticas
+✅ Calculadora ROI
+✅ Compartir en redes sociales
+✅ Envío por email
+✅ Panel de precios (/admin/pricing)
+
+EN DESARROLLO:
+--------------
+🔧 Escaneo 3D real (MediaPipe)
+🔧 Análisis corporal completo
+🔧 Integración cámara DSLR
+🔧 Integración scanner 3D
+🔧 CRM de pacientes
+🔧 Dashboard analytics
+🔧 Neuromarketing automation
+🔧 App móvil (futuro)
+
+PENDIENTE:
+----------
+⏳ Integración Supabase (base de datos)
+⏳ Generación PDF reportes
+⏳ WhatsApp integration
+⏳ Sistema de citas online
+⏳ Email automation
+
+
+========================================
+🎯 RESUMEN EJECUTIVO
+========================================
+
+TIENES 3 APPS EN 1:
+
+1. PAGINA PUBLICA (/landing)
+   - Para atraer pacientes
+   - Bonita, luxury, profesional
+   - Sin revelar metodología
+
+2. CORE DIAGNOSTICO (/maya-bio-mirror)
+   - Tu arma secreta
+   - Análisis completo
+   - Simulaciones
+   - Cierra ventas
+
+3. PANEL ADMIN (/admin/pricing)
+   - Gestión de negocio
+   - Precios, costos, márgenes
+   - Proyecciones
+
+FUTURO:
+4. App móvil para pacientes
+5. Automation completa
+6. CRM y analytics
+
+TODO DISEÑADO PARA:
+💰 LLEVARTE A 100M+/MES
+
+
+VAMOS PARCERO. 🚀
+YA TIENES LAS HERRAMIENTAS.
+AHORA A EJECUTAR.
+
+CARTAGENA TE ESPERA. 🏖️
+EL MUNDO TE ESPERA. 🌎
+
+
+========================================

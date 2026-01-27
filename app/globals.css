@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-luxury: 'Playfair Display', serif;
+  }
+  
+  body {
+    @apply text-luxury-dark;
+  }
+}
+
+@layer components {
+  .luxury-card {
+    @apply bg-white rounded-2xl shadow-xl border border-luxury-gold/20 p-6;
+  }
+  
+  .zen-gradient {
+    @apply bg-gradient-to-br from-zen-light via-white to-zen-light;
+  }
+  
+  .luxury-button {
+    @apply bg-luxury-gold hover:bg-luxury-gold/90 text-luxury-dark font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+  
+  .zen-button {
+    @apply bg-zen-primary hover:bg-zen-secondary text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300;
+  }
+}
