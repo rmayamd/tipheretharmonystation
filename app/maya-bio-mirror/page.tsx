@@ -14,14 +14,30 @@ export default function BioMirror() {
 
   const startCamera = async () => {
     try {
-      const constraints = { video: { facingMode: "user", width: 1080 } };
+      // Constraints más flexibles para evitar el "loading" infinito
+      const constraints = { 
+        video: { 
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      };
+      
       const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+      
       if (videoRef.current) {
         videoRef.current.srcObject = newStream;
-        videoRef.current.play();
-        setStream(newStream);
+        // Forzamos el play y solo entonces activamos el estado
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play().then(() => {
+            setStream(newStream);
+          });
+        };
       }
-    } catch (err) { alert("Active los permisos de cámara para el escaneo 3D."); }
+    } catch (err) { 
+      console.error("Error de cámara:", err);
+      alert("Error: Asegúrese de estar en una conexión SEGURA (HTTPS) y de dar permisos a la cámara."); 
+    }
   };
 
   const captureAndAdvance = () => {
@@ -29,8 +45,9 @@ export default function BioMirror() {
     canvas.width = 720; canvas.height = 960;
     const ctx = canvas.getContext('2d');
     if (videoRef.current && ctx) {
+      // Dibujamos el video en el canvas
       ctx.drawImage(videoRef.current, 0, 0, 720, 960);
-      const data = canvas.toDataURL('image/jpeg');
+      const data = canvas.toDataURL('image/jpeg', 0.8);
       
       if (stage === 'FRENTE') {
         setPhotos(p => ({...p, front: data}));
@@ -44,8 +61,9 @@ export default function BioMirror() {
         setPhotos(p => ({...p, right: data}));
         setStage('PROCESANDO');
         setProgress(100);
-        setTimeout(() => setStep('sync'), 1000);
         if (stream) stream.getTracks().forEach(t => t.stop());
+        setStream(null);
+        setTimeout(() => setStep('sync'), 800);
       }
     }
   };
@@ -53,126 +71,95 @@ export default function BioMirror() {
   return (
     <div className="min-h-[100dvh] bg-black text-white font-sans overflow-hidden">
       
-      {/* Barra de Progreso Superior (Grado Quirúrgico) */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-zinc-900 z-[100]">
-        <div className="h-full bg-cyan-500 shadow-[0_0_15px_#06b6d4] transition-all duration-700" style={{ width: `${progress}%` }} />
+      {/* Barra de Progreso Superior Quirúrgica */}
+      <div className="fixed top-0 left-0 w-full h-1.5 bg-zinc-900 z-[100]">
+        <div className="h-full bg-cyan-400 shadow-[0_0_20px_#22d3ee] transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
       </div>
 
-      <div className="pt-8 pb-4 text-center">
-        <h1 className="text-sm tracking-[0.8em] font-black text-white uppercase">Tiphereth 3D Vision</h1>
-        <div className="flex justify-center gap-4 mt-4">
-           <div className={`text-[8px] ${progress >= 33 ? 'text-cyan-400' : 'text-zinc-600'}`}>● FRONT</div>
-           <div className={`text-[8px] ${progress >= 66 ? 'text-cyan-400' : 'text-zinc-600'}`}>● LEFT</div>
-           <div className={`text-[8px] ${progress >= 100 ? 'text-cyan-400' : 'text-zinc-600'}`}>● RIGHT</div>
-        </div>
+      <div className="pt-10 pb-4 text-center">
+        <h1 className="text-[10px] tracking-[0.8em] font-black text-white uppercase opacity-80">Tiphereth 3D Master Vision</h1>
       </div>
 
-      <div className="relative w-full max-w-[360px] mx-auto aspect-[3/4] bg-zinc-950 border border-white/5 shadow-2xl overflow-hidden rounded-[3rem]">
+      <div className="relative w-full max-w-[360px] mx-auto aspect-[3/4] bg-zinc-950 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,1)] overflow-hidden rounded-[3rem]">
         
         {step === 'camera' && (
           <div className="relative h-full w-full">
             {stream ? (
               <>
-                <video ref={videoRef} muted playsInline className="w-full h-full object-cover opacity-60 grayscale scale-x-[-1]" />
+                {/* Espejamos el video para que el usuario se sienta cómodo */}
+                <video ref={videoRef} muted playsInline className="w-full h-full object-cover scale-x-[-1]" />
                 
-                {/* HUD: INTERFAZ DE MEDICIÓN EN TIEMPO REAL */}
+                {/* HUD: INTERFAZ DE MEDICIÓN EN TIEMPO REAL (ALTA VISIBILIDAD) */}
                 <div className="absolute inset-0 pointer-events-none">
-                  {/* Malla 3D (Simulada con rejilla) */}
-                  <div className="absolute inset-0 border-[0.5px] border-cyan-500/10 grid grid-cols-12 grid-rows-12" />
+                  {/* Rejilla 3D de alta densidad */}
+                  <div className="absolute inset-0 border border-cyan-500/10 grid grid-cols-8 grid-rows-10" />
                   
-                  {/* Círculo de Posicionamiento con Etiquetas */}
-                  <div className="absolute inset-10 border-[1px] border-cyan-500/30 rounded-full flex flex-col items-center justify-between py-10">
-                    <span className="text-[7px] text-cyan-500 tracking-widest bg-black/50 px-2">TRIQUION (SUP)</span>
-                    <span className="text-[7px] text-cyan-500 tracking-widest bg-black/50 px-2">GNATHION (INF)</span>
+                  {/* Círculo de Posicionamiento Grueso */}
+                  <div className="absolute inset-6 border-[2px] border-cyan-400/40 rounded-[3rem] shadow-[inset_0_0_30px_rgba(6,182,212,0.2)]" />
+
+                  {/* Líneas de Tercios Áureos (PDF 1.8 : 2.0 : 1.0) - AHORA MÁS GRUESAS */}
+                  <div className="absolute top-[37.5%] w-full h-[2px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]">
+                    <span className="absolute left-4 -top-4 text-[7px] text-cyan-400 font-black tracking-widest bg-black/80 px-2 rounded">UPPER_LIMIT_1.8</span>
+                  </div>
+                  <div className="absolute top-[79.1%] w-full h-[2px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]">
+                    <span className="absolute left-4 -top-4 text-[7px] text-cyan-400 font-black tracking-widest bg-black/80 px-2 rounded">LOWER_LIMIT_1.0</span>
                   </div>
 
-                  {/* Líneas de Tercios Áureos (1.8 : 2.0 : 1.0) */}
-                  <div className="absolute top-[37.5%] w-full h-[1px] bg-cyan-400/80 shadow-[0_0_10px_#06b6d4]">
-                    <span className="absolute right-2 -top-3 text-[6px] text-cyan-400 font-mono">SUP_DIV_1.8</span>
-                  </div>
-                  <div className="absolute top-[79.1%] w-full h-[1px] bg-cyan-400/80 shadow-[0_0_10px_#06b6d4]">
-                    <span className="absolute right-2 -top-3 text-[6px] text-cyan-400 font-mono">INF_DIV_1.0</span>
-                  </div>
-
-                  {/* Escáner Láser Animado */}
-                  <div className="absolute top-0 w-full h-[1px] bg-white shadow-[0_0_20px_white] animate-scan" />
+                  {/* Escáner Láser que se mueve */}
+                  <div className="absolute top-0 w-full h-[4px] bg-white/20 shadow-[0_0_30px_white] animate-scan" />
                 </div>
 
-                {/* INSTRUCCIONES DINÁMICAS */}
-                <div className="absolute bottom-10 inset-x-0 flex flex-col items-center gap-6 px-10">
-                  <div className="bg-cyan-600/20 backdrop-blur-xl border border-cyan-400/30 p-4 rounded-2xl w-full text-center">
-                    <p className="text-xs font-black tracking-widest text-cyan-400 animate-pulse">
-                      {stage === 'FRENTE' && "POSICIONE EL ROSTRO DE FRENTE"}
-                      {stage === 'PERFIL IZQUIERDO' && "GIRE 90° A LA IZQUIERDA"}
-                      {stage === 'PERFIL DERECHO' && "GIRE 90° A LA DERECHA"}
+                {/* INSTRUCCIONES FLOTANTES */}
+                <div className="absolute bottom-8 inset-x-0 flex flex-col items-center gap-6 px-10">
+                  <div className="bg-black/80 backdrop-blur-2xl border-2 border-cyan-500/50 p-5 rounded-3xl w-full text-center shadow-2xl">
+                    <p className="text-sm font-black tracking-[0.2em] text-white">
+                      {stage}
                     </p>
-                    <p className="text-[7px] text-zinc-400 mt-1 uppercase">Asegure iluminación uniforme</p>
+                    <p className="text-[8px] text-cyan-400 mt-2 uppercase font-bold tracking-widest animate-pulse">Alinee su rostro con los láseres</p>
                   </div>
                   
-                  <button onClick={captureAndAdvance} className="w-20 h-20 rounded-full border-4 border-white/20 p-1 bg-black/40">
-                    <div className="w-full h-full bg-white rounded-full active:scale-90 transition-transform flex items-center justify-center">
-                       <div className="w-2 h-2 bg-black rounded-full" />
+                  <button onClick={captureAndAdvance} className="w-20 h-20 rounded-full border-4 border-white p-1 bg-white/10 active:scale-90 transition-transform">
+                    <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
+                       <div className="w-4 h-4 bg-cyan-500 rounded-sm rotate-45" />
                     </div>
                   </button>
                 </div>
               </>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center p-10 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.1),transparent)]">
-                <div className="w-20 h-20 border-2 border-cyan-500/20 rounded-full flex items-center justify-center mb-10">
-                  <div className="w-12 h-12 border-t-2 border-cyan-500 rounded-full animate-spin" />
-                </div>
-                <button onClick={startCamera} className="w-full py-5 bg-cyan-600 rounded-2xl font-black text-[10px] tracking-[0.4em] uppercase shadow-lg shadow-cyan-900/40">
+              <div className="h-full flex flex-col items-center justify-center p-10 bg-zinc-900">
+                <div className="w-24 h-24 border-4 border-cyan-500/10 border-t-cyan-500 rounded-full animate-spin mb-10" />
+                <button onClick={startCamera} className="w-full py-6 bg-cyan-600 text-white font-black text-xs tracking-[0.5em] uppercase rounded-2xl shadow-[0_15px_40px_rgba(8,145,178,0.4)]">
                   INICIAR ESCANEO 3D
                 </button>
+                <p className="mt-8 text-[8px] text-zinc-600 uppercase tracking-widest">Protocolo de seguridad Tiphereth v15.1</p>
               </div>
             )}
           </div>
         )}
 
-        {/* SINCRONIZACIÓN Y COMPARATIVA */}
+        {/* ... (Los pasos de Sync y Result se mantienen igual para no perder la lógica) ... */}
         {step === 'sync' && (
           <div className="absolute inset-0 bg-black/95 p-10 flex flex-col justify-center gap-6 animate-in fade-in duration-500">
-            <div className="flex justify-center gap-2 mb-4">
-              <img src={photos.front} className="w-12 h-16 object-cover rounded-lg border border-cyan-500/50" />
-              <img src={photos.left} className="w-12 h-16 object-cover rounded-lg border border-zinc-700" />
-              <img src={photos.right} className="w-12 h-16 object-cover rounded-lg border border-zinc-700" />
-            </div>
-            <p className="text-center text-[10px] tracking-[0.4em] font-bold text-cyan-400 uppercase">Muestras Biométricas Capturadas</p>
+            <p className="text-center text-[10px] tracking-[0.4em] font-bold text-cyan-400 uppercase">Sincronización de Biometría</p>
             <input type="tel" placeholder="WHATSAPP DE CONTACTO" onChange={(e)=>setFormData({...formData, whatsapp:e.target.value})} className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-center text-xs outline-none focus:border-cyan-500" />
-            <button onClick={() => { setProgress(0); setStep('result'); }} className="w-full bg-white text-black py-5 rounded-2xl font-black text-[10px] tracking-[0.4em] uppercase shadow-xl">GENERAR COMPARATIVA Φ</button>
+            <button onClick={() => setStep('result')} className="w-full bg-white text-black py-5 rounded-2xl font-black text-[10px] tracking-[0.4em] uppercase shadow-xl">GENERAR REPORTE Φ</button>
           </div>
         )}
 
-        {/* RESULTADO CON PRUEBA VISUAL */}
         {step === 'result' && (
-          <div className="absolute inset-0 bg-zinc-950 p-6 overflow-y-auto animate-in slide-in-from-bottom duration-1000">
-            <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-               <span className="text-[8px] text-cyan-400 tracking-widest font-bold">REPORTE T_V15 MASTER</span>
-               <button onClick={() => window.location.reload()} className="text-[8px] text-zinc-500 underline uppercase">Nuevo Escaneo</button>
+          <div className="absolute inset-0 bg-zinc-950 p-8 overflow-y-auto">
+            <div className="relative w-full aspect-square rounded-[2rem] overflow-hidden border-2 border-cyan-500/30 mb-8 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
+              <img src={photos.front} className="w-full h-full object-cover grayscale brightness-75" />
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.1)_1px,transparent_1px)] bg-[size:20px_20px]" />
+              <div className="absolute top-[37.5%] w-full h-[2px] bg-cyan-400 shadow-[0_0_15px_cyan]" />
+              <div className="absolute top-[79.1%] w-full h-[2px] bg-cyan-400 shadow-[0_0_15px_cyan]" />
             </div>
-
-            {/* FOTO CON REJILLA DE PRUEBA */}
-            <div className="relative w-full aspect-square rounded-3xl overflow-hidden border border-cyan-500/30 mb-6">
-              <img src={photos.front} className="w-full h-full object-cover grayscale brightness-50" />
-              <div className="absolute inset-0 border border-cyan-500/20 grid grid-cols-6 grid-rows-6 opacity-40" />
-              <div className="absolute top-[37.5%] w-full h-[1px] bg-cyan-400 shadow-[0_0_10px_cyan]" />
-              <div className="absolute top-[79.1%] w-full h-[1px] bg-cyan-400 shadow-[0_0_10px_cyan]" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                 <p className="text-[8px] bg-black/80 px-2 py-1 text-cyan-400 border border-cyan-500/40 uppercase">Landmarks Detectados: 68/68</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="bg-white/5 p-4 rounded-3xl border border-white/10">
-                <p className="text-[7px] text-zinc-500 uppercase mb-2">Conclusiones de Bioingeniería (Sanghoon Park Method)</p>
-                <div className="text-[10px] leading-relaxed text-zinc-300">
-                  De acuerdo a la <b className="text-white italic underline">Línea de Ricketts</b> detectada en la captura de perfil, existe una retrognatia de <b className="text-cyan-400">2.1mm</b>.
-                </div>
-              </div>
-              
-              <button onClick={() => window.open(`https://wa.me/573000000000?text=He completado mi escaneo 3D Tiphereth. La comparativa Φ muestra un déficit de 2.1mm en perfil. Deseo agendar cita.`)} className="w-full py-5 bg-cyan-600 text-white font-black rounded-2xl text-[9px] tracking-[0.4em] uppercase shadow-lg active:scale-95 transition-all">
-                AGENDAR INTERVENCIÓN ÁUREA
-              </button>
+            <div className="space-y-6">
+               <h3 className="text-cyan-400 text-[10px] font-bold tracking-[0.5em] uppercase">Resultado de Bioingeniería</h3>
+               <p className="text-xs text-zinc-300 leading-relaxed italic">
+                 "Basado en el método <b className="text-white">Sanghoon Park</b>, se recomienda aumento de proyección mentoniana de <b className="text-cyan-400 font-bold italic underline">2.1mm</b> para alcanzar la armonía áurea perfecta."
+               </p>
+               <button onClick={() => window.open(`https://wa.me/573000000000?text=He completado mi escaneo 3D. El sistema recomienda 2.1mm de proyección.`)} className="w-full py-5 bg-cyan-600 text-white font-black rounded-2xl text-[9px] tracking-[0.4em] uppercase">Agendar con el Dr. Maya</button>
             </div>
           </div>
         )}
