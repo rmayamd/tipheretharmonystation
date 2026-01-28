@@ -1,193 +1,185 @@
 "use client";
 import React, { useRef, useState } from 'react';
 
-// CONFIGURACIÓN ARQUITECTO
+// === CONFIGURACIÓN SAGRADA ===
 const WS_BUSINESS = "573117936211";
 const WS_PERSONAL = "573014993452";
+const PHI = 1.618; // La Proporción Divina
 
 type Step = 'intro' | 'scanning' | 'sync' | 'lead' | 'result' | 'report';
-type Layer = 'real' | 'wood' | 'uv' | 'infra';
+type SkinVision = 'REAL' | 'WOOD' | 'UV' | 'VASCULAR' | 'TEXTURA' | 'MANCHAS';
 
-export default function BioMirror() {
+export default function TipherethKeter() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState<Step>('intro');
   const [photos, setPhotos] = useState<string[]>([]);
-  const [logs, setLogs] = useState<string[]>([]);
-  const [userData, setUserData] = useState({ phone: '', email: '', name: '' });
-  const [activeLayer, setActiveLayer] = useState<Layer>('real');
+  const [activeVision, setActiveVision] = useState<SkinVision>('REAL');
+  const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
 
   const speak = (text: string) => {
-    return new Promise((resolve) => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'es-ES';
-        utterance.onend = () => resolve(true);
-        window.speechSynthesis.speak(utterance);
-      } else resolve(true);
-    });
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'es-ES'; u.rate = 0.9;
+      window.speechSynthesis.speak(u);
+    }
   };
 
-  const startFullScan = async () => {
+  const runKeterScan = async () => {
     setStep('scanning');
     try {
-      const constraints = { video: { facingMode: "user", width: { ideal: 1280 } } };
-      const newStream = await navigator.mediaDevices.getUserMedia(constraints);
-      setStream(newStream);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
       if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-        videoRef.current.play();
+        videoRef.current.srcObject = stream;
+        speak("Iniciando Ascenso a Keter. El sistema está mapeando su geometría divina. Manténgase presente.");
         
-        await speak("Por favor, retírese las gafas para escaneo biométrico.");
-        await animateProgress(0, 100, 6000);
-        
-        capture();
-        newStream.getTracks().forEach(t => t.stop());
-        setStep('sync');
-        simulateAnalysis();
+        let p = 0;
+        const interval = setInterval(() => {
+          p += 1;
+          setProgress(p);
+          if (p >= 100) {
+            clearInterval(interval);
+            capture();
+            stream.getTracks().forEach(t => t.stop());
+            setStep('sync');
+            setTimeout(() => setStep('lead'), 3000);
+          }
+        }, 60);
       }
-    } catch (err) { alert("Active los permisos de cámara."); }
-  };
-
-  const simulateAnalysis = () => {
-    const msgs = ["Extrayendo Mapas de Melanina...", "Calculando Proporciones de Park...", "Generando Reporte de ROI..."];
-    msgs.forEach((msg, i) => {
-      setTimeout(() => {
-        setLogs(prev => [...prev, msg]);
-        if (i === msgs.length - 1) setTimeout(() => setStep('lead'), 1000);
-      }, i * 1000);
-    });
-  };
-
-  const animateProgress = (start: number, end: number, duration: number) => {
-    return new Promise((resolve) => {
-      let startTime: number | null = null;
-      const animate = (currentTime: number) => {
-        if (!startTime) startTime = currentTime;
-        const elapsed = currentTime - startTime;
-        setProgress(Math.min(start + (end - start) * (elapsed / duration), end));
-        if (elapsed < duration) requestAnimationFrame(animate); else resolve(true);
-      };
-      requestAnimationFrame(animate);
-    });
+    } catch (e) { alert("Acceso denegado a la luz."); }
   };
 
   const capture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 600; canvas.height = 800;
+    canvas.width = 720; canvas.height = 960;
     const ctx = canvas.getContext('2d');
-    if (videoRef.current) { ctx?.drawImage(videoRef.current, 0, 0, 600, 800); setPhotos([canvas.toDataURL('image/jpeg')]); }
-  };
-
-  // Función para "Imprimir" (Descargar PDF nativo del navegador)
-  const downloadPDF = () => {
-    window.print();
-  };
-
-  const sendWhatsApp = (num: string) => {
-    const msg = encodeURIComponent(`Hola Dr. Maya, mi certificado Tiphereth arroja 94.2% de simetría. Soy ${userData.name}, deseo validar mi plan maestro.`);
-    window.open(`https://wa.me/${num}?text=${msg}`);
+    if (videoRef.current) {
+      ctx?.drawImage(videoRef.current, 0, 0, 720, 960);
+      setPhotos([canvas.toDataURL('image/jpeg')]);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-sans print:bg-white print:text-black">
+    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-serif selection:bg-cyan-500">
       
-      {/* OCULTAR DURANTE IMPRESIÓN */}
-      <div className="print:hidden w-full flex flex-col items-center">
-        {step !== 'report' && (
-          <div className="relative w-full max-w-[320px] aspect-square flex items-center justify-center">
-            <svg className="absolute inset-0 w-full h-full -rotate-90">
-              <circle cx="50%" cy="50%" r="48%" stroke="#111" strokeWidth="2" fill="none" />
-              <circle cx="50%" cy="50%" r="48%" stroke="#06b6d4" strokeWidth="4" fill="none" 
-                strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300 shadow-[0_0_15px_#06b6d4]" />
-            </svg>
-            <div className="w-[85%] h-[85%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/5">
-              {step === 'intro' && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                  <h1 className="text-cyan-400 text-[10px] tracking-[0.5em] font-black mb-4 uppercase">TIPHERETH STATION</h1>
-                  <button onClick={startFullScan} className="bg-white text-black px-8 py-3 rounded-full font-black text-[9px] uppercase tracking-widest">INICIAR BIO-SCAN</button>
-                </div>
-              )}
-              {step === 'scanning' && (
-                 <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-110" />
-              )}
-              {step === 'result' && (
-                <img src={photos[0]} className={`w-full h-full object-cover ${activeLayer === 'wood' ? 'hue-rotate-[280deg] saturate-200' : activeLayer === 'uv' ? 'invert sepia saturate-[5]' : activeLayer === 'infra' ? 'brightness-150 contrast-200 grayscale' : ''}`} />
-              )}
-            </div>
+      {/* 1. EL ESPEJO DEL ALMA (SCANNER) */}
+      {step !== 'report' && (
+        <div className="relative group" style={{ width: 300 * PHI / 1.5, height: 300 * PHI / 1.5 }}>
+          <div className="absolute inset-0 rounded-full border border-cyan-500/30 animate-pulse scale-105" />
+          <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/10 relative shadow-[0_0_50px_rgba(6,182,212,0.2)]">
+            {step === 'intro' && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-zinc-950">
+                <h1 className="text-cyan-400 text-[10px] tracking-[0.8em] font-black mb-2 uppercase italic">TIPHERETH STATION</h1>
+                <p className="text-[6px] text-zinc-500 uppercase tracking-widest mb-8">Ascenso a la Perfección Estética</p>
+                <button onClick={runKeterScan} className="bg-white text-black px-12 py-4 rounded-full font-black text-[9px] uppercase tracking-[0.2em] hover:bg-cyan-400 transition-colors shadow-2xl">Aspirar a Keter</button>
+              </div>
+            )}
+            {step === 'scanning' && (
+              <>
+                <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover grayscale brightness-125" />
+                <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent" />
+                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-cyan-400 shadow-[0_0_15px_cyan] animate-bounce" />
+              </>
+            )}
+            {(step === 'result' || step === 'lead') && (
+              <img src={photos[0]} className={`w-full h-full object-cover transition-all duration-1000 
+                ${activeVision === 'WOOD' ? 'hue-rotate-180 saturate-200 contrast-150' : ''}
+                ${activeVision === 'UV' ? 'invert sepia saturate-[5]' : ''}
+                ${activeVision === 'VASCULAR' ? 'brightness-110 contrast-200 saturate-200' : ''}
+                ${activeVision === 'TEXTURA' ? 'grayscale contrast-[3] brightness-75' : ''}
+              `} />
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="mt-8 w-full max-w-[320px] print:m-0 print:max-w-none">
-        {step === 'sync' && <div className="space-y-2">{logs.map((log, i) => <p key={i} className="text-[9px] text-cyan-500 font-mono animate-pulse uppercase">{">"} {log}</p>)}</div>}
-        
+      {/* 2. DATOS DE PODER (LEADS) */}
+      <div className="mt-12 w-full max-w-[360px]">
         {step === 'lead' && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom print:hidden">
-            <p className="text-center text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Registro Clínico de Leads</p>
-            <input type="text" placeholder="NOMBRE" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <input type="email" placeholder="EMAIL" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <input type="tel" placeholder="WHATSAPP (+57...)" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <button onClick={() => { if(userData.name && userData.phone) setStep('result'); else alert("Complete todos los datos para ver su diagnóstico"); }} className="w-full bg-white text-black py-4 rounded-2xl font-black text-[10px] uppercase">VER DIAGNÓSTICO PROFUNDO</button>
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom duration-1000">
+            <h2 className="text-center text-[9px] tracking-widest text-zinc-500 uppercase mb-6 italic">Sincronización de Identidad Divina</h2>
+            <input type="text" placeholder="Nombre de su Linaje" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900/50 border border-white/5 p-5 rounded-2xl text-[10px] text-white outline-none focus:border-cyan-500 transition-all" />
+            <input type="tel" placeholder="WhatsApp (Conexión Directa)" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900/50 border border-white/5 p-5 rounded-2xl text-[10px] text-white outline-none focus:border-cyan-500 transition-all" />
+            <button onClick={() => setStep('result')} className="w-full bg-cyan-600 text-white py-5 rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-lg">Revelar Mi Destino Estético</button>
           </div>
         )}
 
+        {/* 3. DIAGNÓSTICO Φ (VISIA + INBODY + COMPARATIVO) */}
         {step === 'result' && (
-          <div className="space-y-4 print:hidden">
-            <div className="flex gap-1">
-              {['normal', 'wood', 'uv', 'infra'].map((l) => <button key={l} onClick={() => setActiveLayer(l as Layer)} className={`flex-1 py-2 text-[7px] uppercase border rounded-lg ${activeLayer === l ? 'bg-cyan-500 text-white border-cyan-400' : 'border-white/10 text-zinc-500'}`}>{l}</button>)}
+          <div className="space-y-6 animate-in fade-in">
+            <div className="flex flex-wrap justify-center gap-1">
+              {(['REAL', 'WOOD', 'UV', 'VASCULAR', 'TEXTURA', 'MANCHAS'] as SkinVision[]).map((v) => (
+                <button key={v} onClick={() => setActiveVision(v)} className={`px-3 py-2 text-[6px] font-bold rounded-md border transition-all ${activeVision === v ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_10px_cyan]' : 'border-white/5 text-zinc-500 uppercase'}`}>{v}</button>
+              ))}
             </div>
-            <button onClick={() => setStep('report')} className="w-full bg-white text-black py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">EXPEDIR CERTIFICADO Φ</button>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-zinc-900/80 p-4 rounded-3xl border border-white/5 text-center">
+                <p className="text-[7px] text-zinc-500 uppercase mb-2 italic tracking-tighter">Módulo InBody</p>
+                <div className="text-xs font-bold text-cyan-400 uppercase tracking-tighter animate-pulse">Sincronizado</div>
+                <p className="text-[6px] text-zinc-400 mt-1">Grasa: 14% | Músculo: Óptimo</p>
+              </div>
+              <div className="bg-zinc-900/80 p-4 rounded-3xl border border-white/5 text-center">
+                <p className="text-[7px] text-zinc-500 uppercase mb-2 italic tracking-tighter">Bio-Scanner</p>
+                <div className="text-xs font-bold text-emerald-400 uppercase tracking-tighter animate-pulse">Activo</div>
+                <p className="text-[6px] text-zinc-400 mt-1">Vitalidad Celular: 92%</p>
+              </div>
+            </div>
+
+            <button onClick={() => setStep('report')} className="w-full bg-white text-black py-5 rounded-3xl font-black text-[10px] uppercase tracking-[0.3em] shadow-2xl">Expedir Certificado Maestro</button>
           </div>
         )}
 
-        {/* --- REPORTE CLÍNICO EXPORTABLE --- */}
+        {/* 4. REPORTE FINAL: ANTES/DESPUÉS Y TRANSFORMACIÓN */}
         {step === 'report' && (
-          <div id="report-content" className="bg-white text-black p-8 rounded-[2rem] shadow-2xl print:shadow-none print:p-0 print:rounded-none">
-            <div className="text-[7px] font-black text-zinc-400 text-right uppercase tracking-[0.3em] mb-2">Clinical Report | Tiphereth Station</div>
-            <h2 className="text-center text-xs font-black tracking-[0.4em] uppercase mb-8 border-b border-zinc-100 pb-4 italic">Certificado de Armonía Facial</h2>
-            
-            <div className="flex gap-4 mb-8">
-              <img src={photos[0]} className="w-24 h-32 object-cover rounded-2xl grayscale border border-zinc-100 shadow-sm" />
-              <div className="text-[10px] space-y-2 flex flex-col justify-center">
-                <p className="border-b border-zinc-50 pb-1"><strong>PACIENTE:</strong> {userData.name.toUpperCase()}</p>
-                <p className="border-b border-zinc-50 pb-1"><strong>ID:</strong> TX-{Math.floor(Math.random()*9000)+1000}</p>
-                <p className="text-cyan-600 font-black">SIMETRÍA: 94.2% (ÁUREA)</p>
-                <p><strong>FECHA:</strong> {new Date().toLocaleDateString()}</p>
+          <div className="bg-white text-black p-10 rounded-[3rem] shadow-[0_30px_60px_rgba(0,0,0,0.5)] animate-in zoom-in duration-700">
+            <header className="text-center mb-10 border-b pb-6">
+              <h1 className="text-[14px] font-black tracking-[0.5em] italic mb-1 uppercase">Tiphereth Clinical Report</h1>
+              <p className="text-[8px] text-zinc-400 tracking-[0.2em] font-serif uppercase">The Divine Path to Keter</p>
+            </header>
+
+            <div className="grid grid-cols-2 gap-6 mb-10 italic">
+              <div>
+                <p className="text-[7px] font-black text-zinc-400 uppercase mb-2 text-center">Estado Actual (Sefirot Malkhut)</p>
+                <img src={photos[0]} className="w-full aspect-[3/4] object-cover rounded-2xl grayscale opacity-60 grayscale-[0.5]" />
+              </div>
+              <div>
+                <p className="text-[7px] font-black text-cyan-600 uppercase mb-2 text-center">Transformación (Sefirot Keter)</p>
+                <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl">
+                  <img src={photos[0]} className="w-full h-full object-cover scale-105 brightness-110 saturate-[0.8] contrast-110" />
+                  <div className="absolute inset-0 bg-cyan-400/10 mix-blend-color" />
+                  <div className="absolute bottom-2 right-2 text-[6px] bg-black text-white px-2 py-1 rounded-md">SIMULACIÓN Φ</div>
+                </div>
               </div>
             </div>
 
-            <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 mb-8">
-              <p className="text-[7px] font-black text-zinc-400 uppercase mb-3 text-center">Ratios Master (1.8 : 2.0 : 1.0)</p>
-              <div className="grid grid-cols-3 text-[10px] text-center">
-                <div><p className="text-zinc-400 text-[6px]">SUP</p><p className="font-bold">1.82</p></div>
-                <div><p className="text-zinc-400 text-[6px]">MED</p><p className="font-bold">2.01</p></div>
-                <div><p className="text-zinc-400 text-[6px]">INF</p><p className="font-bold text-red-500">0.92</p></div>
-              </div>
+            <div className="space-y-4 mb-10 bg-zinc-50 p-6 rounded-3xl border border-zinc-100 shadow-inner">
+               <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest text-center italic border-b pb-2">Plan Maestro de Reingeniería</p>
+               <ul className="text-[10px] space-y-3 font-medium">
+                  <li className="flex justify-between"><span>Optimización V-Line (Park 1.0)</span> <span className="text-cyan-600 font-bold">RECOMENDADO</span></li>
+                  <li className="flex justify-between"><span>Bio-Estimulación Sefirótica</span> <span className="text-cyan-600 font-bold">RECOMENDADO</span></li>
+                  <li className="flex justify-between"><span>Armonización Áurea Orbital</span> <span className="text-emerald-600 font-bold">PRIORIDAD</span></li>
+               </ul>
             </div>
 
-            <p className="text-[9px] italic text-zinc-600 mb-8 border-l-2 border-zinc-200 pl-4 leading-relaxed">
-              "Análisis estructural sugiere corrección de plano mandibular. Recomendación de Reingeniería Estructural V-Line."
-            </p>
-
-            <div className="space-y-3 print:hidden">
-              <button onClick={downloadPDF} className="w-full border-2 border-black text-black py-4 rounded-2xl font-black text-[9px] uppercase active:bg-zinc-100">Descargar PDF</button>
-              <button onClick={() => sendWhatsApp(WS_BUSINESS)} className="w-full bg-black text-white py-4 rounded-2xl font-black text-[9px] uppercase">Consultar con el Dr. Maya</button>
-            </div>
-            
-            <p className="hidden print:block text-center text-[7px] text-zinc-400 uppercase mt-20">Este documento es una pre-valoración generada por Tiphereth Harmony Station. Válido por 48 horas.</p>
+            <button 
+              onClick={() => {
+                const msg = encodeURIComponent(`Shalom Dr. Maya, soy ${userData.name.toUpperCase()}. He visto mi transformación a Keter (94.2% Φ). Deseo materializar mi Plan Maestro de Bioingeniería.`);
+                window.open(`https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${msg}`);
+              }}
+              className="w-full bg-black text-white py-6 rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-2xl active:scale-95 transition-all mb-4">
+              Materializar Mi Transformación
+            </button>
+            <p className="text-[6px] text-zinc-400 text-center uppercase tracking-widest italic leading-relaxed">"Lo que está arriba es como lo que está abajo. Tiphereth es el equilibrio perfecto."</p>
           </div>
         )}
       </div>
 
       <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&display=swap');
+        body { font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-        @media print {
-          body { background: white !important; }
-          .print\:hidden { display: none !important; }
-        }
       `}</style>
     </div>
   );
