@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 
 type Step = 'intro' | 'scanning' | 'sync' | 'lead' | 'result';
-type Layer = 'real' | 'uv_damage' | 'vascular' | 'bone_structure';
+type Layer = 'normal' | 'wood' | 'uv' | 'infra';
 
 export default function BioMirror() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -12,7 +12,7 @@ export default function BioMirror() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [userData, setUserData] = useState({ phone: '', email: '', name: '' });
-  const [activeLayer, setActiveLayer] = useState<Layer>('real');
+  const [activeLayer, setActiveLayer] = useState<Layer>('normal');
 
   const speak = (text: string) => {
     return new Promise((resolve) => {
@@ -20,51 +20,42 @@ export default function BioMirror() {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'es-ES';
-        utterance.rate = 0.95;
+        utterance.rate = 1.0;
         utterance.onend = () => resolve(true);
         window.speechSynthesis.speak(utterance);
       } else resolve(true);
     });
   };
 
-  const startAnalysis = async () => {
+  const startFaceID = async () => {
     setStep('scanning');
     try {
-      const constraints = { video: { facingMode: "user", width: 1280 } };
+      const constraints = { video: { facingMode: "user", width: { ideal: 1280 } } };
       const newStream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(newStream);
       if (videoRef.current) {
         videoRef.current.srcObject = newStream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play();
-          runScanner(newStream);
-        };
+        videoRef.current.onloadedmetadata = () => { videoRef.current?.play(); runProtocol(newStream); };
       }
-    } catch (err) { alert("Error de Acceso Biométrico."); }
+    } catch (err) { alert("Error: Use HTTPS y permita la cámara."); }
   };
 
-  const runScanner = async (activeStream: MediaStream) => {
-    await speak("Iniciando Escaneo Tiphereth de Alta Resolución. No parpadee.");
-    await animateProgress(0, 100, 7000); // 7 segundos de "suspenso tecnológico"
+  const runProtocol = async (activeStream: MediaStream) => {
+    await speak("Iniciando análisis multiespectral a 50 centímetros. Mire al frente.");
+    await animateProgress(0, 100, 6000); 
     capture();
     activeStream.getTracks().forEach(t => t.stop());
-    setStream(null);
     setStep('sync');
-    simulateAI();
+    simulateAnalysis();
   };
 
-  const simulateAI = () => {
-    const msgs = [
-      "Mapeando Melanina Profunda (UV)...",
-      "Calculando Desviación Áurea (1.8:2.0:1.0)...",
-      "Analizando ROI de Armonización...",
-      "Generando Diagnóstico Sanghoon Park..."
-    ];
+  const simulateAnalysis = () => {
+    const msgs = ["Analizando Melanina (UV)...", "Mapeando Vascularización...", "Calculando Ratios 1.8:2.0:1.0...", "Generando Plan Maya-Ding..."];
     msgs.forEach((msg, i) => {
       setTimeout(() => {
         setLogs(prev => [...prev, msg]);
         if (i === msgs.length - 1) setTimeout(() => setStep('lead'), 1000);
-      }, i * 1200);
+      }, i * 1000);
     });
   };
 
@@ -83,18 +74,16 @@ export default function BioMirror() {
 
   const capture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 600; canvas.height = 800;
+    canvas.width = 720; canvas.height = 960;
     const ctx = canvas.getContext('2d');
     if (videoRef.current) {
-      ctx?.drawImage(videoRef.current, 0, 0, 600, 800);
+      ctx?.drawImage(videoRef.current, 0, 0, 720, 960);
       setPhotos([canvas.toDataURL('image/jpeg')]);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">
-      
-      {/* CÍRCULO DE ESCANEO PROFESIONAL */}
+    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-sans overflow-hidden">
       <div className="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
         <svg className="absolute inset-0 w-full h-full -rotate-90">
           <circle cx="50%" cy="50%" r="48%" stroke="#111" strokeWidth="2" fill="none" />
@@ -102,76 +91,62 @@ export default function BioMirror() {
             strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300" />
         </svg>
 
-        <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.2)]">
+        <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/10 shadow-2xl">
           {step === 'intro' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-zinc-900 to-black">
-              <h1 className="text-cyan-400 text-[12px] tracking-[0.6em] font-black mb-4 uppercase">TIPHERETH HARMONY</h1>
-              <p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-10 leading-relaxed italic">
-                La plataforma de bioingeniería facial más avanzada del mundo.
-              </p>
-              <button onClick={startAnalysis} className="bg-white text-black px-12 py-5 rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-white/20 shadow-xl">
-                INICIAR BIO-SCAN
-              </button>
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+              <h2 className="text-cyan-400 text-[10px] tracking-[0.5em] font-bold mb-4 uppercase italic">Tiphereth Station v18</h2>
+              <button onClick={startFaceID} className="bg-white text-black px-8 py-4 rounded-full font-black text-[9px] uppercase tracking-widest shadow-xl">Iniciar Escaneo</button>
             </div>
           )}
 
           {step === 'scanning' && (
-            <>
-              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-125" />
-              <div className="absolute top-0 w-full h-[4px] bg-cyan-400 shadow-[0_0_20px_#22d3ee] animate-[scan_2s_linear_infinite]" />
-            </>
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-125" />
           )}
 
           {step === 'result' && (
              <div className="relative w-full h-full">
                 <img src={photos[0]} className={`w-full h-full object-cover transition-all duration-700 
-                  ${activeLayer === 'uv_damage' ? 'saturate-[4] contrast-[1.5] hue-rotate-[200deg] invert-[0.2]' : ''}
-                  ${activeLayer === 'vascular' ? 'brightness-[1.2] contrast-[2] sepia-[0.5] saturate-[5]' : ''}
-                  ${activeLayer === 'bone_structure' ? 'grayscale brightness-[1.5] contrast-[2]' : ''}
+                  ${activeLayer === 'wood' ? 'hue-rotate-[280deg] saturate-[2.5] contrast-[1.5]' : ''}
+                  ${activeLayer === 'uv' ? 'invert-[1] sepia-[1] saturate-[10] hue-rotate-[180deg]' : ''}
+                  ${activeLayer === 'infra' ? 'brightness-[1.5] contrast-[2] grayscale-[1] invert-[1]' : ''}
                 `} />
-                <div className="absolute inset-0 bg-black/10 border border-cyan-500/30" />
+                <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 border border-cyan-500/20 opacity-40" />
              </div>
           )}
         </div>
       </div>
 
-      {/* MOTOR DE CONVERSIÓN DE 100M+ */}
-      <div className="mt-10 w-full max-w-[320px]">
-        {step === 'sync' && (
-           <div className="space-y-3 bg-zinc-900/30 p-4 rounded-3xl border border-white/5">
-              {logs.map((log, i) => (
-                <p key={i} className="text-[9px] text-cyan-500 font-mono tracking-widest animate-pulse">✓ {log}</p>
-              ))}
-           </div>
-        )}
-
+      <div className="mt-12 w-full max-w-[320px]">
         {step === 'lead' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom">
-            <div className="text-center">
-               <p className="text-[10px] text-cyan-400 font-black tracking-widest uppercase">Escaneo Exitoso</p>
-               <p className="text-[8px] text-zinc-500 uppercase mt-1 italic">Sincronizando diagnóstico con el Dr. Maya</p>
-            </div>
-            <input type="text" placeholder="NOMBRE COMPLETO" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900/80 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <input type="email" placeholder="EMAIL PROFESIONAL" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900/80 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <input type="tel" placeholder="WHATSAPP PERSONAL" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900/80 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <button onClick={() => { if(userData.email && userData.phone) setStep('result'); }} className="w-full bg-cyan-600 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">
-              RECIBIR DIAGNÓSTICO MAESTRO
-            </button>
+            <input type="text" placeholder="NOMBRE" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
+            <input type="email" placeholder="EMAIL" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
+            <input type="tel" placeholder="WHATSAPP" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
+            <button onClick={() => { if(userData.email && userData.phone) setStep('result'); }} className="w-full bg-cyan-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Generar Diagnóstico ROI</button>
           </div>
         )}
 
         {step === 'result' && (
-          <div className="space-y-6 animate-in fade-in duration-1000">
-            {/* Capas Multiespectrales (Superior a Canfield) */}
-            <div className="flex justify-between gap-1 p-1 bg-zinc-900 rounded-xl border border-white/5">
-              {(['real', 'uv_damage', 'vascular', 'bone_structure'] as Layer[]).map((l) => (
-                <button key={l} onClick={() => setActiveLayer(l)} className={`flex-1 py-3 text-[6px] font-bold uppercase rounded-lg transition-all ${activeLayer === l ? 'bg-cyan-500 text-white shadow-lg' : 'text-zinc-500'}`}>
-                  {l === 'real' ? 'Real' : l === 'uv_damage' ? 'UV' : l === 'vascular' ? 'Vasc' : 'Hueso'}
-                </button>
+          <div className="space-y-4 animate-in fade-in">
+            <div className="flex justify-between gap-1">
+              {['normal', 'wood', 'uv', 'infra'].map((f) => (
+                <button key={f} onClick={() => setActiveLayer(f as any)} className={`flex-1 py-2 text-[7px] font-bold uppercase border rounded-lg transition-all ${activeLayer === f ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_10px_#06b6d4]' : 'border-white/10 text-zinc-500'}`}>{f}</button>
               ))}
             </div>
 
-            {/* Neuromarketing: El ROI de la Belleza */}
-            <div className="bg-gradient-to-br from-zinc-900 to-black p-6 rounded-[2.5rem] border border-cyan-500/20 text-left space-y-4">
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="text-cyan
+            <div className="bg-zinc-900/50 p-5 rounded-[2.5rem] border border-white/5 space-y-4 text-[10px]">
+              <div className="flex justify-between border-b border-white/5 pb-2 font-bold italic">
+                <span className="text-cyan-400 uppercase tracking-tighter tracking-widest">Protocolo Maya-Ding</span>
+                <span className="text-white">ROI: +400% Social</span>
+              </div>
+              <p className="text-zinc-300 leading-tight italic">"Sugerencia: Reingeniería Estructural mediante Laminación Térmica (Láser 1470nm) y Suspensión Poligonal Butterfly."</p>
+            </div>
+
+            <button onClick={() => window.open(`https://wa.me/573000000000?text=He visto mi análisis multiespectral Tiphereth. Mi email es ${userData.email}. Deseo agendar mi Reingeniería Estructural.`)} 
+              className="w-full bg-white text-black py-5 rounded-[2rem] font-black text-[10px] uppercase tracking-widest shadow-xl">Reclamar Plan Maestro</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
