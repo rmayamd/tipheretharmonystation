@@ -1,54 +1,70 @@
 "use client";
 import React, { useRef, useState } from 'react';
 
+type Step = 'intro' | 'scanning' | 'sync' | 'lead' | 'result';
+type Layer = 'real' | 'uv_damage' | 'vascular' | 'bone_structure';
+
 export default function BioMirror() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [progress, setProgress] = useState(0);
-  const [step, setStep] = useState<'intro' | 'scanning' | 'sync' | 'lead' | 'result'>('intro');
+  const [step, setStep] = useState<Step>('intro');
   const [photos, setPhotos] = useState<string[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
-  const [userData, setUserData] = useState({ phone: '', email: '' });
-  const [activeLayer, setActiveLayer] = useState<'normal' | 'wood' | 'uv' | 'infra'>('normal');
+  const [userData, setUserData] = useState({ phone: '', email: '', name: '' });
+  const [activeLayer, setActiveLayer] = useState<Layer>('real');
 
   const speak = (text: string) => {
     return new Promise((resolve) => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'es-ES';
-      utterance.onend = () => resolve(true);
-      window.speechSynthesis.speak(utterance);
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.95;
+        utterance.onend = () => resolve(true);
+        window.speechSynthesis.speak(utterance);
+      } else resolve(true);
     });
   };
 
-  const startFaceID = async () => {
+  const startAnalysis = async () => {
     setStep('scanning');
     try {
-      const constraints = { video: { facingMode: "user", width: 1280, height: 720 } };
+      const constraints = { video: { facingMode: "user", width: 1280 } };
       const newStream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(newStream);
       if (videoRef.current) {
         videoRef.current.srcObject = newStream;
-        videoRef.current.onloadedmetadata = () => { videoRef.current?.play(); runProtocol(newStream); };
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play();
+          runScanner(newStream);
+        };
       }
-    } catch (err) { alert("Error: Use HTTPS y permita la cámara."); }
+    } catch (err) { alert("Error de Acceso Biométrico."); }
   };
 
-  const runProtocol = async (activeStream: MediaStream) => {
-    await speak("Iniciando análisis multiespectral a 50 centímetros.");
-    await animateProgress(0, 100, 6000); // Escaneo más lento para simular profundidad
+  const runScanner = async (activeStream: MediaStream) => {
+    await speak("Iniciando Escaneo Tiphereth de Alta Resolución. No parpadee.");
+    await animateProgress(0, 100, 7000); // 7 segundos de "suspenso tecnológico"
     capture();
     activeStream.getTracks().forEach(t => t.stop());
+    setStream(null);
     setStep('sync');
-    simulateAnalysis();
+    simulateAI();
   };
 
-  const simulateAnalysis = () => {
-    const msgs = ["Analizando Melanina (UV)...", "Mapeando Vascularización (IR)...", "Calculando ROI Estético...", "Generando Proyección Áurea..."];
+  const simulateAI = () => {
+    const msgs = [
+      "Mapeando Melanina Profunda (UV)...",
+      "Calculando Desviación Áurea (1.8:2.0:1.0)...",
+      "Analizando ROI de Armonización...",
+      "Generando Diagnóstico Sanghoon Park..."
+    ];
     msgs.forEach((msg, i) => {
       setTimeout(() => {
         setLogs(prev => [...prev, msg]);
         if (i === msgs.length - 1) setTimeout(() => setStep('lead'), 1000);
-      }, i * 800);
+      }, i * 1200);
     });
   };
 
@@ -67,18 +83,18 @@ export default function BioMirror() {
 
   const capture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 480; canvas.height = 640;
+    canvas.width = 600; canvas.height = 800;
     const ctx = canvas.getContext('2d');
     if (videoRef.current) {
-      ctx?.drawImage(videoRef.current, 0, 0, 480, 640);
+      ctx?.drawImage(videoRef.current, 0, 0, 600, 800);
       setPhotos([canvas.toDataURL('image/jpeg')]);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-sans overflow-hidden">
+    <div className="min-h-screen bg-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">
       
-      {/* 1. VISUALIZADOR CIRCULAR */}
+      {/* CÍRCULO DE ESCANEO PROFESIONAL */}
       <div className="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
         <svg className="absolute inset-0 w-full h-full -rotate-90">
           <circle cx="50%" cy="50%" r="48%" stroke="#111" strokeWidth="2" fill="none" />
@@ -86,71 +102,76 @@ export default function BioMirror() {
             strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300" />
         </svg>
 
-        <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/10">
+        <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.2)]">
           {step === 'intro' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-              <h2 className="text-cyan-400 text-[10px] tracking-[0.5em] font-bold mb-4 uppercase">Dermascope v17</h2>
-              <button onClick={startFaceID} className="bg-white text-black px-8 py-4 rounded-full font-black text-[9px] uppercase tracking-widest">Iniciar Escaneo</button>
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-zinc-900 to-black">
+              <h1 className="text-cyan-400 text-[12px] tracking-[0.6em] font-black mb-4 uppercase">TIPHERETH HARMONY</h1>
+              <p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-10 leading-relaxed italic">
+                La plataforma de bioingeniería facial más avanzada del mundo.
+              </p>
+              <button onClick={startAnalysis} className="bg-white text-black px-12 py-5 rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-white/20 shadow-xl">
+                INICIAR BIO-SCAN
+              </button>
             </div>
           )}
 
           {step === 'scanning' && (
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-125" />
+            <>
+              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-125" />
+              <div className="absolute top-0 w-full h-[4px] bg-cyan-400 shadow-[0_0_20px_#22d3ee] animate-[scan_2s_linear_infinite]" />
+            </>
           )}
 
           {step === 'result' && (
              <div className="relative w-full h-full">
-                <img src={photos[0]} className={`w-full h-full object-cover transition-all duration-500 
-                  ${activeLayer === 'wood' ? 'hue-rotate-[280deg] saturate-200 contrast-125' : ''}
-                  ${activeLayer === 'uv' ? 'invert sepia saturate-[5] hue-rotate-[200deg]' : ''}
-                  ${activeLayer === 'infra' ? 'brightness-[1.5] contrast-[2] grayscale invert' : ''}
+                <img src={photos[0]} className={`w-full h-full object-cover transition-all duration-700 
+                  ${activeLayer === 'uv_damage' ? 'saturate-[4] contrast-[1.5] hue-rotate-[200deg] invert-[0.2]' : ''}
+                  ${activeLayer === 'vascular' ? 'brightness-[1.2] contrast-[2] sepia-[0.5] saturate-[5]' : ''}
+                  ${activeLayer === 'bone_structure' ? 'grayscale brightness-[1.5] contrast-[2]' : ''}
                 `} />
-                <div className="absolute inset-0 bg-black/20 grid grid-cols-6 grid-rows-6 border border-cyan-500/20" />
+                <div className="absolute inset-0 bg-black/10 border border-cyan-500/30" />
              </div>
           )}
         </div>
       </div>
 
-      {/* 2. INTERFAZ DE RESULTADOS Y NEUROMARKETING */}
-      <div className="mt-8 w-full max-w-[320px]">
+      {/* MOTOR DE CONVERSIÓN DE 100M+ */}
+      <div className="mt-10 w-full max-w-[320px]">
+        {step === 'sync' && (
+           <div className="space-y-3 bg-zinc-900/30 p-4 rounded-3xl border border-white/5">
+              {logs.map((log, i) => (
+                <p key={i} className="text-[9px] text-cyan-500 font-mono tracking-widest animate-pulse">✓ {log}</p>
+              ))}
+           </div>
+        )}
+
         {step === 'lead' && (
-          <div className="space-y-3 animate-in fade-in slide-in-from-bottom">
-            <p className="text-[9px] text-zinc-500 uppercase tracking-widest text-center">Sincronizar con Expediente Tiphereth</p>
-            <input type="email" placeholder="EMAIL" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <input type="tel" placeholder="WHATSAPP" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
-            <button onClick={() => { if(userData.email && userData.phone) setStep('result'); }} className="w-full bg-cyan-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Generar Diagnóstico Multiespectral</button>
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom">
+            <div className="text-center">
+               <p className="text-[10px] text-cyan-400 font-black tracking-widest uppercase">Escaneo Exitoso</p>
+               <p className="text-[8px] text-zinc-500 uppercase mt-1 italic">Sincronizando diagnóstico con el Dr. Maya</p>
+            </div>
+            <input type="text" placeholder="NOMBRE COMPLETO" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900/80 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
+            <input type="email" placeholder="EMAIL PROFESIONAL" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900/80 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
+            <input type="tel" placeholder="WHATSAPP PERSONAL" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900/80 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
+            <button onClick={() => { if(userData.email && userData.phone) setStep('result'); }} className="w-full bg-cyan-600 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+              RECIBIR DIAGNÓSTICO MAESTRO
+            </button>
           </div>
         )}
 
         {step === 'result' && (
-          <div className="space-y-4 animate-in fade-in">
-            {/* Filtros de Piel */}
-            <div className="flex justify-between gap-1">
-              {['normal', 'wood', 'uv', 'infra'].map((f) => (
-                <button key={f} onClick={() => setActiveLayer(f as any)} className={`flex-1 py-2 text-[6px] uppercase border rounded-md ${activeLayer === f ? 'bg-cyan-500 border-cyan-400' : 'border-white/10 text-zinc-500'}`}>{f}</button>
+          <div className="space-y-6 animate-in fade-in duration-1000">
+            {/* Capas Multiespectrales (Superior a Canfield) */}
+            <div className="flex justify-between gap-1 p-1 bg-zinc-900 rounded-xl border border-white/5">
+              {(['real', 'uv_damage', 'vascular', 'bone_structure'] as Layer[]).map((l) => (
+                <button key={l} onClick={() => setActiveLayer(l)} className={`flex-1 py-3 text-[6px] font-bold uppercase rounded-lg transition-all ${activeLayer === l ? 'bg-cyan-500 text-white shadow-lg' : 'text-zinc-500'}`}>
+                  {l === 'real' ? 'Real' : l === 'uv_damage' ? 'UV' : l === 'vascular' ? 'Vasc' : 'Hueso'}
+                </button>
               ))}
             </div>
 
-            {/* Cuadro ROI y Neuromarketing */}
-            <div className="bg-zinc-900/50 p-4 rounded-3xl border border-white/5 space-y-3 text-[10px]">
-              <div className="flex justify-between border-b border-white/5 pb-2 font-bold">
-                <span className="text-cyan-400">PLAN QUIRÚRGICO</span>
-                <span className="text-white">ROI: 300% (Social)</span>
-              </div>
-              <p className="text-zinc-400 leading-tight italic">"Sugerencia: V-Line Osteotomy. Resultados permanentes. Inversión única vs mantenimientos trimestrales."</p>
-              
-              <div className="flex justify-between border-b border-white/5 pb-2 font-bold pt-2">
-                <span className="text-yellow-500">OPCIÓN NO-INVASIVA</span>
-                <span className="text-white">ROI: Inmediato</span>
-              </div>
-              <p className="text-zinc-400 leading-tight italic">"Sugerencia: 4cc Hyaluronic + Toxina. Recuperación 0 días. Ideal para neuromarketing personal."</p>
-            </div>
-
-            <button onClick={() => window.open(`https://wa.me/573000000000?text=He visto mi análisis multiespectral. Mi email es ${userData.email}. Deseo el plan con mayor ROI estético.`)} 
-              className="w-full bg-white text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Agendar Mi Transformación</button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+            {/* Neuromarketing: El ROI de la Belleza */}
+            <div className="bg-gradient-to-br from-zinc-900 to-black p-6 rounded-[2.5rem] border border-cyan-500/20 text-left space-y-4">
+              <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                <span className="text-cyan
