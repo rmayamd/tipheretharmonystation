@@ -1,8 +1,12 @@
 "use client";
 import React, { useRef, useState } from 'react';
 
-type Step = 'intro' | 'scanning' | 'sync' | 'lead' | 'result';
-type Layer = 'normal' | 'wood' | 'uv' | 'infra';
+// === CONFIGURACIÓN DEL ARQUITECTO ===
+const WHATSAPP_DOCTOR = "573100000000"; // CAMBIA ESTO POR TU NÚMERO REAL (Ej: 57300...)
+const CLINICA_NOMBRE = "Tiphereth Harmony Station";
+
+type Step = 'intro' | 'scanning' | 'sync' | 'lead' | 'result' | 'report';
+type Layer = 'real' | 'uv_damage' | 'vascular' | 'bone_structure';
 
 export default function BioMirror() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -12,7 +16,7 @@ export default function BioMirror() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [userData, setUserData] = useState({ phone: '', email: '', name: '' });
-  const [activeLayer, setActiveLayer] = useState<Layer>('normal');
+  const [activeLayer, setActiveLayer] = useState<Layer>('real');
 
   const speak = (text: string) => {
     return new Promise((resolve) => {
@@ -27,30 +31,34 @@ export default function BioMirror() {
     });
   };
 
-  const startFaceID = async () => {
+  const startAnalysis = async () => {
     setStep('scanning');
     try {
-      const constraints = { video: { facingMode: "user", width: { ideal: 1280 } } };
+      const constraints = { video: { facingMode: "user", width: 1280 } };
       const newStream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(newStream);
       if (videoRef.current) {
         videoRef.current.srcObject = newStream;
-        videoRef.current.onloadedmetadata = () => { videoRef.current?.play(); runProtocol(newStream); };
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play();
+          runScanner(newStream);
+        };
       }
-    } catch (err) { alert("Error: Use HTTPS y permita la cámara."); }
+    } catch (err) { alert("Error de Acceso Biométrico."); }
   };
 
-  const runProtocol = async (activeStream: MediaStream) => {
-    await speak("Iniciando análisis multiespectral a 50 centímetros. Mire al frente.");
-    await animateProgress(0, 100, 6000); 
+  const runScanner = async (activeStream: MediaStream) => {
+    await speak("Iniciando Escaneo Multiespectral. Mantenga la posición.");
+    await animateProgress(0, 100, 6000);
     capture();
     activeStream.getTracks().forEach(t => t.stop());
+    setStream(null);
     setStep('sync');
-    simulateAnalysis();
+    simulateAI();
   };
 
-  const simulateAnalysis = () => {
-    const msgs = ["Analizando Melanina (UV)...", "Mapeando Vascularización...", "Calculando Ratios 1.8:2.0:1.0...", "Generando Plan Maya-Ding..."];
+  const simulateAI = () => {
+    const msgs = ["Extrayendo Capas UV...", "Mapeando Vascularización...", "Analizando Ratios 1.8:2.0:1.0...", "Sincronizando con Servidor Tiphereth..."];
     msgs.forEach((msg, i) => {
       setTimeout(() => {
         setLogs(prev => [...prev, msg]);
@@ -74,79 +82,89 @@ export default function BioMirror() {
 
   const capture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 720; canvas.height = 960;
+    canvas.width = 600; canvas.height = 800;
     const ctx = canvas.getContext('2d');
     if (videoRef.current) {
-      ctx?.drawImage(videoRef.current, 0, 0, 720, 960);
+      ctx?.drawImage(videoRef.current, 0, 0, 600, 800);
       setPhotos([canvas.toDataURL('image/jpeg')]);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-sans overflow-hidden">
-      <div className="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
-        <svg className="absolute inset-0 w-full h-full -rotate-90">
-          <circle cx="50%" cy="50%" r="48%" stroke="#111" strokeWidth="2" fill="none" />
-          <circle cx="50%" cy="50%" r="48%" stroke="#06b6d4" strokeWidth="4" fill="none" 
-            strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300" />
-        </svg>
-
-        <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/10 shadow-2xl">
-          {step === 'intro' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-              <h2 className="text-cyan-400 text-[10px] tracking-[0.5em] font-bold mb-4 uppercase italic">Tiphereth Station v18</h2>
-              <button onClick={startFaceID} className="bg-white text-black px-8 py-4 rounded-full font-black text-[9px] uppercase tracking-widest shadow-xl">Iniciar Escaneo</button>
-            </div>
-          )}
-
-          {step === 'scanning' && (
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-125" />
-          )}
-
-          {step === 'result' && (
-             <div className="relative w-full h-full">
-                <img src={photos[0]} className={`w-full h-full object-cover transition-all duration-700 
-                  ${activeLayer === 'wood' ? 'hue-rotate-[280deg] saturate-[2.5] contrast-[1.5]' : ''}
-                  ${activeLayer === 'uv' ? 'invert-[1] sepia-[1] saturate-[10] hue-rotate-[180deg]' : ''}
-                  ${activeLayer === 'infra' ? 'brightness-[1.5] contrast-[2] grayscale-[1] invert-[1]' : ''}
-                `} />
-                <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 border border-cyan-500/20 opacity-40" />
-             </div>
-          )}
+    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-sans overflow-x-hidden">
+      
+      {/* 1. VISUALIZADOR PRINCIPAL */}
+      {step !== 'report' && (
+        <div className="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
+          <svg className="absolute inset-0 w-full h-full -rotate-90">
+            <circle cx="50%" cy="50%" r="48%" stroke="#111" strokeWidth="2" fill="none" />
+            <circle cx="50%" cy="50%" r="48%" stroke="#06b6d4" strokeWidth="4" fill="none" 
+              strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300" />
+          </svg>
+          <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/5 shadow-2xl">
+            {step === 'intro' && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                <h1 className="text-cyan-400 text-[10px] tracking-[0.5em] font-black mb-4 uppercase italic">{CLINICA_NOMBRE}</h1>
+                <button onClick={startAnalysis} className="bg-white text-black px-10 py-4 rounded-full font-black text-[9px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">Iniciar Bio-Scan</button>
+              </div>
+            )}
+            {step === 'scanning' && (
+              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-110" />
+            )}
+            {step === 'result' && (
+              <img src={photos[0]} className={`w-full h-full object-cover 
+                ${activeLayer === 'uv_damage' ? 'saturate-[4] contrast-[1.5] hue-rotate-[200deg] invert-[0.2]' : ''}
+                ${activeLayer === 'vascular' ? 'brightness-[1.2] contrast-[2] sepia-[0.5] saturate-[5]' : ''}
+                ${activeLayer === 'bone_structure' ? 'grayscale brightness-[1.5] contrast-[2]' : ''}
+              `} />
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="mt-12 w-full max-w-[320px]">
+      {/* 2. FLUJO DE DATOS Y REPORTE FINAL */}
+      <div className="mt-8 w-full max-w-[340px]">
+        {step === 'sync' && (
+          <div className="space-y-2 text-center p-4 bg-zinc-900/30 rounded-3xl border border-white/5">
+            {logs.map((log, i) => (
+              <p key={i} className="text-[9px] text-cyan-500 font-mono animate-pulse uppercase">{">"} {log}</p>
+            ))}
+          </div>
+        )}
+
         {step === 'lead' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom">
-            <input type="text" placeholder="NOMBRE" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
+            <div className="text-center mb-6">
+               <p className="text-[10px] text-cyan-400 font-black tracking-widest uppercase">Escaneo Completado</p>
+               <p className="text-[8px] text-zinc-600 uppercase mt-1">Sincronice sus resultados con el servidor clínico</p>
+            </div>
+            <input type="text" placeholder="NOMBRE COMPLETO" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
             <input type="email" placeholder="EMAIL" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
-            <input type="tel" placeholder="WHATSAPP" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
-            <button onClick={() => { if(userData.email && userData.phone) setStep('result'); }} className="w-full bg-cyan-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Generar Diagnóstico ROI</button>
+            <input type="tel" placeholder="WHATSAPP (+57...)" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500" />
+            <button onClick={() => { if(userData.phone && userData.email) setStep('result'); }} className="w-full bg-white text-black py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl">Ver Diagnóstico de Piel</button>
           </div>
         )}
 
         {step === 'result' && (
-          <div className="space-y-4 animate-in fade-in">
+          <div className="space-y-6 animate-in fade-in">
             <div className="flex justify-between gap-1">
-              {['normal', 'wood', 'uv', 'infra'].map((f) => (
-                <button key={f} onClick={() => setActiveLayer(f as any)} className={`flex-1 py-2 text-[7px] font-bold uppercase border rounded-lg transition-all ${activeLayer === f ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_10px_#06b6d4]' : 'border-white/10 text-zinc-500'}`}>{f}</button>
+              {(['real', 'uv_damage', 'vascular', 'bone_structure'] as Layer[]).map((l) => (
+                <button key={l} onClick={() => setActiveLayer(l)} className={`flex-1 py-2 text-[7px] font-bold uppercase border rounded-lg transition-all ${activeLayer === l ? 'bg-cyan-500 text-white border-cyan-400 shadow-lg' : 'border-white/10 text-zinc-500'}`}>{l.replace('_', ' ')}</button>
               ))}
             </div>
-
-            <div className="bg-zinc-900/50 p-5 rounded-[2.5rem] border border-white/5 space-y-4 text-[10px]">
-              <div className="flex justify-between border-b border-white/5 pb-2 font-bold italic">
-                <span className="text-cyan-400 uppercase tracking-tighter tracking-widest">Protocolo Maya-Ding</span>
-                <span className="text-white">ROI: +400% Social</span>
-              </div>
-              <p className="text-zinc-300 leading-tight italic">"Sugerencia: Reingeniería Estructural mediante Laminación Térmica (Láser 1470nm) y Suspensión Poligonal Butterfly."</p>
+            <div className="bg-zinc-900/50 p-6 rounded-[2rem] border border-cyan-500/20 text-left">
+               <p className="text-[9px] text-cyan-400 font-black uppercase mb-2">Resumen Bioingeniería</p>
+               <p className="text-xs text-zinc-300 italic mb-4">"Se detectan desviaciones críticas en los ratios de Park (Mentón). ROI proyectado: +45% armonía."</p>
+               <button onClick={() => setStep('report')} className="w-full bg-white text-black py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-lg">Descargar Certificado Φ</button>
             </div>
-
-            <button onClick={() => window.open(`https://wa.me/573000000000?text=He visto mi análisis multiespectral Tiphereth. Mi email es ${userData.email}. Deseo agendar mi Reingeniería Estructural.`)} 
-              className="w-full bg-white text-black py-5 rounded-[2rem] font-black text-[10px] uppercase tracking-widest shadow-xl">Reclamar Plan Maestro</button>
           </div>
         )}
-      </div>
-    </div>
-  );
-}
+
+        {/* --- DOCUMENTO FINAL (CERTIFICADO DE RESULTADOS) --- */}
+        {step === 'report' && (
+          <div className="animate-in slide-in-from-bottom duration-700 bg-white text-black p-8 rounded-[2rem] shadow-2xl relative">
+            <div className="absolute top-4 right-6 text-[10px] font-black text-zinc-200">OFFICIAL REPORT</div>
+            <h2 className="text-center text-xs font-black tracking-[0.3em] uppercase mb-8 border-b border-zinc-100 pb-4">Tiphereth Clinical Analysis</h2>
+            
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="aspect-
