@@ -1,4 +1,4 @@
-# Arquitectura Maya Harmony Station
+# Arquitectura tipheret Harmony Station
 
 ## Visión General
 
@@ -35,13 +35,7 @@ Maya Harmony Station es una estación de bioingeniería humana construida con Ne
   - Calidad de piel < 40%
 - **Resultado**: Genera protocolos de pre-habilitación epigenética automáticamente
 
-### 4. Sistema de Despacho Interdrogas
-- **Ubicación**: `lib/interdrogas/order-generator.ts`
-- **Funcionalidad**: Genera órdenes completas con:
-  - Kit de Preparación de Piel
-  - Suplementación Epigenética
-  - Kit de Tensión Zero
-- **Integración**: Envío automático por WhatsApp al 6024873000
+
 
 ## Módulos Principales
 
