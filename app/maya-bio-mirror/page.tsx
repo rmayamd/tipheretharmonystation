@@ -1,236 +1,182 @@
 "use client";
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 
-// === CONFIGURACIÓN DE PODER ===
+// CONFIGURACIÓN DE CONTACTO REAL
 const WS_BUSINESS = "573117936211";
 const WS_PERSONAL = "573014993452";
-const PHI = 1.618;
 
 type Step = 'intro' | 'scanning' | 'sync' | 'lead' | 'result' | 'report';
-type Stage = 'FRENTE' | 'PERFIL IZQUIERDO' | 'PERFIL DERECHO';
-type Layer = 'real' | 'wood' | 'uv' | 'infra' | 'textura';
+type Layer = 'normal' | 'wood' | 'uv' | 'infra' | 'textura';
 
-export default function TipherethV25() {
+export default function TipherethV26() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState<Step>('intro');
-  const [stage, setStage] = useState<Stage>('FRENTE');
   const [photos, setPhotos] = useState<string[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
-  const [activeLayer, setActiveLayer] = useState<Layer>('real');
+  const [activeLayer, setActiveLayer] = useState<Layer>('normal');
 
   const speak = (text: string) => {
-    return new Promise((resolve) => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'es-ES'; u.rate = 0.95;
-        u.onend = () => resolve(true);
-        window.speechSynthesis.speak(u);
-      } else resolve(true);
-    });
-  };
-
-  const startFullScan = async () => {
-    setStep('scanning');
-    try {
-      const constraints = { video: { facingMode: "user", width: { ideal: 1280 } } };
-      const s = await navigator.mediaDevices.getUserMedia(constraints);
-      setStream(s);
-      if (videoRef.current) {
-        videoRef.current.srcObject = s;
-        videoRef.current.play();
-        runClinicalProtocol(s);
-      }
-    } catch (err) { alert("Active los permisos de cámara para el análisis multiespectral."); }
-  };
-
-  const runClinicalProtocol = async (activeStream: MediaStream) => {
-    await speak("Iniciando Escaneo Tiphereth. Por favor, retírese las gafas y despeje el rostro.");
-    
-    // CAPTURA FRENTE
-    setStage('FRENTE');
-    await speak("Mire fijamente al frente.");
-    await animateProgress(0, 33, 3000);
-    capture();
-
-    // CAPTURA IZQUIERDA
-    setStage('PERFIL IZQUIERDO');
-    await speak("Gire su rostro a la izquierda.");
-    await animateProgress(33, 66, 3000);
-    capture();
-
-    // CAPTURA DERECHA
-    setStage('PERFIL DERECHO');
-    await speak("Gire su rostro a la derecha.");
-    await animateProgress(66, 100, 3000);
-    capture();
-
-    await speak("Escaneo completado. Procesando gemelo digital y capas de piel.");
-    activeStream.getTracks().forEach(t => t.stop());
-    setStream(null);
-    setStep('sync');
-    simulateDeepAnalysis();
-  };
-
-  const simulateDeepAnalysis = () => {
-    const msgs = [
-      "Extrayendo Bio-Landmarks 3D...",
-      "Mapeando Daño Actínico (UV)...",
-      "Calculando Ratios Áureos (1.8 : 2.0 : 1.0)...",
-      "Sincronizando Módulos InBody y BioScanner...",
-      "Generando Plan de Reingeniería Estructural..."
-    ];
-    msgs.forEach((msg, i) => {
-      setTimeout(() => {
-        setLogs(prev => [...prev, msg]);
-        if (i === msgs.length - 1) setTimeout(() => setStep('lead'), 1000);
-      }, i * 1200);
-    });
-  };
-
-  const animateProgress = (start: number, end: number, duration: number) => {
-    return new Promise((resolve) => {
-      let startTime: number | null = null;
-      const animate = (currentTime: number) => {
-        if (!startTime) startTime = currentTime;
-        const elapsed = currentTime - startTime;
-        setProgress(Math.min(start + (end - start) * (elapsed / duration), end));
-        if (elapsed < duration) requestAnimationFrame(animate); else resolve(true);
-      };
-      requestAnimationFrame(animate);
-    });
-  };
-
-  const capture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 600; canvas.height = 800;
-    const ctx = canvas.getContext('2d');
-    if (videoRef.current) { 
-      ctx?.drawImage(videoRef.current, 0, 0, 600, 800); 
-      setPhotos(prev => [...prev, canvas.toDataURL('image/jpeg')]); 
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'es-ES'; u.rate = 1.0;
+      window.speechSynthesis.speak(u);
     }
   };
 
-  const sendWhatsApp = (num: string) => {
-    const msg = encodeURIComponent(`Shalom Dr. Maya, soy ${userData.name.toUpperCase()}. He recibido mi Certificado Tiphereth (94.2% Φ). Deseo materializar mi Plan Maestro.`);
-    window.open(`https://api.whatsapp.com/send?phone=${num}&text=${msg}`);
+  const startScan = async () => {
+    setStep('scanning');
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 1280 } });
+      if (videoRef.current) {
+        videoRef.current.srcObject = s;
+        await speak("Iniciando escaneo multiespectral. Analizando geometría y capas profundas.");
+        let p = 0;
+        const interval = setInterval(() => {
+          p += 1; setProgress(p);
+          if (p >= 100) {
+            clearInterval(interval);
+            const canvas = document.createElement('canvas');
+            canvas.width = 600; canvas.height = 800;
+            canvas.getContext('2d')?.drawImage(videoRef.current!, 0, 0, 600, 800);
+            setPhotos([canvas.toDataURL('image/jpeg')]);
+            s.getTracks().forEach(t => t.stop());
+            setStep('sync');
+            simulateAI();
+          }
+        }, 50);
+      }
+    } catch (e) { alert("Error de cámara"); }
+  };
+
+  const simulateAI = () => {
+    const msgs = ["Analizando Puntos Φ...", "Mapeando Daño UV...", "Sincronizando InBody...", "Generando ROI Estético..."];
+    msgs.forEach((m, i) => setTimeout(() => {
+      setLogs(p => [...p, m]);
+      if (i === msgs.length - 1) setTimeout(() => setStep('lead'), 1000);
+    }, i * 1000));
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center justify-center font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-black text-white p-4 font-sans flex flex-col items-center">
       
-      {/* 1. VISUALIZADOR MULTIESPECTRAL */}
+      {/* 1. INTERFAZ DE CAPTURA */}
       {step !== 'report' && (
-        <div className="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
+        <div className="relative w-72 h-72 mb-10 mt-10">
           <svg className="absolute inset-0 w-full h-full -rotate-90">
             <circle cx="50%" cy="50%" r="48%" stroke="#111" strokeWidth="2" fill="none" />
             <circle cx="50%" cy="50%" r="48%" stroke="#06b6d4" strokeWidth="4" fill="none" 
-              strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300 shadow-[0_0_20px_#06b6d4]" />
+              strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-100 shadow-[0_0_15px_cyan]" />
           </svg>
-          
-          <div className="w-[88%] h-[88%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/10 shadow-2xl">
-            {step === 'intro' && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                <h1 className="text-cyan-400 text-[10px] tracking-[0.5em] font-black mb-4 uppercase italic">Tiphereth Station v25</h1>
-                <p className="text-[7px] text-zinc-500 uppercase tracking-widest mb-10">Ascenso a la Perfección Estética</p>
-                <button onClick={startFullScan} className="bg-white text-black px-10 py-4 rounded-full font-black text-[9px] uppercase tracking-widest shadow-xl">Iniciar Bio-Scan</button>
-              </div>
-            )}
-            {step === 'scanning' && (
-              <>
-                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-125" />
-                <div className="absolute top-0 w-full h-[2px] bg-white shadow-[0_0_15px_white] animate-[scan_2s_linear_infinite]" />
-                <div className="absolute bottom-4 inset-x-0 text-[10px] font-black text-cyan-400 text-center tracking-widest">{stage}</div>
-              </>
-            )}
-            {(step === 'result' || step === 'lead') && (
-              <img src={photos[0]} className={`w-full h-full object-cover transition-all duration-700 
-                ${activeLayer === 'wood' ? 'hue-rotate-[280deg] saturate-[2.5] contrast-[1.5]' : ''}
-                ${activeLayer === 'uv' ? 'invert-[1] sepia-[1] saturate-[10] hue-rotate-[180deg]' : ''}
-                ${activeLayer === 'infra' ? 'brightness-[1.5] contrast-[2] grayscale-[1] invert-[1]' : ''}
-                ${activeLayer === 'textura' ? 'contrast-[3] grayscale-[1] brightness-[0.8]' : ''}
-              `} />
-            )}
+          <div className="w-[90%] h-[90%] m-[5%] rounded-full overflow-hidden bg-zinc-900 border border-white/5 relative">
+            {step === 'intro' && <div className="absolute inset-0 flex items-center justify-center p-6 text-center"><button onClick={startScan} className="bg-white text-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest">Iniciar Scan</button></div>}
+            {step === 'scanning' && <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale" />}
+            {(step === 'result' || step === 'lead') && <img src={photos[0]} className={`w-full h-full object-cover ${activeLayer === 'wood' ? 'hue-rotate-180 saturate-200' : activeLayer === 'uv' ? 'invert sepia saturate-150' : activeLayer === 'infra' ? 'brightness-150 contrast-200 grayscale' : activeLayer === 'textura' ? 'contrast-[4] brightness-75 grayscale' : ''}`} />}
           </div>
         </div>
       )}
 
-      {/* 2. INTERFAZ DE NEUROMARKETING */}
-      <div className="mt-10 w-full max-w-[340px]">
-        {step === 'sync' && (
-          <div className="space-y-2 p-6 bg-zinc-900/40 rounded-3xl border border-white/5 font-mono">
-            {logs.map((log, i) => <p key={i} className="text-[9px] text-cyan-500 animate-pulse uppercase">{">"} {log}</p>)}
-          </div>
-        )}
-
+      {/* 2. FLUJO DE LEADS */}
+      <div className="w-full max-w-sm">
+        {step === 'sync' && <div className="space-y-2">{logs.map((l, i) => <p key={i} className="text-[9px] text-cyan-500 font-mono animate-pulse">{">"} {l}</p>)}</div>}
+        
         {step === 'lead' && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom">
-            <p className="text-center text-[9px] text-zinc-500 uppercase tracking-widest font-bold italic">Sincronización de Identidad Áurea</p>
-            <input type="text" placeholder="Nombre Completo" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500 transition-all" />
-            <input type="email" placeholder="Email para Reporte" onChange={(e)=>setUserData({...userData, email:e.target.value})} className="w-full bg-zinc-900 border border-white/10 p-5 rounded-2xl text-xs text-white outline-none focus:border-cyan-500 transition-all" />
-            <button onClick={() => { if(userData.name && userData.email) setStep('result'); }} className="w-full bg-white text-black py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest">Generar Diagnóstico Maestro</button>
+          <div className="space-y-4 p-6 bg-zinc-900/50 rounded-[2.5rem] border border-white/5">
+            <p className="text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Sincronización Clínica</p>
+            <input type="text" placeholder="NOMBRE COMPLETO" onChange={(e)=>setUserData({...userData, name:e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
+            <input type="tel" placeholder="WHATSAPP" onChange={(e)=>setUserData({...userData, phone:e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-cyan-500" />
+            <button onClick={() => { if(userData.name && userData.phone) setStep('result'); }} className="w-full bg-cyan-600 py-4 rounded-2xl font-black text-[10px] uppercase">Ver Dashboard Tiphereth</button>
           </div>
         )}
 
         {step === 'result' && (
           <div className="space-y-6">
-            <div className="flex flex-wrap justify-between gap-1 bg-zinc-900 p-1 rounded-xl">
-              {(['real', 'wood', 'uv', 'infra', 'textura'] as Layer[]).map((l) => (
-                <button key={l} onClick={() => setActiveLayer(l)} className={`flex-1 py-2 text-[7px] font-bold uppercase rounded-lg transition-all ${activeLayer === l ? 'bg-cyan-500 text-white shadow-lg' : 'text-zinc-500'}`}>{l}</button>
-              ))}
+            <div className="flex justify-between gap-1">
+              {(['normal', 'wood', 'uv', 'infra', 'textura'] as Layer[]).map(l => <button key={l} onClick={()=>setActiveLayer(l)} className={`flex-1 py-2 text-[6px] font-bold uppercase rounded-lg border transition-all ${activeLayer === l ? 'bg-cyan-500 border-cyan-400' : 'border-white/5 text-zinc-500'}`}>{l}</button>)}
             </div>
-            <div className="bg-zinc-900/50 p-6 rounded-[2.5rem] border border-cyan-500/20 text-left space-y-4">
-               <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                 <p className="text-[9px] text-cyan-400 font-black uppercase tracking-[0.2em]">Bio-Composición</p>
-                 <span className="text-[7px] text-zinc-500">InBody: SYNC</span>
-               </div>
-               <p className="text-xs text-zinc-300 italic leading-relaxed">"Déficit mandibular detectado. Se sugiere Reingeniería Estructural con ROI del 400%."</p>
-               <button onClick={() => setStep('report')} className="w-full bg-white text-black py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest">Ver Certificado Φ</button>
+            <div className="bg-zinc-900/80 p-6 rounded-[2.5rem] border border-cyan-500/20">
+               <p className="text-[10px] text-cyan-400 font-black uppercase mb-3">Bio-Insight</p>
+               <p className="text-xs text-zinc-300 italic mb-4">"Déficit en ángulo mandibular. Sugerencia: Reingeniería Estructural V-Line."</p>
+               <button onClick={()=>setStep('report')} className="w-full bg-white text-black py-4 rounded-2xl font-black text-[10px] uppercase">Generar Reporte Maestro</button>
             </div>
           </div>
         )}
 
+        {/* 3. REPORTE FINAL VISIA-KILLER (EL CERTIFICADO) */}
         {step === 'report' && (
-          <div className="bg-white text-black p-8 rounded-[3rem] shadow-2xl relative animate-in slide-in-from-bottom duration-700">
-            <h2 className="text-center text-[12px] font-black tracking-[0.3em] uppercase mb-8 border-b pb-4 italic">Tiphereth Clinical Analysis</h2>
-            
+          <div className="bg-white text-black p-8 rounded-[3rem] shadow-2xl animate-in slide-in-from-bottom duration-700">
+            <div className="flex justify-between items-start mb-8 border-b border-zinc-100 pb-4">
+               <div>
+                 <h2 className="text-[12px] font-black tracking-widest uppercase italic">Tiphereth Station</h2>
+                 <p className="text-[7px] text-zinc-400 uppercase tracking-widest">Clinical Bio-Report | v26.0</p>
+               </div>
+               <div className="text-right text-[8px] font-bold text-zinc-300 uppercase">Top Priority Case</div>
+            </div>
+
+            {/* Comparativo Antes/Después */}
             <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="aspect-[3/4] relative rounded-2xl overflow-hidden shadow-inner">
-                <img src={photos[0]} className="w-full h-full object-cover grayscale brightness-110" />
-                <div className="absolute inset-0 border border-cyan-500/20 grid grid-cols-6 grid-rows-8" />
-              </div>
-              <div className="flex flex-col justify-center space-y-2 text-[9px] text-zinc-700">
-                <p><strong>PACIENTE:</strong> {userData.name.toUpperCase()}</p>
-                <p className="text-cyan-600 font-black">SIMETRÍA: 94.2%</p>
-                <p><strong>FECHA:</strong> {new Date().toLocaleDateString()}</p>
-              </div>
+               <div className="text-center space-y-2">
+                 <p className="text-[7px] font-black text-zinc-400 uppercase">Actual</p>
+                 <img src={photos[0]} className="w-full aspect-[3/4] object-cover rounded-2xl grayscale" />
+               </div>
+               <div className="text-center space-y-2">
+                 <p className="text-[7px] font-black text-cyan-600 uppercase">Simulación Φ</p>
+                 <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-inner">
+                    <img src={photos[0]} className="w-full h-full object-cover contrast-125 brightness-110 saturate-[0.8]" />
+                    <div className="absolute inset-0 bg-cyan-400/10 mix-blend-color" />
+                 </div>
+               </div>
             </div>
 
-            <div className="bg-zinc-50 p-5 rounded-3xl border border-zinc-100 mb-8">
-              <p className="text-[7px] font-black text-zinc-400 uppercase mb-3 text-center tracking-widest italic">Ratios de Park (1.8 : 2.0 : 1.0)</p>
-              <div className="grid grid-cols-3 text-center text-[11px]">
-                <div><p className="text-zinc-400 text-[6px]">SUP</p><p className="font-bold">1.82</p></div>
-                <div><p className="text-zinc-400 text-[6px]">MED</p><p className="font-bold">2.01</p></div>
-                <div><p className="text-zinc-400 text-[6px]">INF</p><p className="font-bold text-red-600">0.92</p></div>
-              </div>
+            {/* Análisis Multiespectral (Estilo Visia) */}
+            <div className="grid grid-cols-3 gap-2 mb-8 text-center uppercase tracking-tighter">
+               <div className="p-2 bg-zinc-50 rounded-xl border border-zinc-100">
+                  <p className="text-[6px] text-zinc-400">UV Damage</p>
+                  <p className="text-[10px] font-black text-red-500">ALTO</p>
+               </div>
+               <div className="p-2 bg-zinc-50 rounded-xl border border-zinc-100">
+                  <p className="text-[6px] text-zinc-400">Simetría</p>
+                  <p className="text-[10px] font-black text-cyan-600">94.2%</p>
+               </div>
+               <div className="p-2 bg-zinc-50 rounded-xl border border-zinc-100">
+                  <p className="text-[6px] text-zinc-400">Bio-Edad</p>
+                  <p className="text-[10px] font-black">-2 AÑOS</p>
+               </div>
             </div>
 
-            <button 
-              onClick={() => sendWhatsApp(WS_BUSINESS)}
-              className="w-full bg-black text-white py-5 rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-xl active:bg-cyan-600 transition-all">
+            {/* Ratios de Park */}
+            <div className="bg-zinc-950 text-white p-5 rounded-3xl mb-8">
+               <p className="text-[8px] font-black text-cyan-400 uppercase mb-3 text-center tracking-widest italic">Ratios de Park (1.8 : 2.0 : 1.0)</p>
+               <div className="grid grid-cols-3 text-center text-[12px] font-mono">
+                  <div><p className="text-[6px] text-zinc-500">SUP</p><p>1.82</p></div>
+                  <div><p className="text-[6px] text-zinc-500">MED</p><p>2.01</p></div>
+                  <div className="text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.2)]"><p className="text-[6px] text-red-400">INF</p><p>0.92</p></div>
+               </div>
+            </div>
+
+            {/* InBody & BioScanner */}
+            <div className="grid grid-cols-2 gap-4 mb-8 text-[8px] uppercase font-bold text-zinc-500">
+               <div className="flex items-center gap-2 bg-zinc-50 p-3 rounded-2xl">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /> InBody: Sincronizado
+               </div>
+               <div className="flex items-center gap-2 bg-zinc-50 p-3 rounded-2xl">
+                  <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" /> Bio-Scanner: On
+               </div>
+            </div>
+
+            <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=Hola Dr. Maya, soy ${userData.name.toUpperCase()}. Mi Reporte Tiphereth muestra un ROI Estético del 400% y un déficit INF de 0.92. Deseo agendar mi Reingeniería.`)} 
+              className="w-full bg-black text-white py-6 rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-2xl active:scale-95 transition-all mb-4">
               Materializar Plan Maestro
             </button>
-            <button onClick={() => window.print()} className="w-full mt-4 text-[7px] text-zinc-400 uppercase tracking-widest font-bold">Descargar PDF Científico</button>
+            <p className="text-center text-[7px] text-zinc-400 uppercase font-serif italic">"Excellence is not an act, but a habit. Welcome to the Tiphereth Experience."</p>
           </div>
         )}
       </div>
 
       <style jsx global>{`
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-        @media print { body { background: white !important; } .print-hide { display: none !important; } }
       `}</style>
     </div>
   );
