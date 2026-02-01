@@ -23,7 +23,6 @@ export default function TipherethV70() {
     }
   }, [step]);
 
-  // Generador de Edad Biológica (Urgencia)
   useEffect(() => {
     setBioAge(Math.floor(Math.random() * (55 - 35 + 1)) + 35); 
   }, []);
@@ -88,8 +87,7 @@ export default function TipherethV70() {
       {loading && (
         <div className="fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-50">
           <div className="w-24 h-24 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-6 shadow-[0_0_50px_#06b6d4]" />
-          <p className="text-sm font-black text-cyan-500 uppercase tracking-[0.3em] animate-pulse">Compilando Bio-Data...</p>
-          <div className="mt-2 text-[10px] text-zinc-500">Conectando con Servidor Neural Dr. Maya Romo</div>
+          <p className="text-sm font-black text-cyan-500 uppercase tracking-[0.3em] animate-pulse">Sincronizando Expediente...</p>
         </div>
       )}
 
@@ -98,19 +96,27 @@ export default function TipherethV70() {
             <div className="border border-cyan-500/30 bg-zinc-900/50 backdrop-blur-xl p-8 rounded-[2rem] relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
                 <h1 className="text-white text-4xl font-black italic mb-2 uppercase text-center tracking-tighter">TIPHERETH</h1>
-                <p className="text-[9px] text-cyan-400 uppercase tracking-[0.5em] mb-8 text-center border-b border-white/5 pb-4">The Singularity Engine v70.1</p>
+                <p className="text-[9px] text-cyan-400 uppercase tracking-[0.5em] mb-8 text-center border-b border-white/5 pb-4">The Singularity Engine v70.2</p>
                 
                 <div className="space-y-4 mb-8">
                   <div className="group relative">
                     <span className="absolute left-4 top-3 text-[10px] text-cyan-600 font-bold">NOMBRE</span>
                     <input type="text" onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-black/50 border border-white/10 p-4 pt-7 text-white text-sm outline-none font-bold uppercase rounded-xl focus:border-cyan-500 transition-all" />
                   </div>
+                  
+                  {/* CAMPO DE EMAIL RESTAURADO */}
                   <div className="group relative">
-                    <span className="absolute left-4 top-3 text-[10px] text-cyan-600 font-bold">CONTACTO (WHATSAPP)</span>
+                    <span className="absolute left-4 top-3 text-[10px] text-cyan-600 font-bold">EMAIL</span>
+                    <input type="email" onChange={e => setUser({...user, email: e.target.value})} className="w-full bg-black/50 border border-white/10 p-4 pt-7 text-white text-sm outline-none rounded-xl focus:border-cyan-500 transition-all" />
+                  </div>
+
+                  <div className="group relative">
+                    <span className="absolute left-4 top-3 text-[10px] text-cyan-600 font-bold">WHATSAPP</span>
                     <input type="tel" onChange={e => setUser({...user, phone: e.target.value})} className="w-full bg-black/50 border border-white/10 p-4 pt-7 text-white text-sm outline-none rounded-xl focus:border-cyan-500 transition-all" />
                   </div>
+
                   <div className="group relative">
-                    <span className="absolute left-4 top-3 text-[10px] text-cyan-600 font-bold">SEDE DE MATERIALIZACIÓN</span>
+                    <span className="absolute left-4 top-3 text-[10px] text-cyan-600 font-bold">SEDE</span>
                     <select onChange={e => setUser({...user, city: e.target.value})} className="w-full bg-black/50 border border-white/10 p-4 pt-7 text-white text-sm outline-none font-bold rounded-xl focus:border-cyan-500 transition-all appearance-none">
                         <option value="Cali">Cali (Base Central)</option>
                         <option value="Popayán">Popayán (Semana Q.)</option>
@@ -119,7 +125,7 @@ export default function TipherethV70() {
                   </div>
                 </div>
                 
-                <button onClick={() => setStep('scanning')} disabled={!user.name || !user.phone} 
+                <button onClick={() => setStep('scanning')} disabled={!user.name || !user.phone || !user.email} 
                     className="w-full bg-cyan-600 text-white py-6 rounded-xl font-black text-xs uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:bg-white hover:text-black hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100">
                     INICIAR BIO-SCAN 3D
                 </button>
