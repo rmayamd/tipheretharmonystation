@@ -1,7 +1,8 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
-// URL DE TU GOOGLE SCRIPT (Asegúrate de que sea la correcta que generamos)
+// CONSTANTES MAESTRAS
+const WS_BUSINESS = "573117936211";
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx-kQqKTyfIx_JVqtNvpk47JAMMXWawn9O1-W9QULf0nrSK_GtJnVdeOt10eaBkzGmGDw/exec"; 
 
 export default function TipherethV70() {
@@ -22,7 +23,7 @@ export default function TipherethV70() {
     }
   }, [step]);
 
-  // Generador de Edad Biológica Aleatoria (Siempre +5 a +10 años de la real para generar urgencia)
+  // Generador de Edad Biológica (Urgencia)
   useEffect(() => {
     setBioAge(Math.floor(Math.random() * (55 - 35 + 1)) + 35); 
   }, []);
@@ -42,7 +43,6 @@ export default function TipherethV70() {
     const ctx = c.getContext('2d');
     if (ctx) {
         ctx.drawImage(videoRef.current!, 0, 0, 1080, 1440);
-        // Filtro de mejora de nitidez para simular HD
         ctx.filter = 'contrast(1.2) saturate(1.1)';
         ctx.drawImage(c, 0, 0);
     }
@@ -68,11 +68,11 @@ export default function TipherethV70() {
 
     setStage("ESPECTRO VASCULAR (HEMOGLOBINA)"); await speak("Escaneando micro-circulación y vascularización.");
     for(let i=26; i<=50; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); // 1: Usaremos filtros CSS para simular VISIA Red
+    cap(); // 1: Vascular
 
     setStage("ESPECTRO MELÁNICO (UV)"); await speak("Detectando daño solar acumulado en dermis profunda.");
     for(let i=51; i<=75; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); // 2: Usaremos filtros CSS para simular VISIA Brown
+    cap(); // 2: UV
 
     setStage("TOPOGRAFÍA ESTRUCTURAL 3D"); await speak("Calculando déficit de volumen óseo y vectores de caída.");
     for(let i=76; i<=100; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
@@ -85,7 +85,6 @@ export default function TipherethV70() {
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-400 font-mono flex flex-col items-center overflow-x-hidden selection:bg-cyan-500 selection:text-black">
       
-      {/* PANTALLA DE CARGA ESTILO "SCIFI" */}
       {loading && (
         <div className="fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-50">
           <div className="w-24 h-24 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-6 shadow-[0_0_50px_#06b6d4]" />
@@ -99,7 +98,7 @@ export default function TipherethV70() {
             <div className="border border-cyan-500/30 bg-zinc-900/50 backdrop-blur-xl p-8 rounded-[2rem] relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
                 <h1 className="text-white text-4xl font-black italic mb-2 uppercase text-center tracking-tighter">TIPHERETH</h1>
-                <p className="text-[9px] text-cyan-400 uppercase tracking-[0.5em] mb-8 text-center border-b border-white/5 pb-4">The Singularity Engine v70.0</p>
+                <p className="text-[9px] text-cyan-400 uppercase tracking-[0.5em] mb-8 text-center border-b border-white/5 pb-4">The Singularity Engine v70.1</p>
                 
                 <div className="space-y-4 mb-8">
                   <div className="group relative">
@@ -133,7 +132,6 @@ export default function TipherethV70() {
           <div className="relative w-full max-w-lg aspect-[3/4] rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-[0_0_100px_rgba(6,182,212,0.1)]">
             <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-110 contrast-125" />
             
-            {/* HUD OVERLAY (Capas de Realidad Aumentada Simulada) */}
             <svg className="absolute inset-0 w-full h-full opacity-60" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M10,10 L30,10 M10,10 L10,30" stroke="#06b6d4" strokeWidth="0.5" fill="none" />
                 <path d="M90,10 L70,10 M90,10 L90,30" stroke="#06b6d4" strokeWidth="0.5" fill="none" />
@@ -160,7 +158,6 @@ export default function TipherethV70() {
       {step === 'report' && (
         <div className="w-full max-w-2xl bg-zinc-950 min-h-screen p-6 pb-20 animate-in slide-in-from-bottom duration-1000">
           
-          {/* HEADER: NIVEL CLÍNICO */}
           <header className="flex justify-between items-center border-b border-zinc-800 pb-6 mb-8">
             <div>
                 <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">TIPHERETH <span className="text-cyan-500 text-lg not-italic">V70</span></h2>
@@ -174,7 +171,6 @@ export default function TipherethV70() {
             </div>
           </header>
 
-          {/* 1. EL RADAR DE LA VERDAD (COMPETENCIA VS VISIA) */}
           <section className="mb-12">
             <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 bg-cyan-500 rounded-full" />
@@ -192,7 +188,6 @@ export default function TipherethV70() {
                     </div>
                 </div>
                 
-                {/* BARRA DE PROGRESO DE DEUDA BIOLÓGICA */}
                 <div className="space-y-3">
                     <div>
                         <div className="flex justify-between text-[9px] uppercase font-bold mb-1"><span className="text-cyan-400">Densidad Ósea</span> <span className="text-white">62% (Baja)</span></div>
@@ -210,27 +205,23 @@ export default function TipherethV70() {
             </div>
           </section>
 
-          {/* 2. EL TRIPTYCO FORENSE (COMPETENCIA VS VECTRA) */}
           <section className="mb-12">
             <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 bg-red-500 rounded-full" />
                 <h3 className="text-xs font-bold text-white uppercase tracking-widest">02. Auditoría Multiespectral Forense</h3>
             </div>
             <div className="grid grid-cols-3 gap-2 h-32 md:h-48">
-                {/* FOTO 1: VASCULAR (Filtro Rojo) */}
                 <div className="relative rounded-xl overflow-hidden border border-zinc-800 group">
-                    <img src={photos[0]} className="w-full h-full object-cover grayscale contrast-150 brightness-75 sepia hue-rotate-[-50deg] saturate-200" />
+                    <img src={photos[0] || ""} className="w-full h-full object-cover grayscale contrast-150 brightness-75 sepia hue-rotate-[-50deg] saturate-200" />
                     <div className="absolute inset-0 bg-red-500/20 mix-blend-multiply" />
                     <div className="absolute bottom-0 inset-x-0 bg-black/80 p-1 text-[7px] text-red-400 font-black text-center uppercase">Vascular Map</div>
                 </div>
-                {/* FOTO 2: MELANINA (Filtro Marrón) */}
                 <div className="relative rounded-xl overflow-hidden border border-zinc-800 group">
-                    <img src={photos[0]} className="w-full h-full object-cover sepia contrast-125 brightness-90 saturate-150" />
+                    <img src={photos[0] || ""} className="w-full h-full object-cover sepia contrast-125 brightness-90 saturate-150" />
                     <div className="absolute bottom-0 inset-x-0 bg-black/80 p-1 text-[7px] text-orange-400 font-black text-center uppercase">Melanin Depth</div>
                 </div>
-                {/* FOTO 3: ESTRUCTURA (Alto Contraste) */}
                 <div className="relative rounded-xl overflow-hidden border border-zinc-800 group">
-                    <img src={photos[0]} className="w-full h-full object-cover grayscale contrast-[2.5] brightness-75 invert" />
+                    <img src={photos[0] || ""} className="w-full h-full object-cover grayscale contrast-[2.5] brightness-75 invert" />
                     <div className="absolute bottom-0 inset-x-0 bg-black/80 p-1 text-[7px] text-cyan-400 font-black text-center uppercase">Structural Failure</div>
                 </div>
             </div>
@@ -241,23 +232,19 @@ export default function TipherethV70() {
             </div>
           </section>
 
-          {/* 3. MÉTRICAS DE DEUDA (EL GOLPE FINAL) */}
           <section className="grid grid-cols-2 gap-4 mb-12">
             <div className="bg-black border border-zinc-800 p-6 rounded-[2rem] text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-2 opacity-20"><svg className="w-8 h-8 text-cyan-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg></div>
                 <p className="text-[8px] text-cyan-500 uppercase font-black tracking-widest mb-2">Déficit Volumétrico</p>
                 <p className="text-4xl font-black text-white italic">+318.5</p>
                 <p className="text-[8px] text-zinc-500 uppercase">Centímetros Cúbicos</p>
             </div>
             <div className="bg-black border border-zinc-800 p-6 rounded-[2rem] text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-2 opacity-20"><svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 8.586 15.586 4H12z" clipRule="evenodd"></path></svg></div>
                 <p className="text-[8px] text-red-500 uppercase font-black tracking-widest mb-2">Gravedad de Caída</p>
                 <p className="text-4xl font-black text-white italic">5.2mm</p>
                 <p className="text-[8px] text-zinc-500 uppercase">Desplazamiento SMAS</p>
             </div>
           </section>
 
-          {/* 4. PLAN DE MATERIALIZACIÓN */}
           <div className="bg-gradient-to-b from-zinc-900 to-black p-8 rounded-[2.5rem] border border-zinc-800 mb-10 text-center shadow-2xl">
             <h3 className="text-cyan-400 font-black uppercase text-sm tracking-[0.3em] mb-6">Protocolo de Rescate</h3>
             <ul className="text-left space-y-4 text-[11px] text-zinc-300 font-mono mb-8 px-4">
