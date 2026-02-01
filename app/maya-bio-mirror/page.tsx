@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 
 const WS_BUSINESS = "573117936211";
 
-export default function TipherethV46() {
+export default function TipherethV48() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [step, setStep] = useState('intro');
   const [progress, setProgress] = useState(0);
@@ -17,7 +17,7 @@ export default function TipherethV46() {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'es-ES';
-        u.rate = 0.7; // VOZ MUY PAUSADA Y PROFESIONAL
+        u.rate = 0.75; // Voz pausada, de autoridad médica
         u.onend = () => resolve(true);
         window.speechSynthesis.speak(u);
       } else resolve(true);
@@ -34,31 +34,31 @@ export default function TipherethV46() {
   };
 
   const runProtocol = async (stream: MediaStream) => {
-    await speak("Bienvenido a Tiphereth. Iniciando análisis de bioingeniería. Mire fijamente al frente.");
+    await speak("Iniciando auditoría biométrica Tiphereth. Por favor, mire al frente, relaje los músculos faciales.");
     setStage("FRONTAL Φ");
-    for(let i=0; i<=33; i++) { setProgress(i); await new Promise(r => setTimeout(r, 100)); }
+    for(let i=0; i<=33; i++) { setProgress(i); await new Promise(r => setTimeout(r, 120)); }
     capture();
 
-    await speak("Captura frontal exitosa. Ahora, gire lentamente su rostro hacia la izquierda.");
+    await speak("Captura frontal completada. Ahora, gire lentamente su rostro hacia la izquierda para análisis de perfilometría.");
     setStage("PERFILOMETRÍA");
-    await new Promise(r => setTimeout(r, 2000)); // PAUSA PARA GIRAR
-    for(let i=34; i<=66; i++) { setProgress(i); await new Promise(r => setTimeout(r, 100)); }
+    await new Promise(r => setTimeout(r, 3000)); 
+    for(let i=34; i<=66; i++) { setProgress(i); await new Promise(r => setTimeout(r, 120)); }
     capture();
 
-    await speak("Perfil capturado. Finalmente, incline su barbilla hacia abajo para medir el arco mandibular.");
+    await speak("Excelente. Finalmente, incline su barbilla hacia abajo para evaluar el SMAS y el arco mandibular.");
     setStage("CENITAL SMAS");
-    await new Promise(r => setTimeout(r, 2000)); // PAUSA PARA INCLINAR
-    for(let i=67; i<=100; i++) { setProgress(i); await new Promise(r => setTimeout(r, 100)); }
+    await new Promise(r => setTimeout(r, 3000));
+    for(let i=67; i<=100; i++) { setProgress(i); await new Promise(r => setTimeout(r, 120)); }
     capture();
 
-    await speak("Protocolo de captura completado. Procesando nube de puntos y capas multiespectrales.");
+    await speak("Escaneo finalizado. Procesando diagnósticos clínicos y plan maestro.");
     stream.getTracks().forEach(t => t.stop());
     setStep('sync');
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 4000));
     setStep('lead');
   };
 
-  const start = async () => {
+  const init = async () => {
     setStep('scanning');
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
@@ -72,14 +72,14 @@ export default function TipherethV46() {
       {step !== 'report' && (
         <div className="relative w-80 h-80 my-12">
           <svg className="absolute inset-0 w-full h-full -rotate-90">
-            <circle cx="50%" cy="50%" r="48%" stroke="#06b6d4" strokeWidth="2" fill="none" strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300 shadow-[0_0_20px_#06b6d4]" />
+            <circle cx="50%" cy="50%" r="48%" stroke="#06b6d4" strokeWidth="2" fill="none" strokeDasharray="1000" strokeDashoffset={1000 - (progress * 10)} className="transition-all duration-300" />
           </svg>
           <div className="w-[86%] h-[86%] m-[7%] rounded-full overflow-hidden bg-zinc-950 relative border border-white/5">
             {step === 'intro' && (
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-[radial-gradient(circle,rgba(6,182,212,0.1)_0%,transparent_70%)]">
-                <h1 className="text-white text-[12px] font-black tracking-[0.5em] mb-2 uppercase italic">TIPHERETH</h1>
-                <p className="text-[6px] text-cyan-500 uppercase tracking-widest mb-10 italic">Advanced 3D Station</p>
-                <button onClick={start} className="bg-white text-black px-12 py-4 rounded-full font-black text-[9px] uppercase tracking-widest hover:bg-cyan-400 transition-all active:scale-95 shadow-2xl">Iniciar Escaneo</button>
+                <h1 className="text-white text-[12px] font-black tracking-[0.5em] mb-2">TIPHERETH</h1>
+                <p className="text-[6px] text-cyan-500 uppercase tracking-widest mb-10 italic">Clinical Master Station</p>
+                <button onClick={init} className="bg-white text-black px-12 py-4 rounded-full font-black text-[9px] uppercase tracking-widest hover:bg-cyan-400 transition-all shadow-2xl">Iniciar Diagnóstico</button>
               </div>
             )}
             {step === 'scanning' && (
@@ -88,99 +88,84 @@ export default function TipherethV46() {
                 <div className="absolute bottom-6 inset-x-0 text-center uppercase text-[8px] font-black text-cyan-400 tracking-widest">{stage}</div>
               </>
             )}
-            {(step === 'sync' || step === 'lead') && photos[0] && (
-              <img src={photos[0]} className="w-full h-full object-cover grayscale opacity-40 animate-pulse" />
-            )}
           </div>
         </div>
       )}
 
       {step === 'lead' && (
         <div className="w-full max-w-[340px] space-y-4 p-8 bg-zinc-900/20 border border-white/5 rounded-[2.5rem] animate-in slide-in-from-bottom">
-          <h3 className="text-[9px] font-black text-white uppercase tracking-widest text-center mb-4">Bio-Identidad del Paciente</h3>
           <input type="text" placeholder="NOMBRE COMPLETO" onChange={e => setUserData({...userData, name: e.target.value})} className="w-full bg-transparent border-b border-white/10 p-4 text-white text-[11px] outline-none" />
-          <input type="email" placeholder="EMAIL PARA REPORTE PDF" onChange={e => setUserData({...userData, email: e.target.value})} className="w-full bg-transparent border-b border-white/10 p-4 text-white text-[11px] outline-none" />
-          <button onClick={() => setStep('report')} className="w-full bg-white text-black py-5 rounded-2xl font-black text-[10px] uppercase shadow-2xl">Compilar Auditoría Final</button>
+          <input type="email" placeholder="EMAIL" onChange={e => setUserData({...userData, email: e.target.value})} className="w-full bg-transparent border-b border-white/10 p-4 text-white text-[11px] outline-none" />
+          <button onClick={() => setStep('report')} className="w-full bg-white text-black py-5 rounded-2xl font-black text-[10px] uppercase shadow-2xl">Compilar Diagnóstico Maestro</button>
         </div>
       )}
 
-      {step === 'report' && photos.length > 0 && (
-        <div className="bg-white text-black p-8 rounded-[3.5rem] w-full max-w-[450px] shadow-2xl animate-in zoom-in mb-20 border-[10px] border-zinc-100">
-          <header className="flex justify-between items-start mb-8 border-b-2 border-black pb-4 font-black">
-            <div className="text-[16px] italic leading-none text-cyan-600">TIPHERETH<br/><span className="text-black">HARMONY</span></div>
-            <div className="text-right text-[7px] text-zinc-400 uppercase tracking-widest">Master Audit v46.0<br/>Canfield Standard</div>
+      {step === 'report' && (
+        <div className="bg-white text-black p-8 rounded-[3.5rem] w-full max-w-[500px] shadow-2xl animate-in zoom-in mb-20 border-[10px] border-zinc-100">
+          <header className="flex justify-between items-start mb-8 border-b-2 border-black pb-4">
+            <div className="text-[16px] font-black italic text-cyan-600 uppercase">TIPHERETH<br/><span className="text-black text-[12px]">Clinical Engineering</span></div>
+            <div className="text-right text-[7px] text-zinc-400 uppercase font-black">Report ID: MASTER-V48<br/>Standards: VISIA/VECTRA</div>
           </header>
 
-          {/* SIMULACIÓN VECTRA H2 */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="relative rounded-2xl overflow-hidden shadow-inner">
-               <img src={photos[0]} className="w-full aspect-[3/4] object-cover grayscale brightness-110" />
-               <p className="absolute bottom-2 left-2 text-[6px] font-black bg-black text-white px-2 py-0.5 rounded">ORIGINAL</p>
+          {/* I. HALLAZGOS CLÍNICOS (EL DIAGNÓSTICO) */}
+          <section className="mb-8">
+            <h3 className="text-[9px] font-black uppercase border-l-4 border-red-600 pl-2 mb-4 italic">I. Auditoría de Hallazgos Clínicos</h3>
+            <div className="grid grid-cols-1 gap-2 text-[10px] font-bold text-zinc-800">
+                <div className="flex justify-between border-b py-2"><span>TERCIO SUPERIOR:</span> <span className="text-red-600 uppercase">Arrugas Dinámicas y Fijas</span></div>
+                <div className="flex justify-between border-b py-2"><span>PERIOCULARES:</span> <span className="text-red-600 uppercase">Laxitud y Ojeras Pigmentarias</span></div>
+                <div className="flex justify-between border-b py-2"><span>TERCIO MEDIO:</span> <span className="text-cyan-600 uppercase">Melasma Grado II / Hiperpigmentación</span></div>
+                <div className="flex justify-between border-b py-2"><span>TERCIO INFERIOR:</span> <span className="text-red-600 uppercase">Jowl / Micrognatia / Lipodistrofia Submental</span></div>
+                <div className="flex justify-between border-b py-2"><span>ENVEJECIMIENTO:</span> <span className="text-black uppercase font-black">Escala de Glogau Grado III</span></div>
             </div>
-            <div className="relative rounded-2xl overflow-hidden ring-2 ring-cyan-500 shadow-xl">
-               <img src={photos[0]} className="w-full h-full object-cover brightness-110 saturate-[0.6] contrast-125" />
-               <div className="absolute inset-0 bg-cyan-400/10 mix-blend-overlay" />
-               <p className="absolute bottom-2 left-2 text-[6px] font-black bg-cyan-600 text-white px-2 py-0.5 rounded">PROYECCIÓN Φ</p>
+          </section>
+
+          {/* II. MAPEO RBX Y VOLUMETRÍA */}
+          <section className="mb-8">
+            <h3 className="text-[9px] font-black uppercase border-l-4 border-cyan-500 pl-2 mb-4 italic">II. Cuantificación Multiespectral (RBX®)</h3>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-zinc-950 p-4 rounded-3xl text-white text-center">
+                 <p className="text-[6px] text-cyan-400 uppercase font-black mb-1">Déficit Volumétrico</p>
+                 <p className="text-xl font-black">+320.5 cc</p>
+              </div>
+              <div className="bg-zinc-950 p-4 rounded-3xl text-white text-center">
+                 <p className="text-[6px] text-red-500 uppercase font-black mb-1">Vector de Tensión (Lift)</p>
+                 <p className="text-xl font-black">↑ 5.2 mm</p>
+              </div>
             </div>
-          </div>
+            <div className="grid grid-cols-4 gap-1 text-[5px] font-black text-center uppercase">
+                <img src={photos[0]} className="rounded-lg contrast-150 invert sepia" />
+                <img src={photos[0]} className="rounded-lg brightness-50 contrast-[3]" />
+                <img src={photos[0]} className="rounded-lg grayscale contrast-[6]" />
+                <img src={photos[0]} className="rounded-lg saturate-[3] hue-rotate-180" />
+            </div>
+          </section>
 
-          {/* PANEL MULTIESPECTRAL VISIA RBX */}
-          <p className="text-[8px] font-black text-center uppercase mb-4 tracking-[0.4em] italic border-t pt-4">Diagnóstico Multiespectral RBX®</p>
-          <div className="grid grid-cols-4 gap-2 mb-8 text-center uppercase">
-              <div className="space-y-1">
-                  <img src={photos[0]} className="w-full aspect-square object-cover rounded-lg contrast-150 invert sepia" />
-                  <p className="text-[5px] font-bold">Rojos (RBX)</p>
-              </div>
-              <div className="space-y-1">
-                  <img src={photos[0]} className="rounded-lg brightness-50 contrast-[3] sepia" />
-                  <p className="text-[5px] font-bold">Marrones (UV)</p>
-              </div>
-              <div className="space-y-1">
-                  <img src={photos[0]} className="rounded-lg grayscale contrast-[5]" />
-                  <p className="text-[5px] font-bold">Porosidad</p>
-              </div>
-              <div className="space-y-1">
-                  <img src={photos[0]} className="rounded-lg saturate-[3] hue-rotate-180" />
-                  <p className="text-[5px] font-bold">Laxitud</p>
-              </div>
-          </div>
-
-          {/* MÉTRICAS DE INGENIERÍA */}
-          <div className="bg-black text-white p-6 rounded-[2.5rem] mb-8 shadow-2xl relative overflow-hidden">
-             <div className="absolute top-0 right-0 w-20 h-20 bg-red-600/20 blur-3xl animate-pulse" />
-             <p className="text-[7px] font-black text-cyan-400 uppercase text-center mb-4 tracking-widest italic">Ratios de Park e InBody Score</p>
-             <div className="grid grid-cols-3 gap-2 text-center text-[12px] font-black">
-                <div className="border border-white/10 p-2"><p className="text-[5px] text-zinc-500">SUP</p>1.82</div>
-                <div className="border border-white/10 p-2"><p className="text-[5px] text-zinc-500">MED</p>2.01</div>
-                <div className="border border-cyan-500 p-2 text-red-500 animate-pulse"><p className="text-[5px]">INF</p>0.92</div>
-             </div>
-             <div className="mt-6 flex justify-between text-[7px] font-black border-t border-white/10 pt-4 uppercase">
-                <span className="text-emerald-500 tracking-tighter italic">Bio-Edad: -4 Años</span>
-                <span className="text-cyan-500 tracking-tighter">Simetría: 94.2%</span>
-             </div>
-          </div>
-
-          {/* PLAN MAESTRO CUERPO Y ROSTRO */}
-          <div className="bg-zinc-50 p-6 rounded-[2.5rem] mb-8 border border-zinc-100 space-y-3">
-             <p className="text-[8px] font-black uppercase text-zinc-400 border-l-4 border-black pl-2">Vademécum de Ingeniería Sugerido</p>
-             <ul className="text-[9px] font-bold text-zinc-700 space-y-1 italic leading-tight">
-                <li>• Químico: Mesopeel Melanostop Trans3 (Mesoestetic)</li>
-                <li>• Estructural: Park V-Line Mandibular Reduction</li>
-                <li>• Corporal: Lipectomía HD 360 + Aumento Mamario (+320cc)</li>
-             </ul>
-          </div>
+          {/* III. PRESCRIPCIÓN DEL PLAN MAESTRO (MESOESTETIC) */}
+          <section className="mb-8 bg-zinc-50 p-6 rounded-[2.5rem] border border-zinc-100">
+            <h3 className="text-[9px] font-black uppercase text-black mb-4 tracking-tighter italic border-b pb-2">III. Prescripción de Ingeniería Humana</h3>
+            <div className="space-y-4 text-[9px] font-bold italic leading-tight">
+               <div>
+                  <p className="text-[7px] text-cyan-700 uppercase mb-1 underline">Protocolo Dermatológico (Mesoestetic):</p>
+                  <p>• Mesopeel Melanostop Trans3 (Hiperpigmentación)</p>
+                  <p>• Age Element Firming Solutions (Laxitud/SMAS)</p>
+               </div>
+               <div>
+                  <p className="text-[7px] text-red-700 uppercase mb-1 underline">Procedimiento Quirúrgico Sugerido:</p>
+                  <p>• Marcación Mandibular (V-Line) + Lipopapada</p>
+                  <p>• Blefaroplastia Superior + Toxina Botulínica (Park Protocol)</p>
+               </div>
+            </div>
+          </section>
 
           <button onClick={() => {
-              const msg = encodeURIComponent(`Shalom Dr. Maya Romo, soy ${userData.name.toUpperCase()}. Mi Auditoría Tiphereth indica un déficit INF de 0.92 y requiero ajuste de +320cc en contorno corporal. Deseo proceder.`);
+              const msg = encodeURIComponent(`Shalom Dr. Maya Romo, soy ${userData.name.toUpperCase()}. He recibido mi Auditoría Maestra. Diagnóstico: Glogau III, Melasma II y Lipodistrofia Submental. Deseo proceder con la marcación de +320cc y el Plan Maestro.`);
               window.open(`https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${msg}`);
             }} 
-            className="w-full bg-black text-white py-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-[0_20px_40px_rgba(0,0,0,0.3)] active:scale-95 transition-all mb-4 hover:bg-cyan-600">
-            Materializar Plan Maestro Φ
+            className="w-full bg-black text-white py-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl hover:bg-cyan-600 transition-all">
+            Materializar Inmortalidad Φ
           </button>
         </div>
       )}
-
-      <style jsx global>{` @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } } `}</style>
     </div>
   );
 }
