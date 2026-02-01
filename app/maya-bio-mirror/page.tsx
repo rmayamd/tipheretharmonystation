@@ -5,16 +5,16 @@ import React, { useRef, useState, useEffect } from 'react';
 const WS_BUSINESS = "573117936211";
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx-kQqKTyfIx_JVqtNvpk47JAMMXWawn9O1-W9QULf0nrSK_GtJnVdeOt10eaBkzGmGDw/exec"; 
 
-export default function TipherethV72() {
+export default function TipherethV73() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [step, setStep] = useState('intro');
   const [prog, setProg] = useState(0);
-  const [photos, setPhotos] = useState<string[]>([]); // [0]: Frontal/Simulación, [1]: Vascular, [2]: UV, [3]: Estructural
+  const [photos, setPhotos] = useState<string[]>([]); // [0]: Simulación, [1]: Vascular, [2]: UV, [3]: Estructural
   const [user, setUser] = useState({ name: '', email: '', phone: '', city: 'Cali' });
   const [stage, setStage] = useState('');
   const [loading, setLoading] = useState(false);
   const [bioAge, setBioAge] = useState(0);
-  const [sliderVal, setSliderVal] = useState(50); // Para el Antes/Después
+  const [sliderVal, setSliderVal] = useState(50);
 
   useEffect(() => {
     if (step === 'scanning') {
@@ -41,7 +41,6 @@ export default function TipherethV72() {
     const ctx = c.getContext('2d');
     if (ctx) {
         ctx.drawImage(videoRef.current!, 0, 0, 1080, 1440);
-        // Filtro de nitidez base
         ctx.filter = 'contrast(1.1) saturate(1.1)';
         ctx.drawImage(c, 0, 0);
     }
@@ -53,7 +52,7 @@ export default function TipherethV72() {
     try {
       await fetch(GOOGLE_SHEET_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, diagnosis: `HYBRID V72: Glogau III / +318.5cc / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ ...user, diagnosis: `TIPHERET HARMONY STATION V73.1: Glogau III / +318.5cc / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
       });
     } catch (e) { console.error("Sync Error"); }
     setLoading(false);
@@ -61,25 +60,21 @@ export default function TipherethV72() {
   };
 
   const runProtocol = async (s: MediaStream) => {
-    // 1. TOMA FRONTAL (Para Simulación Prophet)
-    setStage("ESCANEO DE PROYECCIÓN (PROPHET)"); await speak("Mire al frente. Iniciando simulación de corrección ósea.");
+    setStage("ESCANEO DE PROYECCIÓN (HARMONY)"); await speak("Mire al frente. Iniciando simulación de armonización.");
     for(let i=0; i<=25; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); 
+    cap(); // 0: Frontal para Simulación
 
-    // 2. TOMA VASCULAR (Para Mapa Rojo)
-    setStage("ESPECTRO VASCULAR (HEMOGLOBINA)"); await speak("Gire levemente. Escaneando micro-circulación.");
+    setStage("ESPECTRO VASCULAR"); await speak("Gire levemente. Escaneando micro-circulación.");
     for(let i=26; i<=50; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); 
+    cap(); // 1: Vascular
 
-    // 3. TOMA UV (Para Mapa Marrón)
     setStage("ESPECTRO MELÁNICO (UV)"); await speak("Detectando daño solar profundo.");
     for(let i=51; i<=75; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); 
+    cap(); // 2: UV
 
-    // 4. TOMA ESTRUCTURAL (Para VECTRA killer)
-    setStage("TOPOGRAFÍA 3D"); await speak("Levante el mentón. Calculando vectores de caída.");
+    setStage("TOPOGRAFÍA ESTRUCTURAL"); await speak("Levante el mentón. Calculando vectores de caída.");
     for(let i=76; i<=100; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); 
+    cap(); // 3: Estructural
 
     s.getTracks().forEach(t => t.stop()); 
     await syncLead();
@@ -91,7 +86,7 @@ export default function TipherethV72() {
       {loading && (
         <div className="fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-50">
           <div className="w-24 h-24 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-6 shadow-[0_0_50px_#06b6d4]" />
-          <p className="text-sm font-black text-cyan-500 uppercase tracking-[0.3em] animate-pulse">Compilando Auditoría Maestra...</p>
+          <p className="text-sm font-black text-cyan-500 uppercase tracking-[0.3em] animate-pulse">Compilando Auditoría Tipheret...</p>
         </div>
       )}
 
@@ -99,8 +94,9 @@ export default function TipherethV72() {
         <div className="w-full max-w-md p-6 mt-6 animate-in fade-in zoom-in duration-700">
             <div className="border border-cyan-500/30 bg-zinc-900/50 backdrop-blur-xl p-8 rounded-[2rem] relative overflow-hidden text-center">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
-                <h1 className="text-white text-4xl font-black italic mb-2 uppercase tracking-tighter">TIPHERETH</h1>
-                <p className="text-[9px] text-cyan-400 uppercase tracking-[0.5em] mb-8 border-b border-white/5 pb-4">The Hybrid Engine v72.0</p>
+                {/* NOMBRE CORREGIDO: TIPHERET */}
+                <h1 className="text-white text-3xl font-black italic mb-2 uppercase tracking-tighter">TIPHERET</h1>
+                <p className="text-[9px] text-cyan-400 uppercase tracking-[0.5em] mb-8 border-b border-white/5 pb-4">Harmony Station v73.1</p>
                 
                 <div className="space-y-4 mb-8 text-left">
                   <input type="text" placeholder="NOMBRE COMPLETO" onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-black/50 border border-white/10 p-4 text-white text-xs font-bold uppercase rounded-xl focus:border-cyan-500 outline-none" />
@@ -112,7 +108,7 @@ export default function TipherethV72() {
                 </div>
                 <button onClick={() => setStep('scanning')} disabled={!user.name || !user.phone || !user.email} 
                     className="w-full bg-cyan-600 text-white py-5 rounded-xl font-black text-xs uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:scale-[1.02] transition-all disabled:opacity-50">
-                    INICIAR AUDITORÍA COMPLETA
+                    INICIAR AUDITORÍA HARMONY
                 </button>
             </div>
         </div>
@@ -132,28 +128,36 @@ export default function TipherethV72() {
         <div className="w-full max-w-2xl bg-zinc-950 min-h-screen p-6 pb-32 animate-in slide-in-from-bottom duration-1000">
           
           <header className="flex justify-between items-center border-b border-zinc-800 pb-6 mb-8">
-            <div><h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">TIPHERETH <span className="text-cyan-500 text-lg">V72</span></h2></div>
+            {/* NOMBRE CORREGIDO: TIPHERET */}
+            <div><h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">TIPHERET <span className="text-cyan-500 text-lg">HARMONY</span></h2></div>
             <div className="text-right">
                 <div className="bg-red-900/30 text-red-500 px-2 py-0.5 rounded text-[7px] font-black uppercase mb-1 animate-pulse">STATUS: CRITICAL</div>
                 <p className="text-[8px] text-zinc-600 uppercase">ID: {Math.floor(Math.random()*99999)}</p>
             </div>
           </header>
 
-          {/* I. LA SIMULACIÓN PROPHET (VISUAL) */}
+          {/* I. LA SIMULACIÓN HARMONY (VISUAL DE ALTO IMPACTO) */}
           <section className="mb-12">
             <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 bg-cyan-500 rounded-full animate-ping" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-widest">I. Proyección de Materialización</h3>
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest">I. Proyección Tiphereth Harmony</h3>
             </div>
             
             <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border-2 border-zinc-800 shadow-2xl group mb-4">
-                {/* ANTES */}
+                {/* ANTES (Realidad Cruda) */}
                 <img src={photos[0]} className="absolute inset-0 w-full h-full object-cover grayscale contrast-125 brightness-90" />
-                {/* DESPUÉS */}
-                <div className="absolute inset-0 w-full h-full object-cover grayscale-0 contrast-110 brightness-110 saturate-110 sepia-[0.2]" 
-                     style={{ clipPath: `inset(0 ${100 - sliderVal}% 0 0)`, filter: 'blur(0.5px) brightness(1.15) contrast(1.05)', transform: 'scale(0.98)' }}>
+                
+                {/* DESPUÉS (El Sueño Vendido - EFECTO PORCELANA AGRESIVO) */}
+                <div className="absolute inset-0 w-full h-full object-cover grayscale-0" 
+                     style={{ 
+                         clipPath: `inset(0 ${100 - sliderVal}% 0 0)`, 
+                         // EFECTO PIEL DE PORCELANA + LIFTING DIGITAL
+                         filter: 'blur(1.5px) brightness(1.25) contrast(1.15) saturate(1.2)', 
+                         transform: 'scale(0.99)' 
+                     }}>
                      <img src={photos[0]} className="w-full h-full object-cover" />
                 </div>
+                
                 {/* SLIDER */}
                 <div className="absolute inset-y-0 w-1 bg-cyan-500 cursor-ew-resize shadow-[0_0_20px_#06b6d4]" style={{ left: `${sliderVal}%` }}>
                     <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 bg-black border-2 border-cyan-500 rounded-full flex items-center justify-center">
@@ -165,9 +169,9 @@ export default function TipherethV72() {
             <p className="text-center text-[9px] text-zinc-500 italic">Desliza para visualizar la corrección estructural proyectada.</p>
           </section>
 
-          {/* II. AUDITORÍA MULTIESPECTRAL (TÉCNICA - VISIA KILLER) */}
+          {/* II. AUDITORÍA MULTIESPECTRAL */}
           <section className="mb-12">
-            <h3 className="text-xs font-bold text-white uppercase tracking-widest border-l-4 border-red-600 pl-3 mb-4">II. Auditoría Forense Epidérmica</h3>
+            <h3 className="text-xs font-bold text-white uppercase tracking-widest border-l-4 border-red-600 pl-3 mb-4">II. Auditoría Forense Tiphereth</h3>
             <div className="grid grid-cols-3 gap-2 h-32">
                 <div className="relative rounded-xl overflow-hidden border border-zinc-800">
                     <img src={photos[1]} className="w-full h-full object-cover grayscale contrast-150 brightness-75 sepia hue-rotate-[-50deg] saturate-200" />
@@ -184,7 +188,7 @@ export default function TipherethV72() {
             </div>
           </section>
 
-          {/* III. MÉTRICAS (TÉCNICA - VECTRA KILLER) */}
+          {/* III. MÉTRICAS */}
           <section className="grid grid-cols-2 gap-4 mb-12">
             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] text-center">
                 <p className="text-[8px] text-cyan-500 uppercase font-black tracking-widest mb-1">Déficit Volumétrico</p>
@@ -196,9 +200,9 @@ export default function TipherethV72() {
             </div>
           </section>
 
-          {/* IV. PLAN DE MATERIALIZACIÓN (VENTA) */}
+          {/* IV. PLAN DE MATERIALIZACIÓN */}
           <div className="bg-gradient-to-b from-zinc-900 to-black p-8 rounded-[2.5rem] border border-zinc-800 mb-6 text-center shadow-2xl">
-            <h3 className="text-cyan-400 font-black uppercase text-sm tracking-[0.3em] mb-6">Plan de Acción</h3>
+            <h3 className="text-cyan-400 font-black uppercase text-sm tracking-[0.3em] mb-6">Plan de Acción Tiphereth</h3>
             <ul className="text-left space-y-4 text-[10px] text-zinc-300 font-mono mb-8 px-2">
                 <li className="flex items-start gap-3 border-b border-white/5 pb-2">
                     <span className="text-cyan-500 font-bold">A.</span>
@@ -210,14 +214,14 @@ export default function TipherethV72() {
                 </li>
             </ul>
             <button onClick={() => {
-                const msg = encodeURIComponent(`Shalom Dr. Maya Romo, soy ${user.name.toUpperCase()}. He analizado mi reporte HYBRID V72. Mi Edad Biológica es ${bioAge} años y mi déficit es crítico. Deseo agendar mi cirugía en ${user.city}.`);
+                const msg = encodeURIComponent(`Shalom Dr. Maya Romo, soy ${user.name.toUpperCase()}. He analizado mi reporte TIPHERET HARMONY. Mi Edad Biológica es ${bioAge} años y quiero materializar la proyección. Deseo agendar en ${user.city}.`);
                 window.open(`https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${msg}`);
             }} className="w-full bg-cyan-600 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_40px_rgba(6,182,212,0.3)] hover:scale-105 hover:bg-white hover:text-black transition-all animate-pulse">
                 MATERIALIZAR INMORTALIDAD Φ
             </button>
           </div>
           
-          <p className="text-center text-[7px] text-zinc-600 uppercase tracking-widest font-black">Tiphereth Hybrid Engine • Dr. Maya Romo • 2026</p>
+          <p className="text-center text-[7px] text-zinc-600 uppercase tracking-widest font-black">Tipheret Harmony Station • Dr. Maya Romo • 2026</p>
         </div>
       )}
     </div>
