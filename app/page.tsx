@@ -8,7 +8,7 @@ const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx-kQqKTyfIx_J
 export default function TipherethV76() {
   // ESTADOS DEL SISTEMA
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [step, setStep] = useState('intro'); // Arranca siempre en la Intro
+  const [step, setStep] = useState('intro');
   const [prog, setProg] = useState(0);
   const [photos, setPhotos] = useState<string[]>([]); 
   const [user, setUser] = useState({ name: '', email: '', phone: '', city: 'Sede Principal' });
@@ -26,7 +26,7 @@ export default function TipherethV76() {
     }
   }, [step]);
 
-  // CALCULO DE EDAD AL INICIAR
+  // CALCULO DE EDAD
   useEffect(() => { setBioAge(Math.floor(Math.random() * (58 - 38 + 1)) + 38); }, []);
 
   // VOZ ROBÓTICA
@@ -39,7 +39,7 @@ export default function TipherethV76() {
     window.speechSynthesis.speak(u);
   });
 
-  // CAPTURA DE FOTO
+  // CAPTURA
   const cap = () => {
     const c = document.createElement('canvas');
     c.width = 1080; c.height = 1440;
@@ -52,20 +52,20 @@ export default function TipherethV76() {
     setPhotos(prev => [...prev, c.toDataURL('image/jpeg', 0.9)]);
   };
 
-  // ENVÍO DE DATOS (GOOGLE SHEETS)
+  // ENVÍO DE DATOS
   const syncLead = async () => {
     setLoading(true);
     try {
       await fetch(GOOGLE_SHEET_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, diagnosis: `TIPHERET V76: Glogau III / +318.5cc / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ ...user, diagnosis: `TIPHERET V76.1: Glogau III / +318.5cc / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
       });
     } catch (e) { console.error("Sync Error"); }
     setLoading(false);
     setStep('report');
   };
 
-  // PROTOCOLO DE ESCANEO
+  // PROTOCOLO
   const runProtocol = async (s: MediaStream) => {
     setStage("ESCANEO DE PROYECCIÓN"); await speak("Mire al frente. Iniciando simulación de armonización.");
     for(let i=0; i<=25; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
@@ -90,7 +90,6 @@ export default function TipherethV76() {
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-400 font-mono flex flex-col items-center overflow-x-hidden selection:bg-cyan-500 selection:text-black">
       
-      {/* 1. PANTALLA DE CARGA (HIDDEN DEFAULT) */}
       {loading && (
         <div className="fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-50">
           <div className="w-24 h-24 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-6 shadow-[0_0_50px_#06b6d4]" />
@@ -98,22 +97,19 @@ export default function TipherethV76() {
         </div>
       )}
 
-      {/* 2. PANTALLA DE INTRO (LA QUE SE HABÍA PERDIDO) */}
+      {/* INTRO INTERNACIONAL */}
       {step === 'intro' && (
         <div className="w-full max-w-md p-6 mt-10 animate-in fade-in zoom-in duration-700 flex flex-col items-center justify-center min-h-[80vh]">
             <div className="w-full border border-cyan-500/30 bg-zinc-900/50 backdrop-blur-xl p-8 rounded-[2rem] relative overflow-hidden text-center shadow-[0_0_50px_rgba(6,182,212,0.1)]">
-                {/* Decoración Superior */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
                 
-                {/* Título y Branding */}
                 <h1 className="text-white text-4xl font-black italic mb-2 uppercase tracking-tighter">TIPHERET</h1>
-                <p className="text-[10px] text-cyan-400 uppercase tracking-[0.5em] mb-8 border-b border-white/5 pb-4">Harmony Station v76.0</p>
+                <p className="text-[10px] text-cyan-400 uppercase tracking-[0.5em] mb-8 border-b border-white/5 pb-4">Harmony Station v76.1</p>
                 
-                {/* Formulario de Registro (Sin Ciudad) */}
                 <div className="space-y-4 mb-8 text-left">
                   <div className="group">
                     <label className="text-[9px] text-cyan-600 font-bold ml-1 mb-1 block">NOMBRE DEL PACIENTE</label>
-                    <input type="text" onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-black/60 border border-white/10 p-4 text-white text-sm font-bold uppercase rounded-xl focus:border-cyan-500 outline-none transition-all focus:shadow-[0_0_20px_rgba(6,182,212,0.2)]" />
+                    <input type="text" onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-black/60 border border-white/10 p-4 text-white text-sm font-bold uppercase rounded-xl focus:border-cyan-500 outline-none transition-all" />
                   </div>
                   
                   <div className="group">
@@ -121,13 +117,13 @@ export default function TipherethV76() {
                     <input type="email" onChange={e => setUser({...user, email: e.target.value})} className="w-full bg-black/60 border border-white/10 p-4 text-white text-sm outline-none rounded-xl focus:border-cyan-500 transition-all" />
                   </div>
                   
+                  {/* CAMPO DE TELÉFONO INTERNACIONALIZADO */}
                   <div className="group">
-                    <label className="text-[9px] text-cyan-600 font-bold ml-1 mb-1 block">WHATSAPP (+57)</label>
-                    <input type="tel" onChange={e => setUser({...user, phone: e.target.value})} className="w-full bg-black/60 border border-white/10 p-4 text-white text-sm outline-none rounded-xl focus:border-cyan-500 transition-all" />
+                    <label className="text-[9px] text-cyan-600 font-bold ml-1 mb-1 block">WHATSAPP (INCLUIR CÓDIGO PAÍS)</label>
+                    <input type="tel" placeholder="Ej: +34... / +1... / +57..." onChange={e => setUser({...user, phone: e.target.value})} className="w-full bg-black/60 border border-white/10 p-4 text-white text-sm outline-none rounded-xl focus:border-cyan-500 transition-all placeholder:text-zinc-700" />
                   </div>
                 </div>
                 
-                {/* Botón de Acción */}
                 <button onClick={() => setStep('scanning')} disabled={!user.name || !user.phone || !user.email} 
                     className="w-full bg-gradient-to-r from-cyan-700 to-cyan-500 text-white py-6 rounded-xl font-black text-xs uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer">
                     INICIAR BIO-SCAN 3D
@@ -138,13 +134,11 @@ export default function TipherethV76() {
         </div>
       )}
 
-      {/* 3. PANTALLA DE ESCANEO (CÁMARA) */}
       {step === 'scanning' && (
         <div className="relative w-full h-screen flex flex-col items-center justify-center bg-black">
           <div className="relative w-full max-w-lg aspect-[3/4] rounded-3xl overflow-hidden border-2 border-cyan-500/30 shadow-[0_0_100px_rgba(6,182,212,0.1)]">
             <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-110 contrast-125" />
             
-            {/* HUD (Interfaz de Cámara) */}
             <svg className="absolute inset-0 w-full h-full opacity-60" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M10,10 L30,10 M10,10 L10,30" stroke="#06b6d4" strokeWidth="0.5" fill="none" />
                 <path d="M90,10 L70,10 M90,10 L90,30" stroke="#06b6d4" strokeWidth="0.5" fill="none" />
@@ -159,7 +153,6 @@ export default function TipherethV76() {
         </div>
       )}
 
-      {/* 4. PANTALLA DE REPORTE (FINAL) */}
       {step === 'report' && (
         <div className="w-full max-w-2xl bg-zinc-950 min-h-screen p-6 pb-32 animate-in slide-in-from-bottom duration-1000">
           
