@@ -3,7 +3,8 @@ import React, { useRef, useState, useEffect } from 'react';
 
 // --- CONFIGURACIÓN MAESTRA ---
 const WS_BUSINESS = "573117936211";
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx-kQqKTyfIx_JVqtNvpk47JAMMXWawn9O1-W9QULf0nrSK_GtJnVdeOt10eaBkzGmGDw/exec"; 
+// ENLACE DE SU GOOGLE SHEET (YA CONECTADO):
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzRJhVFuBNbbThtJ5pSWSPvKK3M_xtuk04DvBx8Z6hg2fOs4BZ_DFCKKpx-XlHi4YV_dA/exec"; 
 
 export default function TipherethV78() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -18,18 +19,15 @@ export default function TipherethV78() {
 
   // --- MOTOR DE FILTROS MÉDICOS V78 ---
   const filters = {
-    // VECTRA (Mapas de Calor): Mismo de antes, funciona perfecto.
+    // VECTRA (Mapas de Calor)
     heatmap: "contrast(1.5) brightness(0.8) sepia(1) hue-rotate(-50deg) saturate(3)", 
-    // VISIA (X-Ray): Mismo de antes.
+    // VISIA (X-Ray)
     xray: "grayscale(1) invert(1) contrast(2) brightness(0.9)",
-    // ESTRUCTURAL (EL NUEVO): Simula proyección y volumen mediante luz intensa.
-    // Aumentamos contraste y brillo para que pómulos/nariz "salten" hacia adelante.
+    // ESTRUCTURAL (Simulación de Aumento/Definición)
     after: "blur(0.5px) brightness(1.25) contrast(1.15) saturate(1.1) sepia(0.1)", 
   };
 
   // --- GEOMETRÍA DE PROYECCIÓN V78 ---
-  // En lugar de achicar (scale < 1), agrandamos muy sutilmente (scale > 1)
-  // y aplicamos perspectiva para que el mentón se vea más prominente.
   const projectionGeometry = {
     transform: 'scale(1.015) perspective(500px) rotateX(1deg)',
     filter: filters.after
@@ -68,9 +66,10 @@ export default function TipherethV78() {
   const syncLead = async () => {
     setLoading(true);
     try {
+      // AQUÍ OCURRE LA MAGIA: ENVÍO A SU EXCEL
       await fetch(GOOGLE_SHEET_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, diagnosis: `TIPHERET V78 STRUCTURAL: Proyección Ósea Requerida / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ ...user, diagnosis: `TIPHERET V78: Proyección Ósea Requerida / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
       });
     } catch (e) { console.error("Sync Error"); }
     setLoading(false);
@@ -100,7 +99,7 @@ export default function TipherethV78() {
       {loading && (
         <div className="fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-50">
           <div className="w-24 h-24 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-6 shadow-[0_0_50px_#06b6d4]" />
-          <p className="text-sm font-black text-cyan-500 uppercase tracking-[0.3em] animate-pulse">Renderizando Arquitectura Facial...</p>
+          <p className="text-sm font-black text-cyan-500 uppercase tracking-[0.3em] animate-pulse">Guardando Perfil en Base de Datos...</p>
         </div>
       )}
 
@@ -138,7 +137,6 @@ export default function TipherethV78() {
 
       {step === 'report' && (
         <div className="w-full max-w-2xl bg-zinc-950 min-h-screen p-6 pb-32 animate-in slide-in-from-bottom duration-1000">
-          
           <header className="flex justify-between items-center border-b border-zinc-800 pb-6 mb-8">
             <div><h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">TIPHERET <span className="text-cyan-500 text-lg">STRUCTURAL</span></h2></div>
             <div className="text-right">
@@ -146,31 +144,24 @@ export default function TipherethV78() {
             </div>
           </header>
 
-          {/* 1. SIMULACIÓN ESTRUCTURAL (AUMENTO Y DEFINICIÓN) */}
           <section className="mb-12">
             <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 bg-cyan-500 rounded-full animate-ping" />
                 <h3 className="text-xs font-bold text-white uppercase tracking-widest">I. Proyección de Definición y Volumen</h3>
             </div>
             <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border-2 border-zinc-800 shadow-2xl group mb-4 bg-black">
-                {/* ANTES (Realidad Cruda con Grid) */}
+                {/* ANTES */}
                 <div className="absolute inset-0 w-full h-full">
                     <img src={photos[0]} className="w-full h-full object-cover grayscale contrast-125 brightness-90" />
                     <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 opacity-20 mix-blend-overlay pointer-events-none">
                         {[...Array(64)].map((_, i) => <div key={i} className="border-[0.5px] border-cyan-500/30"></div>)}
                     </div>
                 </div>
-
-                {/* DESPUÉS (El Sueño - PROYECCIÓN + ILUMINACIÓN) */}
+                {/* DESPUÉS */}
                 <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ clipPath: `inset(0 ${100 - sliderVal}% 0 0)` }}>
-                     {/* APLICAMOS LA GEOMETRÍA DE PROYECCIÓN V78 */}
-                     <img src={photos[0]} className="w-full h-full object-cover origin-center" 
-                          style={projectionGeometry} />
-                     
-                     {/* Destellos de luz en puntos de proyección (Pómulos/Mentón) */}
+                     <img src={photos[0]} className="w-full h-full object-cover origin-center" style={projectionGeometry} />
                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-cyan-500/10 mix-blend-color-dodge" />
                 </div>
-
                 {/* SLIDER */}
                 <div className="absolute inset-y-0 w-1 bg-cyan-500 cursor-ew-resize shadow-[0_0_25px_#06b6d4]" style={{ left: `${sliderVal}%` }}>
                     <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 bg-black border-2 border-cyan-500 rounded-full flex items-center justify-center shadow-xl z-10">
@@ -182,9 +173,7 @@ export default function TipherethV78() {
             <p className="text-center text-[9px] text-zinc-500 italic">Deslice para visualizar aumento de pómulos, definición mandibular y proyección.</p>
           </section>
 
-          {/* 2. MAPAS VECTRA/VISIA */}
           <section className="mb-12 grid grid-cols-2 gap-4">
-            {/* VECTRA HEATMAP */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3">
                 <p className="text-[8px] text-cyan-400 font-black uppercase mb-2 text-center">Mapa Térmico Volumétrico</p>
                 <div className="relative h-36 rounded-lg overflow-hidden border border-zinc-700">
@@ -193,8 +182,6 @@ export default function TipherethV78() {
                     <div className="absolute bottom-1 inset-x-0 text-center"><span className="text-[6px] text-white bg-black/50 px-2 rounded">AZUL: DÉFICIT / ROJO: PROYECCIÓN</span></div>
                 </div>
             </div>
-
-            {/* VISIA X-RAY */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3">
                 <p className="text-[8px] text-red-400 font-black uppercase mb-2 text-center">Escaneo Estructural Profundo</p>
                 <div className="relative h-36 rounded-lg overflow-hidden border border-zinc-700">
@@ -204,7 +191,6 @@ export default function TipherethV78() {
             </div>
           </section>
 
-          {/* CIERRE DE VENTA */}
           <div className="bg-zinc-900 p-6 rounded-[2.5rem] border border-zinc-800 mb-6 text-center shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-white to-blue-600" />
             <h3 className="text-white font-black uppercase text-sm tracking-[0.2em] mb-4 mt-2">Protocolo de Definición</h3>
