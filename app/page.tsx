@@ -4,20 +4,19 @@ import React, { useRef, useState, useEffect } from 'react';
 // --- CONFIGURACIÓN DE NEGOCIO ---
 const WS_BUSINESS = "573117936211";
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxHesi-oREB42asByNKgwk-BL65L17mThp5yrnx-4cXGrz7xbL5H0gAGbVQGOQaXQRKlA/exec"; 
-// SU LINK DE PAGO CORRECTO:
 const HOTMART_EBOOK_URL = "https://pay.hotmart.com/G104238384O?checkoutMode=10"; 
 
 export default function TipherethGlobal() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [step, setStep] = useState('intro');
+  const [step, setStep] = useState('menu'); // AHORA INICIAMOS EN EL MENÚ GLOBAL
   const [prog, setProg] = useState(0);
   const [photos, setPhotos] = useState<string[]>([]); 
-  const [user, setUser] = useState({ name: '', email: '', phone: '', country: 'USA' }); 
+  const [user, setUser] = useState({ name: '', email: '', phone: '', country: 'USA', interest: '' }); 
   const [stage, setStage] = useState('');
   const [subStage, setSubStage] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // VARIABLES CLÍNICAS
+  // VARIABLES CLÍNICAS (FACIAL)
   const [bioAge, setBioAge] = useState(0);
   const [fitzpatrick, setFitzpatrick] = useState("III");
   const [glogau, setGlogau] = useState("TYPE II");
@@ -26,7 +25,7 @@ export default function TipherethGlobal() {
   const [symmetry, setSymmetry] = useState(82); 
   const [sliderVal, setSliderVal] = useState(50);
 
-  // FILTROS VISUALES (TIPO VISIA/VECTRA)
+  // FILTROS VISUALES
   const filters = {
     heatmap: "contrast(2.0) brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(4)", 
     xray: "grayscale(1) invert(1) contrast(3) brightness(0.8)", 
@@ -48,10 +47,9 @@ export default function TipherethGlobal() {
   }, [step]);
 
   useEffect(() => { 
+    // SIMULACIÓN DE DATOS CLÍNICOS
     const calculatedAge = Math.floor(Math.random() * (58 - 38 + 1)) + 38;
     setBioAge(calculatedAge);
-    
-    // SIMULACIÓN DE DIAGNÓSTICO SEVERO (Para vender la Cirugía)
     if(calculatedAge > 45) {
         setGlogau("TYPE III (Advanced)");
         setResorcion("SEVERE (Surgical Case)");
@@ -92,35 +90,44 @@ export default function TipherethGlobal() {
     setLoading(true);
     await new Promise(r => setTimeout(r, 2000));
     try {
+      // AQUÍ ENVIAMOS EL INTERÉS ESPECÍFICO (NEURODATA) A SU GOOGLE SHEET
       await fetch(GOOGLE_SHEET_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, diagnosis: `TIPHERET GLOBAL: BioAge ${bioAge} | Resorption ${resorcion} | Country: ${user.country}`, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ 
+            ...user, 
+            diagnosis: `TIPHERET V81: Interest: ${user.interest} | BioAge ${bioAge} | Resorption ${resorcion} | Country: ${user.country}`, 
+            timestamp: new Date().toISOString() 
+        })
       });
     } catch (e) { console.error("Sync Error"); }
     setLoading(false);
-    setStep('report');
+    
+    // SI ES CARA -> REPORTE FACIAL. SI ES CUERPO -> VENTA DIRECTA (POR AHORA)
+    if(user.interest === 'FACE_RECONSTRUCTION') {
+        setStep('report');
+    } else {
+        // Para cuerpo y senos, los mandamos a agendar simulación profesional
+        window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${encodeURIComponent(`Dr. Maya, I selected ${user.interest} in the App. I want to see a simulation of my body/breasts.`)}`;
+    }
   };
 
   const runProtocol = async (s: MediaStream) => {
-    // FASE 1: VOLUMETRÍA (TIPO VECTRA/CRISALIX)
     setStage("VOLUMETRIC STRUCTURAL SCAN"); 
     setSubStage("Mapping 3D Depth & Asymmetry...");
     await speak("Initializing volumetric structural scan.");
     for(let i=0; i<=30; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
-    cap(); // FOTO 1
+    cap(); 
 
-    // FASE 2: DERMATOLOGÍA (TIPO VISIA)
     setStage("EPIDERMAL PIGMENTATION ANALYSIS");
     setSubStage("Scanning Texture & Pore Density...");
     await speak("Analyzing epidermal texture and pigmentation.");
     for(let i=31; i<=60; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
     
-    // FASE 3: OSTEOLOGÍA (EXCLUSIVO TIPHERET)
     setStage("MAXILLOFACIAL DENSITY CHECK");
     setSubStage("Detecting Bone Resorption Levels...");
     await speak("Measuring deep bone density and resorption.");
     for(let i=61; i<=100; i++) { setProg(i); await new Promise(r => setTimeout(r, 30)); }
-    cap(); // FOTO 2
+    cap(); 
     
     s.getTracks().forEach(t => t.stop()); 
     await syncLead();
@@ -132,17 +139,64 @@ export default function TipherethGlobal() {
       {loading && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
           <div className="w-24 h-24 border-t-2 border-b-2 border-cyan-500 rounded-full animate-spin mb-8 shadow-[0_0_40px_rgba(6,182,212,0.6)]" />
-          <p className="text-cyan-500 animate-pulse text-xs tracking-[0.3em] uppercase mb-2">Generating Medical Report</p>
-          <p className="text-zinc-600 text-[9px] uppercase">Integrating Multi-Layer Analysis...</p>
+          <p className="text-cyan-500 animate-pulse text-xs tracking-[0.3em] uppercase mb-2">Processing Neuro-Metrics</p>
+          <p className="text-zinc-600 text-[9px] uppercase">Integrating Surgical Protocol...</p>
         </div>
       )}
 
-      {step === 'intro' && (
+      {/* --- PANTALLA 1: MENÚ GLOBAL ANATÓMICO (NEUROSELECCIÓN) --- */}
+      {step === 'menu' && (
         <div className="w-full max-w-md p-8 mt-12 animate-in fade-in duration-1000 flex flex-col items-center">
-            <div className="mb-12 text-center">
+            <div className="mb-10 text-center">
                 <h1 className="text-white text-4xl font-black mb-2 tracking-tighter italic">TIPHERET</h1>
-                <div className="h-px w-24 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto mb-2 opacity-50"></div>
-                <p className="text-[10px] text-cyan-500 uppercase tracking-[0.6em]">Medical Engineering</p>
+                <p className="text-[9px] text-cyan-500 uppercase tracking-[0.4em]">Medical Digital Hospital</p>
+            </div>
+
+            <div className="w-full space-y-4">
+                <p className="text-center text-[10px] uppercase tracking-widest text-zinc-500 mb-4">Select Target Area for Simulation</p>
+                
+                {/* BOTÓN 1: CARA (Lleva al Scanner Facial) */}
+                <button onClick={() => { setUser({...user, interest: 'FACE_RECONSTRUCTION'}); setStep('intro'); }} 
+                    className="group w-full bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl transition-all duration-300 flex items-center justify-between">
+                    <div className="text-left">
+                        <span className="block text-white font-bold text-sm tracking-widest group-hover:text-cyan-400 transition-colors">FACE & NECK</span>
+                        <span className="text-[9px] text-zinc-500">Analysis: Bone, Skin & Symmetry</span>
+                    </div>
+                    <span className="text-2xl opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all">👤</span>
+                </button>
+
+                {/* BOTÓN 2: CUERPO (Captura interés de Lipo/Abdo) */}
+                <button onClick={() => { setUser({...user, interest: 'BODY_CONTOURING'}); setStep('intro'); }} 
+                    className="group w-full bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl transition-all duration-300 flex items-center justify-between">
+                    <div className="text-left">
+                        <span className="block text-white font-bold text-sm tracking-widest group-hover:text-cyan-400 transition-colors">BODY CONTOURING</span>
+                        <span className="text-[9px] text-zinc-500">Sim: Lipo-Definition & Tummy Tuck</span>
+                    </div>
+                    <span className="text-2xl opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all">👙</span>
+                </button>
+
+                {/* BOTÓN 3: MAMARIO (Captura interés de Implantes) */}
+                <button onClick={() => { setUser({...user, interest: 'BREAST_SURGERY'}); setStep('intro'); }} 
+                    className="group w-full bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl transition-all duration-300 flex items-center justify-between">
+                    <div className="text-left">
+                        <span className="block text-white font-bold text-sm tracking-widest group-hover:text-cyan-400 transition-colors">BREAST SURGERY</span>
+                        <span className="text-[9px] text-zinc-500">Sim: Augmentation & Lift</span>
+                    </div>
+                    <span className="text-2xl opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all">🍒</span>
+                </button>
+            </div>
+            <p className="mt-8 text-[8px] text-zinc-700 text-center max-w-xs">
+                By accessing Tipheret A.I., you agree to the medical data processing for diagnostic and surgical planning purposes.
+            </p>
+        </div>
+      )}
+
+      {/* --- PANTALLA 2: CAPTURA DE DATOS --- */}
+      {step === 'intro' && (
+        <div className="w-full max-w-md p-8 mt-12 animate-in fade-in duration-500 flex flex-col items-center">
+            <div className="mb-8 text-center">
+                <p className="text-[10px] text-cyan-500 uppercase tracking-widest">Protocol: {user.interest.replace('_', ' ')}</p>
+                <h2 className="text-white text-2xl font-black italic">PATIENT DATA</h2>
             </div>
             
             <div className="w-full space-y-5 backdrop-blur-md bg-white/5 p-6 rounded-3xl border border-white/5 shadow-2xl">
@@ -155,20 +209,20 @@ export default function TipherethGlobal() {
                     <option value="USA">🇺🇸 United States</option>
                     <option value="KOREA">🇰🇷 South Korea</option>
                     <option value="UAE">🇦🇪 UAE (Dubai)</option>
-                    <option value="UK">🇬🇧 United Kingdom</option>
                     <option value="EU">🇪🇺 Europe</option>
                     <option value="GLOBAL">🌎 Rest of World</option>
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-xs">▼</div>
               </div>
 
-              <button onClick={() => setStep('scanning')} disabled={!user.name || !user.phone || !user.email} className="w-full mt-4 bg-white text-black py-5 rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                  START DIAGNOSIS
+              <button onClick={() => user.interest === 'FACE_RECONSTRUCTION' ? setStep('scanning') : syncLead()} disabled={!user.name || !user.phone || !user.email} className="w-full mt-4 bg-white text-black py-5 rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                  INITIALIZE {user.interest === 'FACE_RECONSTRUCTION' ? 'SCANNER' : 'SIMULATION'}
               </button>
             </div>
         </div>
       )}
 
+      {/* --- PANTALLA 3: ESCÁNER FACIAL (SOLO SI ELIGIÓ CARA) --- */}
       {step === 'scanning' && (
         <div className="relative w-full h-screen flex flex-col items-center justify-center bg-black overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
@@ -177,7 +231,7 @@ export default function TipherethGlobal() {
             
             <div className="absolute top-0 left-0 p-4 space-y-1">
                 <p className="text-[8px] text-cyan-500 font-mono">REC: ACTIVE</p>
-                <p className="text-[8px] text-cyan-500 font-mono">ISO: AUTO</p>
+                <p className="text-[8px] text-cyan-500 font-mono">MODE: {user.interest}</p>
                 <p className="text-[8px] text-cyan-500 font-mono">GRID: PHI-1.618</p>
             </div>
 
@@ -201,6 +255,7 @@ export default function TipherethGlobal() {
         </div>
       )}
 
+      {/* --- PANTALLA 4: REPORTE FACIAL --- */}
       {step === 'report' && (
         <div className="w-full max-w-2xl bg-black min-h-screen p-6 animate-in slide-in-from-bottom duration-1000">
           <header className="flex justify-between items-end border-b border-white/10 pb-6 mb-8">
@@ -254,20 +309,6 @@ export default function TipherethGlobal() {
              </div>
           </section>
 
-          <section className="grid grid-cols-2 gap-3 mb-8">
-            <div className="bg-zinc-900/50 p-2 rounded-xl border border-white/5 relative overflow-hidden">
-               <div className="absolute inset-0 bg-red-900/10 z-0"></div>
-              <p className="text-[7px] text-red-400 font-bold uppercase text-center mb-2 relative z-10">INFLAMMATION MAP</p>
-              <img src={photos[0]} className="h-24 w-full object-cover rounded-lg opacity-80 relative z-10" style={{ filter: filters.heatmap }} />
-            </div>
-            <div className="bg-zinc-900/50 p-2 rounded-xl border border-white/5 relative overflow-hidden">
-               <div className="absolute inset-0 bg-cyan-900/10 z-0"></div>
-              <p className="text-[7px] text-cyan-400 font-bold uppercase text-center mb-2 relative z-10">BONE STRUCTURE (AI)</p>
-              <img src={photos[1]} className="h-24 w-full object-cover rounded-lg opacity-80 relative z-10" style={{ filter: filters.xray }} />
-            </div>
-          </section>
-
-          {/* ZONA DE CONVERSIÓN HÍBRIDA (LIBRO + CIRUGÍA) */}
           <div className="bg-gradient-to-br from-zinc-900 via-black to-zinc-900 p-8 rounded-[2rem] border border-cyan-500/30 mb-8 text-center shadow-[0_0_50px_rgba(6,182,212,0.1)] relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] font-bold px-4 py-1 rounded-full uppercase tracking-widest animate-pulse">
                 Structural Alert
