@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 // --- CONFIGURACIÓN DE NEGOCIO ---
 const WS_BUSINESS = "573117936211";
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzRJhVFuBNbbThtJ5pSWSPvKK3M_xtuk04DvBx8Z6hg2fOs4BZ_DFCKKpx-XlHi4YV_dA/exec"; 
-const HOTMART_EBOOK_URL = "const HOTMART_EBOOK_URL = "https://go.hotmart.com/G104238384O?dp=1";"; // <--- PEGUE SU LINK AQUÍ
+const HOTMART_EBOOK_URL = "https://go.hotmart.com/G104238384O?dp=1"; 
 
 export default function TipherethV78() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -16,6 +16,30 @@ export default function TipherethV78() {
   const [loading, setLoading] = useState(false);
   const [bioAge, setBioAge] = useState(0);
   const [sliderVal, setSliderVal] = useState(50);
+
+  // --- SISTEMA DE TRADUCCIÓN (Integrado en el Cliente) ---
+  useEffect(() => {
+    const translateApp = async () => {
+      try {
+        const response = await fetch('/i18n.json');
+        if (!response.ok) return;
+        const translations = await response.json();
+        const browserLang = navigator.language.split('-')[0];
+        const lang = ['es', 'en', 'pt'].includes(browserLang) ? browserLang : 'en';
+
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.getAttribute('data-i18n');
+          if (key) {
+            const text = key.split('.').reduce((obj, i) => obj?.[i], translations);
+            if (text && text[lang]) {
+              (el as HTMLElement).innerText = text[lang];
+            }
+          }
+        });
+      } catch (error) { console.error("Error i18n", error); }
+    };
+    translateApp();
+  }, [step]); 
 
   // --- FILTROS DE DIAGNÓSTICO ---
   const filters = {
@@ -161,7 +185,7 @@ export default function TipherethV78() {
               onClick={() => window.open(HOTMART_EBOOK_URL)}
               data-i18n="monetization.buy_ebook"
               className="w-full bg-gradient-to-r from-blue-700 to-cyan-600 text-white py-5 rounded-2xl font-black text-xs uppercase shadow-lg">
-                DOWNLOAD EBOOK ($DOWNLOAD EBOOK ($35.00))
+                DOWNLOAD EBOOK ($35.00)
             </button>
           </div>
 
