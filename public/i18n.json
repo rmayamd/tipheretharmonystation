@@ -1,0 +1,42 @@
+{
+  "app_name": "Tipheret Facial Scanner",
+  "screens": {
+    "welcome": {
+      "es": "Escáner de Arquitectura Facial",
+      "en": "Facial Architecture Scan",
+      "pt": "Varredura de Arquitetura Facial"
+    },
+    "instruction_profile": {
+      "es": "Coloca tu rostro de perfil frente a la cámara",
+      "en": "Position your face in profile in front of the camera",
+      "pt": "Posicione seu rosto de perfil na frente da câmera"
+    },
+    "analyzing": {
+      "es": "Analizando vectores de soporte óseo...",
+      "en": "Analyzing bone support vectors...",
+      "pt": "Analisando vetores de suporte ósseo..."
+    }
+  },
+  "diagnostics": {
+    "cervicomental_angle": {
+      "label": { "es": "Ángulo Cervicomental", "en": "Cervicomental Angle", "pt": "Ângulo Cervicomentoniano" },
+      "status_obtuse": { "es": "Obtuso (Alerta de Inflamación)", "en": "Obtuse (Inflammation Alert)", "pt": "Obtuso (Alerta de Inflamação)" }
+    },
+    "smas_status": {
+      "label": { "es": "Tensión del SMAS", "en": "SMAS Tension", "pt": "Tensão do SMAS" },
+      "low": { "es": "Baja (Ptosis detectada)", "en": "Low (Ptosis detected)", "pt": "Baixa (Ptose detectada)" }
+    }
+  },
+  "monetization": {
+    "unlock_report": {
+      "es": "Desbloquear Reporte Médico Completo ($4.99)",
+      "en": "Unlock Full Medical Report ($4.99)",
+      "pt": "Desbloquear Relatório Médico Completo ($4.99)"
+    },
+    "buy_ebook": {
+      "es": "Comprar El Código de Desinflamación ($20)",
+      "en": "Buy The Facial Swelling Code ($20)",
+      "pt": "Comprar O Código de Desinflamação ($20)"
+    }
+  }
+}
