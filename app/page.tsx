@@ -1,70 +1,116 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
-// --- CONFIGURACIÓN ---
+// --- CONFIGURACIÓN DEL HOSPITAL DIGITAL ---
 const WS_BUSINESS = "573117936211";
 const HOTMART_EBOOK_URL = "https://pay.hotmart.com/G104238384O?checkoutMode=10"; 
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxHesi-oREB42asByNKgwk-BL65L17mThp5yrnx-4cXGrz7xbL5H0gAGbVQGOQaXQRKlA/exec"; 
 
 export default function TipherethGlobal() {
+  // ESTADOS DE LA APLICACIÓN
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [step, setStep] = useState('menu'); 
+  const [step, setStep] = useState('login'); // PASO 1: EL MURO DE REGISTRO
   const [prog, setProg] = useState(0);
   const [photos, setPhotos] = useState<string[]>([]); 
-  const [user, setUser] = useState({ name: '', email: '', phone: '', country: 'USA', interest: '' }); 
+  const [user, setUser] = useState({ name: '', email: '', phone: '', country: 'USA', interest: 'GENERAL_ACCESS' }); 
   const [stage, setStage] = useState('');
   const [subStage, setSubStage] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // VARIABLES DE MEDICIÓN REAL (SIMULADA)
+  // VARIABLES MÉDICAS COMPLETAS (LA SUMA DE TODO)
   const [metrics, setMetrics] = useState({
-    upperThird: 33, // Ideal 33.3%
-    midThird: 33,
-    lowerThird: 33,
-    eyeDist: 20, // Quintos (Ideal 20%)
-    phi: 1.618,
-    symmetry: 100,
-    resorption: 'NONE'
+    // 1. Geometría (Vectra)
+    upperThird: 33, midThird: 33, lowerThird: 33,
+    phi: 1.618, symmetry: 100, eyeDist: 20,
+    // 2. Piel (Visia)
+    skinTexture: 90, uvDamage: 10, pores: 20, glogau: "TYPE II",
+    // 3. Hueso (Tipheret)
+    resorption: 'NONE', score: 95
   });
 
   const [sliderVal, setSliderVal] = useState(50);
 
-  // FILTROS TÉCNICOS
+  // FILTROS DE ALTA TECNOLOGÍA
   const filters = {
-    grid: "grayscale(1) contrast(1.2) brightness(0.8)", 
+    heatmap: "contrast(2.0) brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(4)", 
     xray: "grayscale(1) invert(1) contrast(2) brightness(0.7)", 
+    structure: "grayscale(1) contrast(1.2) brightness(0.9)",
+    grid: "brightness(0.8) contrast(1.2)"
   };
 
+  // --- EFECTO DE PERSISTENCIA (PARA QUE NO SE REGISTRE 2 VECES) ---
   useEffect(() => {
+    const savedUser = localStorage.getItem('tipheret_user');
+    if (savedUser) {
+        setUser(JSON.parse(savedUser));
+        setStep('menu'); // Si ya existe, pase directo al juego
+    }
+  }, []);
+
+  // --- FUNCIÓN DE REGISTRO INICIAL (EL GANCHO) ---
+  const registerUser = async () => {
+    setLoading(true);
+    // Guardamos en el navegador del usuario
+    localStorage.setItem('tipheret_user', JSON.stringify(user));
+    
+    // Enviamos el Lead a su Base de Datos (Google Sheet)
+    try {
+        await fetch(GOOGLE_SHEET_URL, {
+            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...user, diagnosis: "NEW REGISTERED USER - ACCESS GRANTED", timestamp: new Date().toISOString() })
+        });
+    } catch (e) { console.error("Sync Error"); }
+    
+    await new Promise(r => setTimeout(r, 1500)); // Pequeña espera para dar sensación de seguridad
+    setLoading(false);
+    setStep('menu'); // ABRIMOS EL PARQUE DE DIVERSIONES
+  };
+
+  // --- RASTREADOR DE INTERESES (NEUROCIENCIA) ---
+  const trackInterest = async (area: string) => {
+    // Esto se ejecuta en silencio cuando el usuario toca un botón
+    try {
+        await fetch(GOOGLE_SHEET_URL, {
+            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...user, interest: area, diagnosis: `USER BROWSING: ${area}`, timestamp: new Date().toISOString() })
+        });
+    } catch (e) {} // Silencioso
+  };
+
+  // --- MOTOR DE DIAGNÓSTICO INTELIGENTE ---
+  useEffect(() => { 
     if (step === 'scanning') {
       navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
         .then((s) => { if (videoRef.current) { videoRef.current.srcObject = s; runProtocol(s); } })
-        .catch(() => setStep('intro'));
+        .catch(() => setStep('menu'));
     }
-  }, [step]);
-
-  // SIMULADOR DE PROPORCIONES (ALGORITMO DE "DEFECTO")
-  useEffect(() => { 
-    // Generamos un caso con defecto en el tercio inferior (común para vender mentoplastia/protocolo)
-    const lowerDeficit = Math.floor(Math.random() * (30 - 25) + 25); // 25-30% (Corto)
-    const compensacion = (100 - lowerDeficit) / 2;
     
+    // Simulación de Algoritmo Médico (Randomizado para demo)
+    const lowerDeficit = Math.floor(Math.random() * (30 - 25) + 25); 
+    const compensacion = (100 - lowerDeficit) / 2;
+    const isSevere = lowerDeficit < 28;
+
     setMetrics({
         upperThird: Number(compensacion.toFixed(1)),
         midThird: Number(compensacion.toFixed(1)),
         lowerThird: lowerDeficit,
-        eyeDist: 22, // Ligeramente separado
-        phi: 1.58, // Lejos del 1.618
-        symmetry: Math.floor(Math.random() * (92 - 82) + 82), // Asimetría real
-        resorption: 'MODERATE RETRUSION'
+        phi: isSevere ? 1.58 : 1.61, 
+        symmetry: Math.floor(Math.random() * (94 - 80) + 80),
+        eyeDist: 22,
+        skinTexture: isSevere ? 65 : 88,
+        uvDamage: isSevere ? 70 : 30,
+        pores: isSevere ? 60 : 25,
+        glogau: isSevere ? "TYPE III (Advanced)" : "TYPE II (Moderate)",
+        resorption: isSevere ? 'SEVERE RETRUSION' : 'MODERATE',
+        score: isSevere ? 68 : 85
     });
-  }, []);
+  }, [step]);
 
   const speak = (t: string) => new Promise(res => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return res(true);
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(t);
-    u.lang = 'en-US'; u.rate = 1.0; u.pitch = 0.9;
+    u.lang = 'en-US'; u.rate = 1.0;
     u.onend = () => setTimeout(res, 300);
     window.speechSynthesis.speak(u);
   });
@@ -80,45 +126,29 @@ export default function TipherethGlobal() {
     }
   };
 
-  const syncLead = async () => {
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 2000));
-    try {
-      await fetch(GOOGLE_SHEET_URL, {
-        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            ...user, 
-            diagnosis: `TIPHERET V83: Lower3rd ${metrics.lowerThird}% | Phi ${metrics.phi} | Sym ${metrics.symmetry}%`, 
-            timestamp: new Date().toISOString() 
-        })
-      });
-    } catch (e) { console.error("Sync Error"); }
-    setLoading(false);
-    
-    if(user.interest === 'FACE_RECONSTRUCTION') setStep('report');
-    else window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${encodeURIComponent(`Dr. Maya, I selected ${user.interest} in the App. I want to see a simulation.`)}`;
-  };
-
   const runProtocol = async (s: MediaStream) => {
-    setStage("CALIBRATING GRID (RULE OF THIRDS)"); 
-    setSubStage("Measuring Vertical Proportions...");
-    await speak("Calibrating facial thirds.");
-    for(let i=0; i<=40; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
+    // 1. GEOMETRÍA (TERCIOS Y QUINTOS)
+    setStage("GEOMETRIC MAPPING"); 
+    setSubStage("Analyzing Facial Thirds & Fifths...");
+    await speak("Calibrating facial geometry.");
+    for(let i=0; i<=35; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
     cap(); 
 
-    setStage("HORIZONTAL FIFTHS ANALYSIS");
-    setSubStage("Calculating Intercanthal Distance...");
-    await speak("Analyzing horizontal fifths and symmetry.");
-    for(let i=41; i<=80; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
+    // 2. PIEL (VISIA)
+    setStage("DERMATOLOGICAL SCAN");
+    setSubStage("Measuring Texture & UV Damage...");
+    await speak("Analyzing skin quality.");
+    for(let i=36; i<=70; i++) { setProg(i); await new Promise(r => setTimeout(r, 40)); }
     
-    setStage("GOLDEN RATIO (PHI) CALCULATION");
-    setSubStage("Comparing Left vs Right Hemi-Face...");
-    await speak("Calculating Golden Ratio deviation.");
-    for(let i=81; i<=100; i++) { setProg(i); await new Promise(r => setTimeout(r, 30)); }
+    // 3. HUESO (TIPHERET)
+    setStage("OSTEOLOGICAL X-RAY");
+    setSubStage("Detecting Bone Resorption...");
+    await speak("Checking deep bone structure.");
+    for(let i=71; i<=100; i++) { setProg(i); await new Promise(r => setTimeout(r, 30)); }
     cap(); 
     
     s.getTracks().forEach(t => t.stop()); 
-    await syncLead();
+    setStep('report');
   };
 
   return (
@@ -127,176 +157,198 @@ export default function TipherethGlobal() {
       {loading && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
           <div className="w-24 h-24 border-t-2 border-b-2 border-cyan-500 rounded-full animate-spin mb-8 shadow-[0_0_40px_rgba(6,182,212,0.6)]" />
-          <p className="text-cyan-500 animate-pulse text-xs tracking-[0.3em] uppercase mb-2">Calculating Proportions</p>
-          <p className="text-zinc-600 text-[9px] uppercase">Integrating Thirds & Fifths Logic...</p>
+          <p className="text-cyan-500 animate-pulse text-xs tracking-[0.3em] uppercase mb-2">Creating Secure ID</p>
+          <p className="text-zinc-600 text-[9px] uppercase">Encrypting Medical Data...</p>
         </div>
       )}
 
-      {/* --- MENU GLOBAL --- */}
-      {step === 'menu' && (
-        <div className="w-full max-w-md p-8 mt-12 animate-in fade-in duration-1000 flex flex-col items-center">
-            <div className="mb-10 text-center">
-                <h1 className="text-white text-4xl font-black mb-2 tracking-tighter italic">TIPHERET</h1>
-                <p className="text-[9px] text-cyan-500 uppercase tracking-[0.4em]">Medical Digital Hospital</p>
-            </div>
-            <div className="w-full space-y-4">
-                <p className="text-center text-[10px] uppercase tracking-widest text-zinc-500 mb-4">Select Analysis Target</p>
-                <button onClick={() => { setUser({...user, interest: 'FACE_RECONSTRUCTION'}); setStep('intro'); }} className="w-full bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between transition-all hover:border-cyan-500/50">
-                    <div className="text-left"><span className="block text-white font-bold text-sm tracking-widest">FACE ANALYSIS</span><span className="text-[9px] text-zinc-500">Thirds, Fifths & Phi Ratio</span></div><span className="text-2xl">👤</span>
-                </button>
-                <button onClick={() => { setUser({...user, interest: 'BODY_CONTOURING'}); setStep('intro'); }} className="w-full bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between transition-all hover:border-cyan-500/50">
-                    <div className="text-left"><span className="block text-white font-bold text-sm tracking-widest">BODY SCULPT</span><span className="text-[9px] text-zinc-500">Lipo & Definition</span></div><span className="text-2xl">👙</span>
-                </button>
-                <button onClick={() => { setUser({...user, interest: 'BREAST_SURGERY'}); setStep('intro'); }} className="w-full bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between transition-all hover:border-cyan-500/50">
-                    <div className="text-left"><span className="block text-white font-bold text-sm tracking-widest">BREAST SURGERY</span><span className="text-[9px] text-zinc-500">Volumetric Simulation</span></div><span className="text-2xl">🍒</span>
-                </button>
-            </div>
-        </div>
-      )}
-
-      {/* --- INTRO --- */}
-      {step === 'intro' && (
+      {/* --- PASO 1: EL REGISTRO OBLIGATORIO (SOLO SALE SI NO ESTÁ REGISTRADO) --- */}
+      {step === 'login' && (
         <div className="w-full max-w-md p-8 mt-12 animate-in fade-in duration-500 flex flex-col items-center">
-            <h2 className="text-white text-xl font-black italic mb-6">PATIENT RECORD</h2>
+            <h1 className="text-white text-4xl font-black mb-2 tracking-tighter italic text-center">TIPHERET<br/><span className="text-[10px] text-cyan-500 font-normal tracking-[0.5em] not-italic">MEDICAL ACCESS</span></h1>
+            <p className="text-[9px] text-zinc-500 mb-8 uppercase tracking-widest text-center">Register once. Access all simulations.</p>
+            
             <div className="w-full space-y-5 backdrop-blur-md bg-white/5 p-6 rounded-3xl border border-white/5 shadow-2xl">
-              <input type="text" onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none" placeholder="FULL NAME" />
-              <input type="email" onChange={e => setUser({...user, email: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none" placeholder="EMAIL ADDRESS" />
-              <input type="tel" onChange={e => setUser({...user, phone: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none" placeholder="WHATSAPP (+XX)" />
-              <button onClick={() => user.interest === 'FACE_RECONSTRUCTION' ? setStep('scanning') : syncLead()} disabled={!user.name || !user.phone || !user.email} className="w-full mt-4 bg-white text-black py-5 rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 hover:text-white transition-all">START MEASUREMENT</button>
+              <div className="space-y-1">
+                <label className="text-[8px] uppercase tracking-widest ml-1">Full Name</label>
+                <input type="text" onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="DR. RICARDO MAYA" />
+              </div>
+              
+              <div className="space-y-1">
+                <label className="text-[8px] uppercase tracking-widest ml-1">Email Address</label>
+                <input type="email" onChange={e => setUser({...user, email: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="patient@email.com" />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[8px] uppercase tracking-widest ml-1">WhatsApp (Required)</label>
+                <input type="tel" onChange={e => setUser({...user, phone: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="+1 555 000 0000" />
+              </div>
+
+              <div className="space-y-1">
+                 <label className="text-[8px] uppercase tracking-widest ml-1">Region</label>
+                 <select onChange={e => setUser({...user, country: e.target.value})} className="w-full bg-black/80 border border-zinc-800 p-4 text-white text-sm rounded-xl outline-none">
+                    <option value="USA">🇺🇸 United States</option>
+                    <option value="LATAM">🌎 Latin America</option>
+                    <option value="EU">🇪🇺 Europe</option>
+                    <option value="ASIA">🇰🇷 Asia / Korea</option>
+                 </select>
+              </div>
+
+              <button onClick={registerUser} disabled={!user.name || !user.phone || !user.email} className="w-full mt-4 bg-white text-black py-5 rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 hover:text-white transition-all shadow-lg disabled:opacity-50">
+                  CREATE PATIENT ID
+              </button>
+            </div>
+            <p className="mt-6 text-[7px] text-zinc-700 text-center max-w-xs">By registering, you accept our medical privacy policy and neuro-data processing.</p>
+        </div>
+      )}
+
+      {/* --- PASO 2: EL "PLAYGROUND" (MENÚ DE JUEGOS) --- */}
+      {step === 'menu' && (
+        <div className="w-full max-w-md p-6 mt-8 animate-in slide-in-from-right duration-500">
+            <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                <div>
+                    <h2 className="text-white font-bold text-lg italic">WELCOME</h2>
+                    <p className="text-[9px] text-cyan-500 uppercase tracking-widest">{user.name}</p>
+                </div>
+                <div className="bg-green-500/10 border border-green-500/30 px-3 py-1 rounded-full">
+                    <span className="text-[8px] text-green-400 font-bold uppercase flex items-center gap-1"><span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> ID ACTIVE</span>
+                </div>
+            </div>
+
+            <p className="text-[10px] text-zinc-500 uppercase tracking-widest text-center mb-6">Select Simulation Module</p>
+            
+            <div className="space-y-4">
+                {/* BOTÓN 1: CARA (ESCÁNER COMPLETO) */}
+                <button onClick={() => { trackInterest('FACE_SCAN'); setStep('scanning'); }} className="group w-full relative overflow-hidden bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between transition-all hover:border-cyan-500 shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="text-left relative z-10">
+                        <span className="block text-white font-black text-lg italic tracking-tighter">FACE ANALYSIS</span>
+                        <span className="text-[9px] text-zinc-400 block mt-1">Full Scan: Skin + Bone + Geometry</span>
+                    </div>
+                    <span className="text-3xl relative z-10 group-hover:scale-110 transition-transform">👤</span>
+                </button>
+
+                {/* BOTÓN 2: CUERPO (Neuro-Trampa) */}
+                <button onClick={() => { trackInterest('BODY_CONTOURING'); window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${encodeURIComponent(`Dr. Maya (ID: ${user.name}), I am interested in BODY CONTOURING simulation.`)}`; }} 
+                    className="group w-full relative overflow-hidden bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between transition-all hover:border-purple-500 shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="text-left relative z-10">
+                        <span className="block text-white font-black text-lg italic tracking-tighter">BODY SCULPT</span>
+                        <span className="text-[9px] text-zinc-400 block mt-1">Lipo-Definition & Tummy Tuck</span>
+                    </div>
+                    <span className="text-3xl relative z-10 group-hover:scale-110 transition-transform">👙</span>
+                </button>
+
+                {/* BOTÓN 3: SENOS (Neuro-Trampa) */}
+                <button onClick={() => { trackInterest('BREAST_SURGERY'); window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${encodeURIComponent(`Dr. Maya (ID: ${user.name}), I am interested in BREAST SURGERY simulation.`)}`; }} 
+                    className="group w-full relative overflow-hidden bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between transition-all hover:border-pink-500 shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="text-left relative z-10">
+                        <span className="block text-white font-black text-lg italic tracking-tighter">BREAST SURGERY</span>
+                        <span className="text-[9px] text-zinc-400 block mt-1">Augmentation & Lift Simulation</span>
+                    </div>
+                    <span className="text-3xl relative z-10 group-hover:scale-110 transition-transform">🍒</span>
+                </button>
+            </div>
+            
+            <div className="mt-12 p-4 bg-zinc-900/50 rounded-xl border border-zinc-800 text-center">
+                <p className="text-[8px] text-zinc-500 uppercase mb-2">My Current Protocols</p>
+                <p className="text-[10px] text-white font-bold">NO ACTIVE PROTOCOLS</p>
+                <button onClick={() => window.open(HOTMART_EBOOK_URL)} className="mt-2 text-[9px] text-cyan-500 underline decoration-cyan-500/30 hover:text-cyan-400">Buy Facial Protocol ($35)</button>
             </div>
         </div>
       )}
 
-      {/* --- SCANNER (CON GRID DE TERCIOS) --- */}
+      {/* --- PASO 3: EL ESCÁNER (GEOMETRÍA + PIEL + HUESO) --- */}
       {step === 'scanning' && (
         <div className="relative w-full h-screen flex flex-col items-center justify-center bg-black overflow-hidden">
           <div className="relative w-full max-w-lg aspect-[3/4] border border-cyan-900/50 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,200,255,0.1)] z-10">
             <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover grayscale brightness-110" />
-            
-            {/* OVERLAY DE TERCIOS Y QUINTOS */}
             <div className="absolute inset-0 pointer-events-none opacity-30">
+                {/* TERCIOS */}
                 <div className="h-1/3 w-full border-b border-cyan-500"></div>
                 <div className="h-1/3 w-full border-b border-cyan-500"></div>
-                <div className="absolute inset-0 flex">
-                    <div className="w-1/5 h-full border-r border-cyan-500"></div>
-                    <div className="w-1/5 h-full border-r border-cyan-500"></div>
-                    <div className="w-1/5 h-full border-r border-cyan-500"></div>
-                    <div className="w-1/5 h-full border-r border-cyan-500"></div>
-                </div>
+                {/* QUINTOS */}
+                <div className="absolute inset-0 flex"><div className="w-1/5 h-full border-r border-cyan-500/50"></div><div className="w-1/5 h-full border-r border-cyan-500/50"></div><div className="w-1/5 h-full border-r border-cyan-500/50"></div><div className="w-1/5 h-full border-r border-cyan-500/50"></div></div>
             </div>
-
             <div className="absolute top-10 inset-x-0 text-center space-y-2">
                  <div className="inline-block bg-black/60 text-cyan-400 text-[10px] px-4 py-1 rounded-full border border-cyan-500/30 uppercase tracking-widest animate-pulse">{stage}</div>
                  <p className="text-[8px] text-zinc-300 bg-black/40 px-2 rounded inline-block">{subStage}</p>
             </div>
-            
             <div className="absolute bottom-12 inset-x-8">
                 <div className="h-1 w-full bg-gray-900 rounded-full overflow-hidden"><div className="h-full bg-cyan-500 transition-all duration-200" style={{ width: `${prog}%` }}></div></div>
             </div>
-          </div>
+        </div>
         </div>
       )}
 
-      {/* --- REPORTE TÉCNICO (TERCIOS / QUINTOS / OPCIONES) --- */}
+      {/* --- PASO 4: REPORTE INTEGRAL (LA SUMA DE V83 + V84) --- */}
       {step === 'report' && (
         <div className="w-full max-w-2xl bg-black min-h-screen p-6 animate-in slide-in-from-bottom duration-1000">
           
-          <header className="border-b border-white/10 pb-6 mb-8 text-center">
-            <h2 className="text-2xl font-black text-white italic mb-1">FACIAL <span className="text-cyan-500">METRICS</span></h2>
-            <p className="text-[8px] text-zinc-500 uppercase tracking-widest">Engineering Report</p>
+          <header className="flex justify-between items-center border-b border-white/10 pb-6 mb-8">
+             <button onClick={() => setStep('menu')} className="text-xs text-zinc-500 hover:text-white">← BACK TO MENU</button>
+             <div className="text-right">
+                <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Medical Score</p>
+                <p className={`text-3xl font-black italic ${metrics.score < 75 ? 'text-red-500' : 'text-green-500'}`}>{metrics.score}<span className="text-sm text-zinc-600 not-italic font-normal">/100</span></p>
+             </div>
           </header>
 
-          {/* 1. ANÁLISIS DE TERCIOS (VERTICAL) */}
-          <section className="mb-8 bg-zinc-900/30 p-4 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] text-white font-bold uppercase mb-4 flex items-center gap-2"><span className="text-cyan-500">I.</span> Vertical Thirds Analysis</h3>
-            <div className="flex justify-between items-end h-32 px-4 gap-2 mb-2">
-                {/* Tercio Superior */}
-                <div className="w-1/3 flex flex-col justify-end items-center gap-1">
-                    <span className="text-[8px] text-zinc-500">UPPER</span>
-                    <div className="w-full bg-zinc-800 rounded-t" style={{height: `${metrics.upperThird}%`}}></div>
-                    <span className="text-xs font-mono text-white">{metrics.upperThird}%</span>
-                </div>
-                {/* Tercio Medio */}
-                <div className="w-1/3 flex flex-col justify-end items-center gap-1">
-                    <span className="text-[8px] text-zinc-500">MIDDLE</span>
-                    <div className="w-full bg-zinc-700 rounded-t" style={{height: `${metrics.midThird}%`}}></div>
-                    <span className="text-xs font-mono text-white">{metrics.midThird}%</span>
-                </div>
-                {/* Tercio Inferior (EL PROBLEMA) */}
-                <div className="w-1/3 flex flex-col justify-end items-center gap-1">
-                    <span className="text-[8px] text-red-500 font-bold animate-pulse">LOWER</span>
-                    <div className="w-full bg-red-900/80 rounded-t border-t border-red-500" style={{height: `${metrics.lowerThird}%`}}></div>
-                    <span className="text-xs font-mono text-red-500">{metrics.lowerThird}%</span>
-                </div>
+          {/* 1. GEOMETRÍA (TERCIOS) */}
+          <section className="mb-6 bg-zinc-900/30 p-4 rounded-2xl border border-white/5">
+            <h3 className="text-[10px] text-cyan-500 font-bold uppercase mb-4 tracking-widest">I. Geometric Analysis (Vectra)</h3>
+            <div className="flex justify-between items-end h-24 px-4 gap-2 mb-2">
+                <div className="w-1/3 flex flex-col justify-end items-center gap-1"><span className="text-[7px]">UPPER</span><div className="w-full bg-zinc-700 rounded-t" style={{height: `${metrics.upperThird}%`}}></div><span className="text-[9px]">{metrics.upperThird}%</span></div>
+                <div className="w-1/3 flex flex-col justify-end items-center gap-1"><span className="text-[7px]">MID</span><div className="w-full bg-zinc-700 rounded-t" style={{height: `${metrics.midThird}%`}}></div><span className="text-[9px]">{metrics.midThird}%</span></div>
+                <div className="w-1/3 flex flex-col justify-end items-center gap-1"><span className="text-[7px] text-red-500 font-bold">LOWER</span><div className="w-full bg-red-900/80 rounded-t border-t border-red-500" style={{height: `${metrics.lowerThird}%`}}></div><span className="text-[9px] text-red-500">{metrics.lowerThird}%</span></div>
             </div>
-            <p className="text-[9px] text-center text-zinc-500 uppercase">Target Ideal: 33.3% Equal Distribution</p>
-          </section>
-
-          {/* 2. SIMETRÍA Y PHI */}
-          <section className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-zinc-900/30 p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-[8px] text-zinc-500 uppercase mb-1">Golden Ratio (Phi)</p>
-                <p className="text-2xl font-mono text-white">{metrics.phi}</p>
-                <p className="text-[8px] text-red-400 mt-1">Deviation Detected</p>
-            </div>
-            <div className="bg-zinc-900/30 p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-[8px] text-zinc-500 uppercase mb-1">Bilateral Symmetry</p>
-                <p className="text-2xl font-mono text-white">{metrics.symmetry}%</p>
-                <p className="text-[8px] text-yellow-500 mt-1">Left Side Dominant</p>
+            <div className="flex justify-between px-2 pt-2 border-t border-white/5">
+                <div className="text-center"><p className="text-[7px] text-zinc-500">PHI RATIO</p><p className="text-xs text-white font-mono">{metrics.phi}</p></div>
+                <div className="text-center"><p className="text-[7px] text-zinc-500">SYMMETRY</p><p className="text-xs text-white font-mono">{metrics.symmetry}%</p></div>
             </div>
           </section>
 
-          {/* 3. VISUALIZACIÓN DE SIMETRÍA (SLIDER) */}
-          <section className="mb-8 relative w-full aspect-[4/5] rounded-xl overflow-hidden border border-zinc-800 bg-black">
-             <div className="absolute top-2 left-2 z-20 bg-black/60 px-2 py-1 rounded text-[8px] text-white">LEFT vs RIGHT COMPARISON</div>
-             <div className="absolute inset-0 w-full h-full"><img src={photos[0]} className="w-full h-full object-cover grayscale opacity-50" /></div>
-             <div className="absolute inset-0 w-full h-full overflow-hidden border-r border-cyan-500" style={{ clipPath: `inset(0 ${100 - sliderVal}% 0 0)` }}>
-                <img src={photos[0]} className="w-full h-full object-cover scale-x-[-1]" />
+          {/* 2. PIEL (VISIA) */}
+          <section className="mb-6">
+            <h3 className="text-[10px] text-purple-400 font-bold uppercase mb-4 tracking-widest">II. Skin Quality (Visia)</h3>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="bg-zinc-900 p-2 rounded border border-purple-900/30 relative overflow-hidden">
+                     <img src={photos[1]} className="w-full h-24 object-cover rounded opacity-80" style={{ filter: filters.heatmap }} />
+                     <p className="absolute bottom-1 left-0 right-0 text-[7px] text-center text-purple-200 bg-black/50">UV THERMAL MAP</p>
+                </div>
+                <div className="space-y-3">
+                     <div><div className="flex justify-between text-[8px] text-zinc-400"><span>TEXTURE</span><span>{metrics.skinTexture}%</span></div><div className="h-1 bg-zinc-800 rounded"><div className="h-full bg-green-500" style={{width: `${metrics.skinTexture}%`}}></div></div></div>
+                     <div><div className="flex justify-between text-[8px] text-zinc-400"><span>PORES</span><span>{metrics.pores}%</span></div><div className="h-1 bg-zinc-800 rounded"><div className="h-full bg-yellow-500" style={{width: `${metrics.pores}%`}}></div></div></div>
+                     <div><div className="flex justify-between text-[8px] text-zinc-400"><span>UV SPOTS</span><span>{metrics.uvDamage}%</span></div><div className="h-1 bg-zinc-800 rounded"><div className="h-full bg-red-500" style={{width: `${metrics.uvDamage}%`}}></div></div></div>
+                </div>
+            </div>
+          </section>
+
+          {/* 3. HUESO (TIPHERET) */}
+          <section className="mb-8 border-t border-white/10 pt-4">
+             <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[10px] text-red-500 font-bold uppercase tracking-widest">III. Bone Structure</h3>
+                <span className="bg-red-900/30 text-red-500 px-2 py-0.5 rounded text-[8px] border border-red-900 animate-pulse">{metrics.resorption}</span>
              </div>
-             <input type="range" min="0" max="100" value={sliderVal} onChange={(e) => setSliderVal(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+             <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-red-900/30">
+                <img src={photos[0]} className="w-full h-full object-cover" style={{ filter: filters.structure }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-red-900/50 to-transparent"></div>
+                <p className="absolute bottom-2 left-2 text-[8px] text-white max-w-[200px]">Analysis: Mandibular recession detected. Structural support is compromised.</p>
+             </div>
           </section>
 
-          {/* 4. PLAN DE TRATAMIENTO (QUIRÚRGICO VS NO QUIRÚRGICO) */}
-          <div className="bg-zinc-900 rounded-2xl p-6 border border-zinc-800">
-            <h3 className="text-center text-white font-bold uppercase text-sm mb-6 tracking-widest">Treatment Options</h3>
+          {/* 4. CIERRE DE VENTA */}
+          <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800 text-center">
+            <h3 className="text-white font-bold uppercase text-xs mb-4">Recommended Treatment</h3>
             
-            <div className="grid grid-cols-2 gap-4 mb-6">
-                {/* COLUMNA 1: NO QUIRÚRGICO */}
-                <div className="border border-zinc-700 rounded-xl p-3 bg-black/40">
-                    <p className="text-[9px] text-green-400 font-bold uppercase mb-2 text-center">Option A: Non-Surgical</p>
-                    <ul className="text-[8px] text-zinc-400 space-y-2 list-disc pl-3">
-                        <li>Decompress Inflammation</li>
-                        <li>Correct Tongue Posture</li>
-                        <li>Stimulate Bone Density</li>
-                    </ul>
-                    <div className="mt-4 pt-2 border-t border-zinc-800 text-center">
-                        <span className="text-[10px] text-white font-bold block">$35 USD</span>
-                        <span className="text-[7px] text-zinc-500">Home Protocol</span>
-                    </div>
-                </div>
-
-                {/* COLUMNA 2: QUIRÚRGICO */}
-                <div className="border border-red-900/30 rounded-xl p-3 bg-red-900/10">
-                    <p className="text-[9px] text-red-400 font-bold uppercase mb-2 text-center">Option B: Surgical</p>
-                    <ul className="text-[8px] text-zinc-400 space-y-2 list-disc pl-3">
-                        <li>Genioplasty (Chin)</li>
-                        <li>Mandibular Angle Imp.</li>
-                        <li>Structural Lipo</li>
-                    </ul>
-                    <div className="mt-4 pt-2 border-t border-red-900/30 text-center">
-                        <span className="text-[10px] text-white font-bold block">$5,000+ USD</span>
-                        <span className="text-[7px] text-zinc-500">Requires Consultation</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* BOTONES DE ACCIÓN */}
-            <button onClick={() => window.open(HOTMART_EBOOK_URL)} className="w-full bg-white text-black py-4 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-cyan-400 mb-3">
-                START OPTION A (PROTOCOL)
+            <button onClick={() => window.open(HOTMART_EBOOK_URL)} className="w-full bg-white text-black py-4 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-cyan-400 mb-3 shadow-lg transform hover:scale-[1.02] transition-all">
+                DOWNLOAD HOME PROTOCOL ($35)
+                <span className="block text-[8px] font-normal mt-1 text-zinc-600">NON-SURGICAL OPTION</span>
             </button>
-            <button onClick={() => window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${encodeURIComponent("Dr. Maya, I saw my Thirds Analysis. I want to discuss OPTION B (Surgery).")}`} 
+
+            <button onClick={() => window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=${encodeURIComponent(`Dr. Maya (ID: ${user.name}), I saw my Score (${metrics.score}). I want to discuss SURGERY options.`)}`} 
                 className="w-full border border-zinc-700 text-zinc-400 py-3 rounded-xl font-bold text-[9px] uppercase tracking-widest hover:text-white hover:border-white">
-                CONSULT OPTION B (SURGERY)
+                REQUEST SURGICAL CONSULTATION ➜
             </button>
           </div>
 
