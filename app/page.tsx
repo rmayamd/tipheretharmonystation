@@ -23,7 +23,14 @@ export default function TipherethOS() {
   // --- ESTADOS DE CONSULTA (VISIA + SNIPER + COTIZADOR) ---
   const [consultPhase, setConsultPhase] = useState('CAPTURE'); 
   const [captureStep, setCaptureStep] = useState('FRONT'); // FRONT -> SIDE_R -> SIDE_L
-  const [photos, setPhotos] = useState({ front: null, right: null, left: null });
+  
+  // CORRECCIÓN AQUÍ: Definimos explícitamente que puede ser string o null
+  const [photos, setPhotos] = useState<{ front: string | null; right: string | null; left: string | null }>({ 
+    front: null, 
+    right: null, 
+    left: null 
+  });
+  
   const [reportTab, setReportTab] = useState('QUOTE'); // QUOTE | SURGERY | SKIN
   
   // DATA IA
@@ -79,8 +86,14 @@ export default function TipherethOS() {
             const imgData = cvs.toDataURL('image/jpeg', 0.9);
 
             if (appMode === 'CONSULT') {
-                if (captureStep === 'FRONT') { setPhotos(prev => ({ ...prev, front: imgData })); setCaptureStep('SIDE_R'); }
-                else if (captureStep === 'SIDE_R') { setPhotos(prev => ({ ...prev, right: imgData })); setCaptureStep('SIDE_L'); }
+                if (captureStep === 'FRONT') { 
+                    setPhotos(prev => ({ ...prev, front: imgData })); 
+                    setCaptureStep('SIDE_R'); 
+                }
+                else if (captureStep === 'SIDE_R') { 
+                    setPhotos(prev => ({ ...prev, right: imgData })); 
+                    setCaptureStep('SIDE_L'); 
+                }
                 else if (captureStep === 'SIDE_L') { 
                     setPhotos(prev => ({ ...prev, left: imgData })); 
                     setConsultPhase('PROCESSING'); 
@@ -213,10 +226,10 @@ export default function TipherethOS() {
                         <div className="flex-1 bg-black relative flex flex-col justify-center overflow-hidden">
                              {/* VISOR INTELIGENTE: MUESTRA LA FOTO SEGÚN EL TAB */}
                              {reportTab === 'SKIN' ? (
-                                <img src={photos.front!} className="absolute w-full h-full object-contain filter contrast-125" />
+                                photos.front && <img src={photos.front} className="absolute w-full h-full object-contain filter contrast-125" />
                              ) : (
                                 <div className="relative w-full h-full">
-                                    <img src={photos.right!} className="absolute w-full h-full object-contain" />
+                                    {photos.right && <img src={photos.right} className="absolute w-full h-full object-contain" />}
                                     {/* TARGETS (MIRA DE FRANCOTIRADOR) */}
                                     <div className="target-dot border-green-500" style={{top:'45%', left:'40%'}}></div> {/* Nariz */}
                                     <div className="target-dot border-red-500" style={{top:'65%', left:'35%'}}></div> {/* Mentón */}
