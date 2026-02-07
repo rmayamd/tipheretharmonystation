@@ -1,267 +1,311 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
-// --- CONFIGURACIÓN DE NEURO-VENTAS ---
-// Usamos enlaces directos para reducir fricción.
-const HOTMART_PROTOCOL_URL = "https://pay.hotmart.com/G104238384O?checkoutMode=10"; 
-const WS_BUSINESS = "573117936211";
+// --- CONFIGURACIÓN DEL SISTEMA TIPHERET ---
+const HOTMART_EBOOK_URL = "https://pay.hotmart.com/G104238384O?checkoutMode=10"; 
+const HUMAN_SUPPORT_LINK = "https://api.whatsapp.com/send?phone=573117936211&text=Hola,%20necesito%20ayuda%20humana.";
 
-export default function TipherethClinical() {
+export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // ESTADOS CLÍNICOS
+  // ESTADOS PRINCIPALES
   const [step, setStep] = useState('login'); 
   const [user, setUser] = useState({ name: '', age: '' });
+  const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
   
-  // MODO DE ANÁLISIS (PRIORIDAD 1 y 2)
-  // 'VASCULAR' (Rojo/Inflamación), 'PIGMENT' (UV/Manchas), 'STRUCTURE' (Vectores/Sombras)
-  const [clinicalMode, setClinicalMode] = useState('NORMAL'); 
-  
-  // SIMULADOR DE DESPLAZAMIENTO (PRIORIDAD 2 - TIKTOK LOGIC)
-  const [vectorTension, setVectorTension] = useState(0); // 0 a 100% de tracción
+  // SIMULACIÓN DE VECTORES
+  const [liftLevel, setLiftLevel] = useState(0); // Intensidad del vector (0-100)
+  const [showGuide, setShowGuide] = useState(true); // Mostrar flechas guías
 
-  // DIAGNÓSTICO GENERADO (NEUROCIENCIA)
-  const [diagnosis, setDiagnosis] = useState<string[]>([]);
+  // DIAGNÓSTICO AUTOMÁTICO (Simulado)
+  const [diagnosis, setDiagnosis] = useState({
+    skin: "Inflamación Crónica Detectada (Rosácea/UV)",
+    smas: "Ptosis de Ligamentos Cigomáticos (Caída)",
+    bone: "Retrusión Mandibular Leve (Soporte Débil)"
+  });
 
-  // --- 1. ACCESO RÁPIDO (CERO FRICCIÓN) ---
-  const handleLogin = () => {
+  // --- 1. LOGIN ---
+  const login = () => {
     if (!user.name) return;
-    setStep('camera');
+    setLoading(true);
+    // Simulamos carga de base de datos
+    setTimeout(() => { setLoading(false); setStep('camera'); }, 1000);
   };
 
-  // --- 2. CÁMARA DE ALTA DEFINICIÓN ---
-  useEffect(() => {
-    if (step === 'camera') startCamera();
+  // --- 2. CÁMARA ---
+  useEffect(() => { 
+    if (step === 'camera') startCamera(); 
+    // Limpieza al desmontar
+    return () => { 
+        if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(t => t.stop());
+        }
+    };
   }, [step]);
 
   const startCamera = async () => {
     try {
-      // Pedimos máxima resolución posible para análisis de poros
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } } 
+          video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } } 
       });
       if (videoRef.current) videoRef.current.srcObject = stream;
-    } catch (e) { alert("Cámara requerida para diagnóstico clínico."); }
+    } catch (e) { console.error("Error cámara", e); }
   };
 
-  // --- 3. PROCESAMIENTO DE IMAGEN (EL CEREBRO DE LA APP) ---
-  const captureAndAnalyze = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    
-    const vid = videoRef.current;
-    const cvs = canvasRef.current;
-    cvs.width = vid.videoWidth;
-    cvs.height = vid.videoHeight;
-    
-    const ctx = cvs.getContext('2d');
-    if (!ctx) return;
-
-    // Captura Espejo
-    ctx.translate(cvs.width, 0); ctx.scale(-1, 1);
-    ctx.drawImage(vid, 0, 0, cvs.width, cvs.height);
-    
-    setPhoto(cvs.toDataURL('image/jpeg', 1.0)); // Calidad máxima
-    setAnalyzing(true);
-
-    // SIMULACIÓN DE PROCESAMIENTO DE CAPAS (AQUÍ IRÍA LA IA REAL DE SU DRIVE)
-    setTimeout(() => {
-      generateDiagnosis();
-      setAnalyzing(false);
-      setStep('analysis');
-    }, 1500);
-  };
-
-  // GENERADOR DE REPORTE BASADO EN "LIBRERÍA MÉDICA" (Simulado por ahora)
-  const generateDiagnosis = () => {
-    const age = parseInt(user.age) || 35;
-    const report = [];
-    
-    // Lógica de Envejecimiento (Prioridad 1)
-    if (age > 30) report.push("Daño UV profundo detectado (Capa Dermis Reticular).");
-    if (age > 40) report.push("Adelgazamiento epidérmico visible.");
-    
-    // Lógica Estructural (Prioridad 2)
-    report.push("Desplazamiento graso en Jowls (Compartimento Mandibular).");
-    report.push("Profundización de Surcos Nasogenianos por ptosis malar.");
-    
-    setDiagnosis(report);
-  };
-
-  // FILTROS TÉCNICOS (VISIA REVERSE ENGINEERING)
-  // Usamos CSS filters para simular la separación de canales de luz
-  const getFilterStyle = () => {
-    switch (clinicalMode) {
-      case 'VASCULAR': // Canal Rojo (Hemoglobina/Inflamación)
-        return "contrast(2.0) saturate(3) brightness(0.9) sepia(1) hue-rotate(-50deg)"; 
-      case 'PIGMENT': // Canal Azul/UV (Melanina/Daño Solar)
-        return "grayscale(1) contrast(1.5) brightness(0.7) invert(0.1)"; 
-      case 'STRUCTURE': // Relieve/Sombras (Glogau)
-        return "grayscale(1) contrast(2.5) brightness(0.9)";
-      default:
-        return "none";
+  const takePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const vid = videoRef.current;
+      const cvs = canvasRef.current;
+      cvs.width = vid.videoWidth;
+      cvs.height = vid.videoHeight;
+      const ctx = cvs.getContext('2d');
+      if (ctx) {
+        // Efecto espejo para que sea natural
+        ctx.translate(cvs.width, 0); ctx.scale(-1, 1);
+        ctx.drawImage(vid, 0, 0, cvs.width, cvs.height);
+        const dataUrl = cvs.toDataURL('image/jpeg');
+        setPhoto(dataUrl);
+        setStep('analysis');
+      }
     }
   };
 
-  // --- RENDERIZADO ---
+  // --- 3. GENERADOR DE PDF NATIVO ---
+  const generatePDF = () => {
+    window.print(); // Invoca el diálogo de impresión del sistema
+  };
+
   return (
-    <div className="min-h-screen bg-black text-zinc-300 font-sans flex flex-col items-center overflow-x-hidden">
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center overflow-x-hidden print:bg-white print:text-black">
       
-      {/* PANTALLA DE LOGIN (NEURO: PERSONALIZACIÓN) */}
+      {/* ESTILOS DE IMPRESIÓN (CSS INYECTADO) 
+          Oculta la interfaz de la app y muestra solo el reporte limpio al imprimir */}
+      <style jsx global>{`
+        @media print {
+          .no-print { display: none !important; }
+          .print-only { display: block !important; }
+          body { background: white; color: black; }
+          /* Forzamos que se impriman los fondos/imágenes */
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+        .print-only { display: none; }
+      `}</style>
+
+      {/* LOADER GLOBAL */}
+      {loading && (<div className="fixed inset-0 bg-black z-50 flex items-center justify-center no-print"><div className="w-12 h-12 border-t-2 border-cyan-500 rounded-full animate-spin"></div></div>)}
+
+      {/* =================================================================================
+          SECCIÓN 1: REPORTE PDF OCULTO (SOLO APARECE AL DARLE A "DESCARGAR PDF")
+         ================================================================================= */}
+      <div className="print-only w-full max-w-4xl p-10">
+          <div className="flex justify-between items-center border-b-2 border-black pb-4 mb-8">
+              <div>
+                  <h1 className="text-4xl font-bold tracking-tight">TIPHERET MEDICAL</h1>
+                  <p className="text-sm text-gray-500">Dr. Ricardo Maya - Facial Plastic Surgery</p>
+              </div>
+              <div className="text-right">
+                  <p className="text-sm font-bold">PACIENTE: {user.name.toUpperCase()}</p>
+                  <p className="text-sm">FECHA: {new Date().toLocaleDateString()}</p>
+              </div>
+          </div>
+
+          {/* FOTOS COMPARATIVAS PARA EL PDF */}
+          <div className="grid grid-cols-2 gap-8 mb-8">
+              <div>
+                  <p className="font-bold mb-2 text-xs bg-gray-200 inline-block px-2 py-1 rounded">ESTADO INICIAL</p>
+                  {photo && <img src={photo} className="w-full rounded-lg border border-gray-300" alt="Antes" />}
+              </div>
+              <div>
+                  <p className="font-bold mb-2 text-xs bg-cyan-100 text-cyan-800 inline-block px-2 py-1 rounded">PROYECCIÓN VECTORIAL</p>
+                  {/* Aquí mostramos la foto simulada estática para el papel */}
+                  {photo && <img src={photo} className="w-full rounded-lg border border-gray-300" style={{ transform: 'scale(1.03) translateY(-10px)' }} alt="Después" />} 
+                  <p className="text-[10px] text-gray-500 mt-1 italic">*Simulación de reposición de tejidos blandos (SMAS).</p>
+              </div>
+          </div>
+
+          {/* DIAGNÓSTICO ESCRITO */}
+          <div className="space-y-4 mb-8 border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-bold">ANÁLISIS ESTRUCTURAL</h3>
+              <div className="grid grid-cols-3 gap-4">
+                  <div className="p-3 bg-red-50 rounded border border-red-100">
+                      <p className="font-bold text-red-800 text-xs mb-1">CAPA 1: PIEL</p>
+                      <p className="text-xs">{diagnosis.skin}</p>
+                  </div>
+                  <div className="p-3 bg-blue-50 rounded border border-blue-100">
+                      <p className="font-bold text-blue-800 text-xs mb-1">CAPA 3: SMAS</p>
+                      <p className="text-xs">{diagnosis.smas}</p>
+                  </div>
+                  <div className="p-3 bg-yellow-50 rounded border border-yellow-100">
+                      <p className="font-bold text-yellow-800 text-xs mb-1">CAPA 5: HUESO</p>
+                      <p className="text-xs">{diagnosis.bone}</p>
+                  </div>
+              </div>
+          </div>
+
+          <div className="text-center mt-12 bg-black text-white p-6 rounded-xl">
+              <p className="font-bold text-lg mb-2">PRESUPUESTO ESTIMADO</p>
+              <div className="flex justify-between max-w-xs mx-auto text-sm border-b border-gray-700 pb-2 mb-2">
+                  <span>Protocolo Piel (Casa)</span>
+                  <span>$35 USD</span>
+              </div>
+              <div className="flex justify-between max-w-xs mx-auto text-sm">
+                  <span>Valoración Quirúrgica</span>
+                  <span>CONSULTAR</span>
+              </div>
+          </div>
+      </div>
+
+      {/* =================================================================================
+          SECCIÓN 2: INTERFAZ MÓVIL (LO QUE VE EL USUARIO EN EL CELULAR)
+         ================================================================================= */}
+      
+      {/* 1. LOGIN */}
       {step === 'login' && (
-        <div className="w-full max-w-md p-10 mt-20 text-center animate-in fade-in">
-            <h1 className="text-4xl font-light text-white mb-2 tracking-tighter">TIPHERET</h1>
-            <p className="text-[10px] text-cyan-500 uppercase tracking-widest mb-10">Advanced Clinical Diagnostics</p>
-            
-            <div className="space-y-4">
-                <div className="text-left">
-                    <label className="text-[9px] uppercase font-bold text-zinc-500 ml-1">NOMBRE DEL PACIENTE</label>
-                    <input onChange={e => setUser({...user, name: e.target.value})} className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-lg text-white outline-none focus:border-cyan-500 transition-colors" placeholder="Ej: Maria Perez" />
-                </div>
-                <div className="text-left">
-                    <label className="text-[9px] uppercase font-bold text-zinc-500 ml-1">EDAD CRONOLÓGICA</label>
-                    <input type="number" onChange={e => setUser({...user, age: e.target.value})} className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-lg text-white outline-none focus:border-cyan-500 transition-colors" placeholder="Ej: 42" />
-                </div>
-                <button onClick={handleLogin} disabled={!user.name} className="w-full bg-white text-black font-bold py-4 rounded-lg mt-4 text-xs uppercase tracking-widest hover:bg-cyan-400 transition-all">INICIAR ESCÁNER</button>
+        <div className="w-full max-w-md p-8 mt-20 text-center animate-in fade-in no-print">
+            <h1 className="text-6xl font-thin text-white mb-4 tracking-tighter">TIPHERET</h1>
+            <p className="text-[9px] text-zinc-400 uppercase tracking-[0.3em] mb-12">Vector Analysis System V108</p>
+            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800 backdrop-blur-md">
+                <input onChange={e => setUser({...user, name: e.target.value})} placeholder="TU NOMBRE COMPLETO" className="w-full bg-black border-b border-zinc-600 p-4 text-center text-white outline-none focus:border-cyan-500 mb-6 transition-all placeholder:text-zinc-700" />
+                <button onClick={login} disabled={!user.name} className="w-full bg-white text-black font-bold py-4 rounded hover:bg-cyan-400 transition-all tracking-widest text-xs shadow-[0_0_20px_rgba(255,255,255,0.2)]">INICIAR DIAGNÓSTICO</button>
             </div>
         </div>
       )}
 
-      {/* CÁMARA CLÍNICA */}
+      {/* 2. CÁMARA */}
       {step === 'camera' && (
-        <div className="relative w-full h-screen bg-black">
+        <div className="relative w-full h-screen bg-black no-print">
             <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
             <canvas ref={canvasRef} className="hidden" />
             
-            {/* GUIAS ANATÓMICAS (PRIORIDAD 2) */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-40">
-                <div className="w-64 h-84 border-2 border-cyan-500/50 rounded-[40%] relative">
-                    <div className="absolute top-1/3 w-full border-t border-dashed border-cyan-500/30"></div> {/* Línea Interpupilar */}
-                    <div className="absolute bottom-1/3 w-full border-t border-dashed border-cyan-500/30"></div> {/* Línea Labial */}
-                    <div className="absolute w-full h-full border-l border-r border-cyan-500/20 mx-auto w-1/2"></div> {/* Quinto Central */}
+            {/* Guía Facial */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-60">
+                <div className="w-56 h-72 border-2 border-dashed border-cyan-500 rounded-[50%] relative shadow-[0_0_30px_cyan]">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 text-cyan-500 text-[10px] font-bold tracking-widest bg-black px-2">ENCAJA TU ROSTRO</div>
                 </div>
             </div>
-            
-            <div className="absolute bottom-12 inset-x-0 flex justify-center z-20">
-                <button onClick={captureAndAnalyze} className="w-20 h-20 rounded-full border-4 border-white/80 bg-white/20 backdrop-blur-md shadow-[0_0_30px_rgba(255,255,255,0.3)] animate-pulse flex items-center justify-center">
-                    <div className="w-16 h-16 bg-white rounded-full"></div>
-                </button>
+
+            <div className="absolute bottom-12 inset-x-0 flex flex-col items-center z-20">
+                <button onClick={takePhoto} className="w-20 h-20 bg-white rounded-full border-4 border-zinc-300 shadow-[0_0_30px_white] hover:scale-105 transition-transform"></button>
             </div>
-            <p className="absolute bottom-4 inset-x-0 text-center text-[9px] text-zinc-400">Mantenga el rostro neutral y sin maquillaje</p>
         </div>
       )}
 
-      {/* ANÁLISIS EN PROCESO */}
-      {analyzing && (
-        <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center">
-            <div className="w-16 h-16 border-t-2 border-cyan-500 rounded-full animate-spin mb-4"></div>
-            <p className="text-cyan-500 text-xs font-mono uppercase tracking-widest">ANALIZANDO PROFUNDIDAD DÉRMICA...</p>
-            <p className="text-zinc-600 text-[9px] mt-2">Mapeando vectores de gravedad</p>
+      {/* 3. PANTALLA DE CARGA (ANÁLISIS) */}
+      {step === 'analysis' && (
+        <div className="flex flex-col items-center justify-center h-screen w-full bg-black no-print">
+            <p className="text-cyan-500 text-xs animate-pulse tracking-[0.2em] mb-4">CALCULANDO VECTORES DE TRACCIÓN...</p>
+            <div className="w-48 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-full bg-cyan-500 animate-[width_2s_ease-in-out_forwards]" style={{width: '100%'}}></div>
+            </div>
+            {/* Auto-avance al reporte después de 2 seg */}
+            {setTimeout(() => setStep('report'), 2000) && ""}
         </div>
       )}
 
-      {/* RESULTADO CLÍNICO (PRIORIDAD 1, 2, 3 INTEGRADA) */}
-      {step === 'analysis' && photo && (
-        <div className="w-full max-w-md bg-black min-h-screen pb-20 animate-in slide-in-from-bottom duration-700">
+      {/* 4. REPORTE INTERACTIVO (SIMULADOR DE VECTORES) */}
+      {step === 'report' && photo && (
+        <div className="w-full max-w-md bg-black min-h-screen pb-20 animate-in fade-in duration-1000 no-print">
             
-            {/* 1. VISOR DIAGNÓSTICO (PRIORIDAD 1 - PIEL) */}
+            {/* CABECERA */}
+            <div className="p-4 flex justify-between items-center bg-zinc-900/80 backdrop-blur border-b border-zinc-800 sticky top-0 z-50">
+                <h2 className="text-xs font-bold text-white tracking-widest">SIMULADOR SMAS</h2>
+                <button onClick={() => setShowGuide(!showGuide)} className="text-[9px] text-cyan-500 border border-cyan-500/50 px-2 py-1 rounded">{showGuide ? 'OCULTAR GUÍAS' : 'VER GUÍAS'}</button>
+            </div>
+
+            {/* --- EL VISOR "DR. HONG KONG" --- */}
             <div className="relative w-full aspect-[4/5] bg-zinc-900 overflow-hidden border-b border-zinc-800">
                 
-                {/* CAPA BASE (IMAGEN) */}
-                <div className="w-full h-full transition-transform duration-200 ease-out origin-bottom"
+                {/* CAPA 1: FONDO ESTÁTICO (Ojos, Frente, Nariz) */}
+                <img src={photo} className="absolute inset-0 w-full h-full object-cover z-0 opacity-60 grayscale" />
+                
+                {/* CAPA 2: TEJIDO MÓVIL (Pómulos y Mandíbula) 
+                    Esta es la que se mueve. Usamos una máscara radial para que solo afecte los bordes y abajo.
+                */}
+                <div className="absolute inset-0 w-full h-full z-10 transition-transform duration-100 ease-out will-change-transform"
                      style={{ 
-                        filter: getFilterStyle(),
-                        // LÓGICA DE VECTOR (PRIORIDAD 2 - ESTRUCTURA)
-                        // Si está en modo estructura, aplicamos el lifting "TikTok Style"
-                        transform: clinicalMode === 'STRUCTURE' ? `translateY(-${vectorTension/2}px) scaleX(${1-(vectorTension/2000)})` : 'none',
-                        // Máscara para que el lifting solo afecte tercio medio e inferior
-                        maskImage: clinicalMode === 'STRUCTURE' ? 'linear-gradient(to bottom, black 0%, black 100%)' : 'none'
+                        // LA MATEMÁTICA DEL VECTOR DIAGONAL:
+                        // X: liftLevel * 0.5 (Se mueve un poco hacia afuera/atrás)
+                        // Y: liftLevel * 1.3 (Se mueve mucho hacia arriba)
+                        transform: `translate(${liftLevel * 0.5}px, -${liftLevel * 1.3}px)`, 
+                        
+                        // MÁSCARA: Un círculo degradado que es transparente en el centro (ojos) y opaco en los bordes
+                        maskImage: 'radial-gradient(circle at 50% 40%, transparent 30%, black 80%)',
+                        WebkitMaskImage: 'radial-gradient(circle at 50% 40%, transparent 30%, black 80%)'
                      }}>
                     <img src={photo} className="w-full h-full object-cover" />
                 </div>
 
-                {/* OVERLAY DE VECTORES (SOLO EN MODO ESTRUCTURA) */}
-                {clinicalMode === 'STRUCTURE' && (
-                    <div className="absolute inset-0 pointer-events-none opacity-60">
+                {/* FLECHAS VECTORIALES (UI) */}
+                {showGuide && (
+                    <div className="absolute inset-0 z-20 pointer-events-none opacity-80">
                         <svg width="100%" height="100%">
-                            {/* Vectores de Lifting Deep Plane */}
-                            <path d="M 80 400 Q 90 300 70 200" fill="none" stroke="cyan" strokeWidth="2" strokeDasharray="4,4" />
-                            <path d="M 320 400 Q 310 300 330 200" fill="none" stroke="cyan" strokeWidth="2" strokeDasharray="4,4" />
-                            <circle cx="70" cy="200" r="4" fill="cyan" />
-                            <circle cx="330" cy="200" r="4" fill="cyan" />
+                            <defs>
+                                <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                    <path d="M0,0 L0,6 L9,3 z" fill="#06b6d4" />
+                                </marker>
+                            </defs>
+                            {/* Líneas diagonales simulando el vector de tracción */}
+                            <line x1="25%" y1="65%" x2="15%" y2="45%" stroke="#06b6d4" strokeWidth="2" markerEnd="url(#arrow)" strokeDasharray="4,4" />
+                            <line x1="75%" y1="65%" x2="85%" y2="45%" stroke="#06b6d4" strokeWidth="2" markerEnd="url(#arrow)" strokeDasharray="4,4" />
                         </svg>
-                        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 px-3 py-1 rounded text-[10px] text-cyan-400 font-bold border border-cyan-500/30">
-                            TRACCIÓN VECTORES: {vectorTension}%
+                        {/* Etiqueta flotante */}
+                        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 px-4 py-1 rounded-full border border-cyan-500/30 backdrop-blur">
+                            <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest">
+                                {liftLevel === 0 ? 'ESTADO ACTUAL' : `VECTOR: ${liftLevel}%`}
+                            </p>
                         </div>
                     </div>
                 )}
-
-                {/* BOTONERA DE FILTROS CLÍNICOS */}
-                <div className="absolute bottom-4 inset-x-0 flex justify-center gap-2 px-4">
-                    <button onClick={() => setClinicalMode('NORMAL')} className={`px-3 py-2 rounded text-[8px] font-bold border ${clinicalMode === 'NORMAL' ? 'bg-white text-black' : 'bg-black/50 text-white border-zinc-600'}`}>REAL</button>
-                    <button onClick={() => setClinicalMode('VASCULAR')} className={`px-3 py-2 rounded text-[8px] font-bold border ${clinicalMode === 'VASCULAR' ? 'bg-red-900 text-white border-red-500' : 'bg-black/50 text-white border-zinc-600'}`}>INFLAMACIÓN</button>
-                    <button onClick={() => setClinicalMode('PIGMENT')} className={`px-3 py-2 rounded text-[8px] font-bold border ${clinicalMode === 'PIGMENT' ? 'bg-blue-900 text-white border-blue-500' : 'bg-black/50 text-white border-zinc-600'}`}>DAÑO UV</button>
-                    <button onClick={() => setClinicalMode('STRUCTURE')} className={`px-3 py-2 rounded text-[8px] font-bold border ${clinicalMode === 'STRUCTURE' ? 'bg-cyan-900 text-white border-cyan-500' : 'bg-black/50 text-white border-zinc-600'}`}>VECTORES</button>
-                </div>
             </div>
 
-            {/* 2. PANEL DE DIAGNÓSTICO Y TRATAMIENTO (PRIORIDAD 3 - NEURO) */}
-            <div className="p-6">
+            {/* CONTROLES Y VENTAS */}
+            <div className="p-6 space-y-6">
                 
-                {/* SI ESTAMOS EN MODO ESTRUCTURA -> SIMULADOR */}
-                {clinicalMode === 'STRUCTURE' ? (
-                    <div className="animate-in fade-in">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-xs font-bold text-white uppercase">SIMULADOR QUIRÚRGICO</h3>
-                            <span className="text-[9px] text-cyan-500">REPOSICIÓN TISULAR</span>
-                        </div>
-                        <input type="range" min="0" max="60" value={vectorTension} onChange={(e) => setVectorTension(Number(e.target.value))} className="w-full h-4 bg-zinc-800 rounded-lg appearance-none cursor-pointer mb-6 accent-cyan-500" />
-                        
-                        <div className="bg-zinc-900 p-4 rounded-xl border border-cyan-900/50 mb-4">
-                            <p className="text-[10px] text-zinc-400 mb-2">Este resultado requiere intervención estructural.</p>
-                            <button onClick={() => window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=Dr.Maya, vi mi simulación de vectores y quiero ese resultado (Cirugía).`} className="w-full bg-white text-black font-bold py-3 rounded-lg text-[10px] uppercase tracking-widest hover:bg-cyan-400 transition-colors">
-                                QUIERO ESTE RESULTADO (AGENDAR)
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    // MODO DIAGNÓSTICO
-                    <div className="animate-in fade-in">
-                        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">HALLAZGOS CLÍNICOS</h3>
-                        
-                        <div className="space-y-3 mb-6">
-                            {diagnosis.map((item, i) => (
-                                <div key={i} className="flex items-start gap-3 bg-zinc-900/50 p-3 rounded border-l-2 border-red-500">
-                                    <span className="text-red-500 text-lg">⚠</span>
-                                    <p className="text-[10px] text-zinc-300 leading-relaxed">{item}</p>
-                                </div>
-                            ))}
-                        </div>
+                {/* 1. SLIDER MAGICO */}
+                <div>
+                    <p className="text-center text-zinc-400 text-[10px] mb-2 uppercase tracking-widest">Desliza para aplicar tracción (Deep Plane)</p>
+                    <input 
+                        type="range" min="0" max="45" step="0.5" 
+                        value={liftLevel} 
+                        onChange={(e) => setLiftLevel(Number(e.target.value))} 
+                        className="w-full h-6 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-cyan-500 hover:accent-cyan-400" 
+                    />
+                </div>
 
-                        {/* PLAN DE ACCIÓN (NEUROVENTA: EL DOLOR YA ESTÁ, AHORA LA CURA) */}
-                        <div className="border-t border-zinc-800 pt-6">
-                            <h3 className="text-center text-white font-bold text-sm mb-4 uppercase">PLAN DE TRATAMIENTO</h3>
-                            
-                            <div className="grid grid-cols-2 gap-3">
-                                {/* OPCIÓN A: NO QUIRÚRGICA (LIBRO) */}
-                                <button onClick={() => window.open(HOTMART_PROTOCOL_URL)} className="bg-zinc-800 p-3 rounded-xl border border-zinc-700 hover:border-white transition-all text-left group">
-                                    <span className="block text-[9px] text-zinc-500 mb-1">NIVEL 1</span>
-                                    <span className="block text-white font-bold text-[10px] mb-2">PROTOCOLO EN CASA</span>
-                                    <span className="text-[8px] text-zinc-400 group-hover:text-white">Corregir Piel/Inflamación ➜</span>
-                                </button>
-
-                                {/* OPCIÓN B: QUIRÚRGICA (CONSULTA) */}
-                                <button onClick={() => window.location.href = `https://api.whatsapp.com/send?phone=${WS_BUSINESS}&text=Hola, quiero valoración para corrección estructural (Vectores).`} className="bg-gradient-to-br from-zinc-800 to-black p-3 rounded-xl border border-amber-900/50 hover:border-amber-500 transition-all text-left group">
-                                    <span className="block text-[9px] text-amber-500 mb-1">NIVEL 2</span>
-                                    <span className="block text-white font-bold text-[10px] mb-2">CORRECCIÓN ESTRUCTURAL</span>
-                                    <span className="text-[8px] text-zinc-400 group-hover:text-amber-400">Valoración Dr. Maya ➜</span>
-                                </button>
-                            </div>
-                        </div>
+                {/* 2. DIAGNÓSTICO RÁPIDO */}
+                <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex items-start gap-3">
+                    <span className="text-2xl">🧬</span>
+                    <div>
+                        <p className="text-[10px] text-zinc-500 font-bold uppercase mb-1">ANÁLISIS DE TEJIDOS</p>
+                        <p className="text-xs text-white leading-relaxed">
+                            Se observa descenso de los compartimentos grasos malares y laxitud ligamentaria. <span className="text-cyan-500 font-bold">Requiere reposición vectorial.</span>
+                        </p>
                     </div>
-                )}
+                </div>
+
+                {/* 3. BOTONES DE ACCIÓN (VENTA) */}
+                <div className="space-y-3 pt-2">
+                    {/* BOTÓN PRINCIPAL: DESCARGAR PDF */}
+                    <button onClick={generatePDF} className="w-full bg-zinc-100 text-black font-black py-4 rounded-xl text-xs uppercase tracking-[0.1em] hover:bg-white hover:scale-[1.01] transition-all shadow-xl flex justify-center items-center gap-2">
+                        <span>📄</span> DESCARGAR REPORTE PDF
+                    </button>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                        {/* VENTA PROTOCOLO */}
+                        <button onClick={() => window.open(HOTMART_EBOOK_URL)} className="bg-zinc-900 text-zinc-300 font-bold py-4 rounded-xl text-[9px] uppercase tracking-widest border border-zinc-700 hover:border-white transition-all">
+                            PROTOCOLO PIEL ($35)
+                        </button>
+                        {/* VENTA HUMANA */}
+                        <button onClick={() => window.open(HUMAN_SUPPORT_LINK)} className="bg-gradient-to-r from-cyan-900 to-black text-white font-bold py-4 rounded-xl text-[9px] uppercase tracking-widest border border-cyan-800 hover:border-cyan-500 transition-all">
+                            HABLAR CON ASESORA
+                        </button>
+                    </div>
+                </div>
+
+                <p className="text-[8px] text-center text-zinc-600 mt-4">Tipheret Medical Systems © 2026</p>
             </div>
         </div>
       )}
