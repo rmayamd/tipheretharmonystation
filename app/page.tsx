@@ -1,53 +1,71 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
+// --- 1. CONFIGURACIÓN DEL CEREBRO (EDITABLE) ---
 const WS_NUMBER = "573117936211";
 
-export default function TipherethHybridV129() {
+const PRICES = {
+  // QUIRÚRGICOS
+  rhino: 4500, bichat: 800, bleph: 2500, liplift: 1500,
+  facelift: 6500, chin_implant: 2000, lipo_neck: 1800,
+  // NO QUIRÚRGICOS
+  botox: 300, filler: 350, radiesse: 450, laser: 600, peeling: 150
+};
+
+export default function TipherethOS() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
-  // ESTADOS DEL SISTEMA
-  const [step, setStep] = useState('login'); 
-  const [photo, setPhoto] = useState<string | null>(null);
-  const [processing, setProcessing] = useState(false);
 
-  // MODO DE TRABAJO (HÍBRIDO)
-  const [workMode, setWorkMode] = useState('DERMA'); // DERMA | ARCH
-
-  // DATOS PACIENTE
+  // --- ESTADOS GLOBALES ---
+  const [appMode, setAppMode] = useState('HOME'); // HOME | CONSULT | RECOVERY
   const [patient, setPatient] = useState({ name: '', age: '' });
 
-  // --- CEREBRO 1: DERMATOLOGÍA (VISIA) ---
-  const [dermaLayer, setDermaLayer] = useState('RGB'); 
-  const [skinMetrics, setSkinMetrics] = useState({
-    skinAge: 0, percentile: 0, spots: 0, wrinkles: 0, uv: 0, red: 0, brown: 0
+  // --- ESTADOS DE CONSULTA (VISIA + SNIPER + COTIZADOR) ---
+  const [consultPhase, setConsultPhase] = useState('CAPTURE'); 
+  const [captureStep, setCaptureStep] = useState('FRONT'); // FRONT -> SIDE_R -> SIDE_L
+  const [photos, setPhotos] = useState({ front: null, right: null, left: null });
+  const [reportTab, setReportTab] = useState('QUOTE'); // QUOTE | SURGERY | SKIN
+  
+  // DATA IA
+  const [analysis, setAnalysis] = useState({
+    skin: { uv: 0, red: 0, brown: 0, pores: 0, rx: "", price: 0 },
+    surgery: {
+      rhino: { rx: "", price: 0 },
+      chin: { rx: "", price: 0 },
+      bichat: { rx: "", price: 0 },
+      bleph: { rx: "", price: 0 },
+      liplift: { rx: "", price: 0 },
+      jaw: { rx: "", price: 0 }
+    },
+    total: 0
   });
 
-  // --- CEREBRO 2: ARQUITECTURA (GOLDEN RATIO) ---
-  const [showMask, setShowMask] = useState(true);
-  const [boneLevel, setBoneLevel] = useState(30); 
-  const [phiMetrics, setPhiMetrics] = useState({
-    score: 0, retrusion: 0
-  });
+  // --- ESTADOS DE RECUPERACIÓN (POST-OP) ---
+  const [postOpDay, setPostOpDay] = useState(7);
+  const [recoveryStatus, setRecoveryStatus] = useState('GREEN'); // GREEN | YELLOW | RED
 
-  // 1. INICIO
-  const startSystem = () => {
-    if(!patient.name || !patient.age) return;
-    setStep('camera');
-  };
+  // ---------------------------------------------------------
+  // MÓDULO 1: INICIO Y NAVEGACIÓN
+  // ---------------------------------------------------------
+  const startConsult = () => { if(patient.name) setAppMode('CONSULT'); };
+  const startRecovery = () => { if(patient.name) setAppMode('RECOVERY'); };
 
-  // 2. CÁMARA
-  useEffect(() => { if(step === 'camera') initCamera(); }, [step]);
-  const initCamera = async () => {
+  // ---------------------------------------------------------
+  // MÓDULO 2: CÁMARA TÁCTICA (3 PASOS)
+  // ---------------------------------------------------------
+  useEffect(() => { 
+    if(appMode === 'CONSULT' && consultPhase === 'CAPTURE') startCamera(); 
+    if(appMode === 'RECOVERY') startCamera();
+  }, [appMode, consultPhase, captureStep]);
+
+  const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 4096 }, height: { ideal: 2160 } } });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } } });
       if(videoRef.current) videoRef.current.srcObject = stream;
     } catch(e) {}
   };
 
-  // 3. CAPTURA
-  const capture = () => {
+  const takeShot = () => {
     if(videoRef.current && canvasRef.current) {
         const vid = videoRef.current;
         const cvs = canvasRef.current;
@@ -55,68 +73,72 @@ export default function TipherethHybridV129() {
         cvs.height = vid.videoHeight;
         const ctx = cvs.getContext('2d');
         if(ctx) {
-            ctx.translate(cvs.width, 0); ctx.scale(-1, 1);
+            // Espejo solo en frontal
+            if (captureStep === 'FRONT' || appMode === 'RECOVERY') { ctx.translate(cvs.width, 0); ctx.scale(-1, 1); }
             ctx.drawImage(vid, 0, 0, cvs.width, cvs.height);
-            setPhoto(cvs.toDataURL('image/jpeg', 1.0));
-            setStep('processing');
-            runHybridAI();
+            const imgData = cvs.toDataURL('image/jpeg', 0.9);
+
+            if (appMode === 'CONSULT') {
+                if (captureStep === 'FRONT') { setPhotos(prev => ({ ...prev, front: imgData })); setCaptureStep('SIDE_R'); }
+                else if (captureStep === 'SIDE_R') { setPhotos(prev => ({ ...prev, right: imgData })); setCaptureStep('SIDE_L'); }
+                else if (captureStep === 'SIDE_L') { 
+                    setPhotos(prev => ({ ...prev, left: imgData })); 
+                    setConsultPhase('PROCESSING'); 
+                    runFullAI(); 
+                }
+            } else {
+                // Modo Recovery: Solo toma una foto de evolución
+                setPhotos(prev => ({ ...prev, front: imgData })); // Usamos slot frontal para evolución
+                setRecoveryStatus(Math.random() > 0.8 ? 'YELLOW' : 'GREEN'); // Simula análisis
+            }
         }
     }
   };
 
-  // 4. IA HÍBRIDA
-  const runHybridAI = () => {
+  // ---------------------------------------------------------
+  // MÓDULO 3: IA MAESTRA (VISIA + SNIPER + PRECIOS)
+  // ---------------------------------------------------------
+  const runFullAI = () => {
       const age = parseInt(patient.age);
-      
-      // CÁLCULO DERMATOLÓGICO
-      const skin = {
-          skinAge: age + Math.floor(Math.random() * 8) - 2,
-          percentile: Math.floor(Math.random() * (95 - 50) + 50),
-          spots: Math.floor(Math.random() * 40 + 10),
-          wrinkles: Math.floor(age * 0.9),
-          uv: Math.floor(Math.random() * 50 + 20),
-          red: Math.floor(Math.random() * 40),
-          brown: Math.floor(Math.random() * 50 + 10)
+      let total = 0;
+
+      // 1. ANÁLISIS QUIRÚRGICO (Francotirador)
+      const sx = {
+          rhino: { rx: "Rinoplastia Ultrasónica + Alectomía", price: PRICES.rhino },
+          chin: { rx: Math.random() > 0.5 ? "Implante de Mentón Rígido" : "Proyección con Volux", price: PRICES.chin_implant },
+          bichat: { rx: "Bichectomía (Perfilamiento)", price: PRICES.bichat },
+          bleph: { rx: age > 40 ? "Blefaroplastia Completa" : "Transconjuntival", price: PRICES.bleph },
+          liplift: { rx: "Lip Lift (Rejuvenecimiento Oral)", price: PRICES.liplift },
+          jaw: { rx: "Radiesse (Vectorización)", price: PRICES.radiesse }
       };
 
-      // CÁLCULO ESTRUCTURAL
-      const phi = {
-          score: Math.floor(Math.random() * (85 - 65) + 65), 
-          retrusion: (Math.random() * 5 + 2).toFixed(1) // mm faltantes
+      // 2. ANÁLISIS PIEL (Visia)
+      const sk = {
+          uv: Math.floor(Math.random() * 60 + 20),
+          red: Math.floor(Math.random() * 40),
+          brown: Math.floor(Math.random() * 50 + 10),
+          pores: Math.floor(Math.random() * 60 + 20),
+          rx: age > 35 ? "Láser CO2 Fraccionado" : "Peeling Químico",
+          price: age > 35 ? PRICES.laser : PRICES.peeling
       };
+
+      // 3. SUMATORIA FINANCIERA
+      Object.values(sx).forEach(i => total += i.price);
+      total += sk.price;
 
       setTimeout(() => {
-          setSkinMetrics(skin);
-          setPhiMetrics({ score: phi.score, retrusion: Number(phi.retrusion) });
-          setProcessing(false);
-          setStep('console');
-      }, 2500);
+          setAnalysis({ surgery: sx, skin: sk, total: total });
+          setConsultPhase('REPORT');
+      }, 3000);
   };
 
-  // 5. MOTOR VISUAL
-  const getVisuals = () => {
-      let filter = '';
-      let transform = '';
-
-      if (workMode === 'DERMA') {
-          switch(dermaLayer) {
-              case 'UV': filter = 'grayscale(1) contrast(2) invert(0.1) brightness(0.7)'; break;
-              case 'BROWN': filter = 'sepia(1) contrast(1.5) hue-rotate(-30deg) brightness(0.9)'; break;
-              case 'RED': filter = 'grayscale(1) sepia(1) hue-rotate(-50deg) saturate(5) contrast(1.2)'; break;
-              default: filter = 'none';
-          }
-      } 
-      else {
-          filter = 'contrast(1.1) brightness(1.1) saturate(1.1) blur(0.5px)';
-          transform = `perspective(500px) rotateX(${boneLevel/20}deg) scale(${1 + boneLevel/1000})`;
-          filter += ` drop-shadow(0 ${boneLevel/5}px ${boneLevel/8}px rgba(0,0,0,0.6))`;
-      }
-      return { filter, transform, transition: 'all 0.5s ease' };
-  };
-
+  // ---------------------------------------------------------
+  // RENDERIZADO
+  // ---------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#050505] text-zinc-300 font-sans overflow-x-hidden selection:bg-cyan-500">
+    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-cyan-500">
       
+      {/* CSS IMPRESIÓN & TARGETS */}
       <style jsx global>{`
         @media print { 
             .no-print { display: none !important; } 
@@ -124,188 +146,208 @@ export default function TipherethHybridV129() {
             body { background: white; color: black; }
         }
         .print-only { display: none; }
+        .target-dot { position: absolute; border: 2px solid; border-radius: 50%; width: 24px; height: 24px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.2);} 100% {transform: scale(1);} }
       `}</style>
 
-      {/* --- REPORTE IMPRESO COMPLETO --- */}
-      <div className="print-only w-full h-screen bg-white text-black p-10">
-          <div className="flex justify-between border-b-4 border-black pb-4 mb-6">
-              <div><h1 className="text-4xl font-black">TIPHERET HYBRID</h1><p>INTEGRATED DIAGNOSTIC SYSTEM</p></div>
-              <div className="text-right"><p className="font-bold text-xl">{patient.name}</p><p>Edad: {patient.age} | Skin Age: {skinMetrics.skinAge}</p></div>
-          </div>
-
-          <div className="mb-8">
-              <h3 className="font-bold text-lg bg-black text-white px-2 mb-2">1. ANÁLISIS DERMATOLÓGICO (PIEL)</h3>
-              <div className="grid grid-cols-3 gap-4 h-40 mb-4">
-                  <div className="border p-1"><p className="text-[10px] font-bold">UV DAMAGE</p>{photo && <img src={photo} className="w-full h-full object-cover grayscale invert contrast-150" />}</div>
-                  <div className="border p-1"><p className="text-[10px] font-bold">VASCULAR MAP</p>{photo && <img src={photo} className="w-full h-full object-cover saturate-200 hue-rotate-[-50deg]" />}</div>
-                  <div className="border p-1"><p className="text-[10px] font-bold">PIGMENTATION</p>{photo && <img src={photo} className="w-full h-full object-cover sepia contrast-125" />}</div>
-              </div>
-          </div>
-
-          <div>
-              <h3 className="font-bold text-lg bg-amber-600 text-white px-2 mb-2">2. ANÁLISIS ESTRUCTURAL (HUESO)</h3>
-              <div className="flex gap-4 mb-4">
-                  <div className="w-1/3">
-                      <p className="font-bold text-sm">PHI SCORE: {phiMetrics.score}%</p>
-                      <p className="font-bold text-sm text-red-600">RETRUSIÓN DETECTADA: -{phiMetrics.retrusion}mm</p>
-                      <p className="text-xs mt-2">Déficit de proyección anterior. El paciente no alcanza el plano estético de Rickets.</p>
-                  </div>
-                  <div className="w-2/3 border border-amber-500 relative h-48 overflow-hidden">
-                       <p className="absolute top-0 left-0 bg-amber-600 text-white text-[10px] px-2">PROYECCIÓN SIMULADA</p>
-                       {photo && <img src={photo} className="w-full h-full object-cover" style={{transform: 'perspective(500px) rotateX(2deg) scale(1.02)'}} />}
-                  </div>
-              </div>
-          </div>
-
-          {/* LA SECCIÓN DE VENTA ACTUALIZADA */}
-          <div className="mt-4 border-t-2 border-black pt-4">
-              <p className="font-bold text-lg mb-2">OPCIONES TERAPÉUTICAS (A VALORAR EN CONSULTA):</p>
-              
-              <div className="grid grid-cols-3 gap-4 text-xs">
-                  <div className="border border-gray-300 p-2">
-                      <p className="font-bold mb-1">OPCIÓN 1: QUIRÚRGICA</p>
-                      <p>Implante de Mentón / Ángulo Mandibular.</p>
-                      <p className="text-[9px] text-gray-500 mt-1">Resultado permanente.</p>
-                  </div>
-                  <div className="border border-gray-300 p-2">
-                      <p className="font-bold mb-1">OPCIÓN 2: VOLUMÉTRICA</p>
-                      <p>Relleno con Ácido Hialurónico (Alta densidad).</p>
-                      <p className="text-[9px] text-gray-500 mt-1">Resultado inmediato, duración 12-18 meses.</p>
-                  </div>
-                  <div className="border border-gray-300 p-2">
-                      <p className="font-bold mb-1">OPCIÓN 3: BIOESTIMULACIÓN</p>
-                      <p>Radiesse (Hidroxiapatita de Calcio).</p>
-                      <p className="text-[9px] text-gray-500 mt-1">Definición + Tensado de piel.</p>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      {/* --- UI APP --- */}
-      {step === 'login' && (
-        <div className="flex flex-col items-center justify-center h-screen no-print bg-[#0a0a0a]">
-            <h1 className="text-7xl font-thin tracking-tighter mb-4 text-white">TIPHERET</h1>
-            <p className="text-xs text-zinc-500 tracking-[0.5em] mb-12">HYBRID MEDICAL SYSTEM V129</p>
-            <div className="w-72 space-y-4">
-                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border border-[#222] p-4 text-white text-center rounded outline-none focus:border-cyan-500 transition-colors" placeholder="NOMBRE PACIENTE" />
-                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border border-[#222] p-4 text-white text-center rounded outline-none focus:border-cyan-500 transition-colors" placeholder="EDAD" />
-                <button onClick={startSystem} className="w-full bg-cyan-700 text-white font-bold py-4 rounded tracking-widest uppercase hover:bg-cyan-600 transition-all">INICIAR SISTEMA</button>
-            </div>
-        </div>
-      )}
-
-      {step === 'camera' && (
-        <div className="relative w-full h-screen bg-black no-print overflow-hidden">
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
-            <canvas ref={canvasRef} className="hidden" />
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-                <div className="absolute top-0 left-1/2 h-full w-px bg-cyan-500"></div>
-                <svg viewBox="0 0 200 300" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%]">
-                    <path d="M10,50 Q100,0 190,50 Q200,150 100,280 Q0,150 10,50" fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="5,5" />
-                    <line x1="10" y1="120" x2="190" y2="120" stroke="#f59e0b" strokeWidth="1" />
-                </svg>
-            </div>
-            <button onClick={capture} className="absolute bottom-12 left-1/2 -translate-x-1/2 w-20 h-20 bg-white/10 backdrop-blur rounded-full border-2 border-white flex items-center justify-center hover:bg-white/20 transition-all">
-                <div className="w-16 h-16 bg-white rounded-full"></div>
-            </button>
-        </div>
-      )}
-
-      {step === 'processing' && (
-        <div className="h-screen flex flex-col items-center justify-center bg-black font-mono text-xs no-print">
-            <div className="flex gap-4 mb-8">
-                <div className="w-4 h-4 bg-cyan-500 rounded-full animate-bounce"></div>
-                <div className="w-4 h-4 bg-amber-500 rounded-full animate-bounce delay-100"></div>
-            </div>
-            <p className="text-cyan-500">ANALYZING DERMIS LAYERS...</p>
-            <p className="text-amber-500 mt-2">CALCULATING BONE STRUCTURE...</p>
-        </div>
-      )}
-
-      {step === 'console' && photo && (
-        <div className="w-full min-h-screen bg-[#050505] flex flex-col no-print">
-            
-            <div className="h-14 border-b border-[#222] bg-[#0a0a0a] flex justify-between items-center px-4">
-                <div className="font-bold text-white tracking-widest">TIPHERET <span className="text-zinc-600 text-[10px]">HYBRID</span></div>
-                <div className="flex bg-[#111] rounded-lg p-1 border border-[#222]">
-                    <button onClick={() => setWorkMode('DERMA')} className={`px-4 py-1 text-[10px] font-bold rounded transition-all ${workMode==='DERMA' ? 'bg-cyan-900 text-cyan-400 shadow' : 'text-zinc-500'}`}>DERMATOLOGY</button>
-                    <button onClick={() => setWorkMode('ARCH')} className={`px-4 py-1 text-[10px] font-bold rounded transition-all ${workMode==='ARCH' ? 'bg-amber-900 text-amber-500 shadow' : 'text-zinc-500'}`}>ARCHITECTURE</button>
+      {/* --- PANTALLA 1: LOGIN (EL HUB) --- */}
+      {appMode === 'HOME' && (
+        <div className="flex flex-col items-center justify-center h-screen bg-black no-print">
+            <h1 className="text-7xl font-thin tracking-tighter mb-4">TIPHERET<span className="text-cyan-500 font-bold">OS</span></h1>
+            <div className="w-80 space-y-4">
+                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border border-zinc-800 p-4 text-center rounded focus:border-cyan-500 outline-none" placeholder="NOMBRE PACIENTE" />
+                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border border-zinc-800 p-4 text-center rounded focus:border-cyan-500 outline-none" placeholder="EDAD" />
+                
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                    <button onClick={startConsult} className="bg-cyan-900/50 border border-cyan-500 text-cyan-400 py-6 rounded-lg font-bold hover:bg-cyan-500 hover:text-black transition-all">
+                        PACIENTE NUEVO<br/><span className="text-[9px] font-normal">DIAGNÓSTICO & COTIZACIÓN</span>
+                    </button>
+                    <button onClick={startRecovery} className="bg-zinc-900 border border-zinc-600 text-zinc-400 py-6 rounded-lg font-bold hover:bg-zinc-800 hover:text-white transition-all">
+                        YA OPERADO<br/><span className="text-[9px] font-normal">SEGUIMIENTO POST-OP</span>
+                    </button>
                 </div>
             </div>
+        </div>
+      )}
 
-            <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
-                <div className="flex-1 bg-black relative flex flex-col justify-center overflow-hidden">
-                    <img src={photo} className="absolute w-full h-full object-contain transition-all duration-500" style={getVisuals()} />
-                    {workMode === 'ARCH' && showMask && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40 mix-blend-screen">
-                            <svg viewBox="0 0 200 300" className="w-[80%] h-[80%] drop-shadow-[0_0_5px_rgba(245,158,11,0.8)]">
-                                <path d="M10,50 Q100,0 190,50 Q200,150 100,280 Q0,150 10,50" fill="none" stroke="#f59e0b" strokeWidth="1" />
-                                <line x1="10" y1="120" x2="190" y2="120" stroke="#f59e0b" strokeWidth="0.5" strokeDasharray="5,5" />
-                                <path d="M20,100 L180,100 L100,280 Z" fill="none" stroke="#f59e0b" strokeWidth="0.5" strokeDasharray="2,2" />
-                            </svg>
-                        </div>
-                    )}
+      {/* --- MODO CONSULTA (EL FRANCOTIRADOR + COTIZADOR) --- */}
+      {appMode === 'CONSULT' && (
+          <>
+            {/* CAPTURA 3 PASOS */}
+            {consultPhase === 'CAPTURE' && (
+                <div className="relative w-full h-screen bg-black no-print overflow-hidden">
+                    <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
+                    <canvas ref={canvasRef} className="hidden" />
+                    <div className="absolute top-20 w-full text-center">
+                        <p className="bg-cyan-600 font-bold inline-block px-4 py-2 rounded shadow-lg uppercase">
+                            {captureStep === 'FRONT' ? "PASO 1: FRONTAL" : captureStep === 'SIDE_R' ? "PASO 2: PERFIL DER" : "PASO 3: PERFIL IZQ"}
+                        </p>
+                    </div>
+                    <button onClick={takeShot} className="absolute bottom-12 left-1/2 -translate-x-1/2 w-20 h-20 bg-white/20 backdrop-blur rounded-full border-4 border-white flex items-center justify-center">
+                        <div className="w-16 h-16 bg-white rounded-full"></div>
+                    </button>
                 </div>
+            )}
 
-                <div className="w-full lg:w-96 bg-[#0a0a0a] border-l border-[#222] p-6 flex flex-col">
-                    
-                    {workMode === 'DERMA' && (
-                        <div className="animate-in fade-in space-y-6">
-                            <h3 className="text-xs font-bold text-cyan-500 uppercase tracking-widest border-b border-cyan-900/30 pb-2">SKIN DIAGNOSIS</h3>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div className="bg-[#111] p-3 rounded border border-[#222]"><p className="text-[9px] text-zinc-500">UV DAMAGE</p><p className="text-lg font-bold text-white">{skinMetrics.uv}</p></div>
-                                <div className="bg-[#111] p-3 rounded border border-[#222]"><p className="text-[9px] text-zinc-500">VASCULAR</p><p className="text-lg font-bold text-white">{skinMetrics.red}</p></div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                                {['RGB', 'UV', 'BROWN', 'RED'].map(l => (
-                                    <button key={l} onClick={() => setDermaLayer(l)} className={`py-2 text-[10px] border rounded ${dermaLayer===l?'bg-cyan-900 text-white border-cyan-500':'border-zinc-800 text-zinc-500 hover:border-zinc-600'}`}>{l}</button>
-                                ))}
-                            </div>
+            {/* PROCESANDO */}
+            {consultPhase === 'PROCESSING' && (
+                <div className="h-screen bg-black flex flex-col items-center justify-center text-xs font-mono no-print">
+                    <p className="text-cyan-500">MAPPING FACIAL VECTORS...</p>
+                    <p className="text-red-500 mt-2">CALCULATING SURGICAL BUDGET...</p>
+                </div>
+            )}
+
+            {/* REPORTE FINAL (VISIA + SNIPER + PRECIO) */}
+            {consultPhase === 'REPORT' && (
+                <div className="w-full min-h-screen bg-[#050505] flex flex-col no-print">
+                    <div className="h-16 border-b border-[#222] bg-[#0a0a0a] flex justify-between items-center px-4">
+                        <div className="font-bold">TIPHERET <span className="text-green-500 text-xs">PRO</span></div>
+                        <div className="flex bg-[#111] rounded p-1 border border-[#222]">
+                            <button onClick={() => setReportTab('QUOTE')} className={`px-4 py-1 text-[10px] font-bold rounded ${reportTab==='QUOTE'?'bg-green-900 text-white':'text-gray-500'}`}>COTIZACIÓN</button>
+                            <button onClick={() => setReportTab('SURGERY')} className={`px-4 py-1 text-[10px] font-bold rounded ${reportTab==='SURGERY'?'bg-red-900 text-white':'text-gray-500'}`}>QX (SNIPER)</button>
+                            <button onClick={() => setReportTab('SKIN')} className={`px-4 py-1 text-[10px] font-bold rounded ${reportTab==='SKIN'?'bg-blue-900 text-white':'text-gray-500'}`}>PIEL (VISIA)</button>
                         </div>
-                    )}
-
-                    {workMode === 'ARCH' && (
-                        <div className="animate-in fade-in space-y-6">
-                            <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest border-b border-amber-900/30 pb-2">STRUCTURAL DESIGN</h3>
-                            
-                            <div className="bg-[#111] p-4 rounded border border-amber-900/30 mb-4">
-                                <div className="flex justify-between items-end">
-                                    <span className="text-[10px] text-zinc-400">DÉFICIT PROYECCIÓN</span>
-                                    <span className="text-xl font-bold text-red-500">-{phiMetrics.retrusion}mm</span>
-                                </div>
-                                <p className="text-[9px] text-zinc-500 mt-1">Sugerido: Implante, Hialurónico o Radiesse.</p>
-                            </div>
-
-                            <div>
-                                <div className="flex justify-between mb-2">
-                                    <span className="text-[10px] font-bold text-amber-500">SIMULACIÓN DE VOLUMEN</span>
-                                    <span className="text-[10px] text-zinc-500">{boneLevel}%</span>
-                                </div>
-                                <input type="range" min="0" max="100" value={boneLevel} onChange={(e) => setBoneLevel(Number(e.target.value))} className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500" />
-                            </div>
-
-                            <button onClick={() => setShowMask(!showMask)} className="w-full py-2 border border-amber-900/50 text-amber-600 text-[10px] rounded hover:bg-amber-900/10 transition-all">{showMask ? 'OCULTAR GUIAS' : 'MOSTRAR GUIAS'}</button>
-
-                            <div className="bg-amber-900/10 p-3 rounded border border-amber-900/30 mt-4">
-                                <p className="text-[9px] text-amber-600 font-bold mb-1">PLAN ESTRUCTURAL MULTI-OPCIÓN:</p>
-                                <ul className="text-xs text-amber-200 list-disc pl-4 space-y-1">
-                                    <li>Implante (Quirúrgico)</li>
-                                    <li>Ácido Hialurónico (Volumen)</li>
-                                    <li>Radiesse (Bioestimulación)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="mt-auto pt-6 space-y-2">
-                         <button onClick={() => window.print()} className="w-full bg-zinc-800 text-white py-3 rounded text-[10px] uppercase font-bold hover:bg-zinc-700">DESCARGAR REPORTE HÍBRIDO</button>
-                         <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, me interesa corregir mi proyección (-${phiMetrics.retrusion}mm). ¿Qué opción me recomienda: Implante, Hialurónico o Radiesse?`)} className="w-full bg-white text-black py-3 rounded text-[10px] uppercase font-bold hover:bg-gray-200 shadow-lg">COTIZAR TRATAMIENTO TOTAL</button>
                     </div>
 
+                    <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
+                        <div className="flex-1 bg-black relative flex flex-col justify-center overflow-hidden">
+                             {/* VISOR INTELIGENTE: MUESTRA LA FOTO SEGÚN EL TAB */}
+                             {reportTab === 'SKIN' ? (
+                                <img src={photos.front!} className="absolute w-full h-full object-contain filter contrast-125" />
+                             ) : (
+                                <div className="relative w-full h-full">
+                                    <img src={photos.right!} className="absolute w-full h-full object-contain" />
+                                    {/* TARGETS (MIRA DE FRANCOTIRADOR) */}
+                                    <div className="target-dot border-green-500" style={{top:'45%', left:'40%'}}></div> {/* Nariz */}
+                                    <div className="target-dot border-red-500" style={{top:'65%', left:'35%'}}></div> {/* Mentón */}
+                                </div>
+                             )}
+                        </div>
+
+                        {/* PANEL DE DATOS */}
+                        <div className="w-full lg:w-96 bg-[#0a0a0a] border-l border-[#222] p-6 overflow-y-auto">
+                            
+                            {/* 1. COTIZADOR */}
+                            {reportTab === 'QUOTE' && (
+                                <div className="space-y-4">
+                                    <h3 className="text-green-500 font-bold mb-4 tracking-widest text-xs">PRESUPUESTO ESTIMADO</h3>
+                                    {[analysis.surgery.rhino, analysis.surgery.chin, analysis.surgery.bichat, analysis.surgery.bleph, analysis.skin].map((item, i) => (
+                                        item.price > 0 && <div key={i} className="flex justify-between text-xs border-b border-[#222] pb-2"><span>{item.rx}</span><span className="text-green-400 font-bold">${item.price}</span></div>
+                                    ))}
+                                    <div className="bg-green-900/20 border border-green-500/50 p-6 rounded-xl text-center mt-6">
+                                        <p className="text-xs text-green-300">TOTAL</p>
+                                        <p className="text-4xl font-black text-white">${analysis.total}</p>
+                                    </div>
+                                    <button onClick={() => window.print()} className="w-full bg-white text-black font-bold py-3 rounded text-xs mt-4">IMPRIMIR FACTURA</button>
+                                </div>
+                            )}
+
+                            {/* 2. SNIPER QUIRÚRGICO */}
+                            {reportTab === 'SURGERY' && (
+                                <div className="space-y-4">
+                                    <h3 className="text-red-500 font-bold mb-4 tracking-widest text-xs">DIAGNÓSTICO ESTRUCTURAL</h3>
+                                    <div className="bg-[#111] p-3 border-l-2 border-red-500"><p className="text-[10px] text-gray-500">MENTÓN</p><p className="font-bold">{analysis.surgery.chin.rx}</p></div>
+                                    <div className="bg-[#111] p-3 border-l-2 border-green-500"><p className="text-[10px] text-gray-500">NARIZ</p><p className="font-bold">{analysis.surgery.rhino.rx}</p></div>
+                                    <div className="bg-[#111] p-3 border-l-2 border-blue-500"><p className="text-[10px] text-gray-500">PÁRPADOS</p><p className="font-bold">{analysis.surgery.bleph.rx}</p></div>
+                                    <div className="bg-[#111] p-3 border-l-2 border-purple-500"><p className="text-[10px] text-gray-500">BICHAT</p><p className="font-bold">{analysis.surgery.bichat.rx}</p></div>
+                                </div>
+                            )}
+
+                            {/* 3. VISIA PIEL */}
+                            {reportTab === 'SKIN' && (
+                                <div className="space-y-4">
+                                    <h3 className="text-blue-500 font-bold mb-4 tracking-widest text-xs">ANÁLISIS DE PIEL</h3>
+                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                        <div className="bg-[#111] p-2"><span>UV: </span><strong>{analysis.skin.uv}</strong></div>
+                                        <div className="bg-[#111] p-2"><span>Vasos: </span><strong>{analysis.skin.red}</strong></div>
+                                        <div className="bg-[#111] p-2"><span>Manchas: </span><strong>{analysis.skin.brown}</strong></div>
+                                        <div className="bg-[#111] p-2"><span>Poros: </span><strong>{analysis.skin.pores}</strong></div>
+                                    </div>
+                                    <div className="bg-blue-900/20 p-4 border border-blue-500/50 mt-4">
+                                        <p className="text-[10px] text-blue-300">RX PIEL</p>
+                                        <p className="text-sm font-bold">{analysis.skin.rx}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            )}
+          </>
       )}
+
+      {/* --- MODO RECUPERACIÓN (EL GUARDIÁN MUNDIAL) --- */}
+      {appMode === 'RECOVERY' && (
+          <div className="w-full max-w-md mx-auto min-h-screen bg-[#111] flex flex-col">
+              <div className="p-6 bg-gradient-to-b from-blue-900/20 to-transparent">
+                  <h1 className="text-2xl font-thin">Hola, <span className="font-bold">{patient.name}</span></h1>
+                  <p className="text-xs text-green-400 uppercase tracking-widest mt-1">RECUPERACIÓN DÍA {postOpDay}</p>
+              </div>
+
+              {/* LÍNEA DE TIEMPO */}
+              <div className="flex gap-4 px-6 overflow-x-auto mb-6 no-scrollbar">
+                  {[1,7,15,30,60].map(d => (
+                      <button key={d} onClick={() => setPostOpDay(d)} className={`min-w-[50px] h-[50px] rounded-full flex items-center justify-center border ${postOpDay===d ? 'bg-blue-600 border-blue-400' : 'bg-[#222] border-[#333]'}`}>
+                          D{d}
+                      </button>
+                  ))}
+              </div>
+
+              {/* CÁMARA / FOTO EVOLUCIÓN */}
+              <div className="flex-1 bg-black relative mx-4 rounded-2xl overflow-hidden border border-gray-800">
+                  {photos.front ? (
+                      <div className="relative w-full h-full">
+                          <img src={photos.front} className="w-full h-full object-cover" />
+                          <div className={`absolute bottom-0 inset-x-0 p-4 ${recoveryStatus==='GREEN'?'bg-green-900/90':'bg-yellow-900/90'}`}>
+                              <p className="font-bold text-white">{recoveryStatus==='GREEN'?'EVOLUCIÓN CORRECTA':'INFLAMACIÓN DETECTADA'}</p>
+                              <p className="text-xs text-gray-300">Análisis IA completado.</p>
+                          </div>
+                      </div>
+                  ) : (
+                      <div className="absolute inset-0">
+                          <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                          <canvas ref={canvasRef} className="hidden" />
+                          <button onClick={takeShot} className="absolute bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-white rounded-full border-4 border-blue-500"></button>
+                          <p className="absolute top-4 w-full text-center text-xs bg-black/50 py-1">FOTO DE CONTROL DIARIO</p>
+                      </div>
+                  )}
+              </div>
+
+              <div className="p-6">
+                  <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, tengo una duda sobre mi día ${postOpDay}.`)} className="w-full bg-white text-black py-4 rounded-xl font-bold text-xs uppercase shadow-lg">
+                      CONTACTAR AL DR. MAYA (SOS)
+                  </button>
+                  <button onClick={() => setAppMode('HOME')} className="w-full text-zinc-500 py-4 text-xs">SALIR</button>
+              </div>
+          </div>
+      )}
+
+      {/* --- REPORTE IMPRESO (PDF UNIFICADO) --- */}
+      <div className="print-only w-full bg-white text-black p-10">
+          <div className="border-b-4 border-black pb-4 mb-6 flex justify-between">
+              <div><h1 className="text-4xl font-black">HISTORIA CLÍNICA</h1><p>DIAGNÓSTICO + COTIZACIÓN</p></div>
+              <div className="text-right"><p className="font-bold">{patient.name}</p><p>Edad: {patient.age}</p></div>
+          </div>
+          {/* FOTOS */}
+          <div className="flex gap-2 h-40 mb-6">
+              <div className="border flex-1">{photos.front && <img src={photos.front} className="w-full h-full object-cover"/>}</div>
+              <div className="border flex-1">{photos.right && <img src={photos.right} className="w-full h-full object-cover"/>}</div>
+          </div>
+          {/* TABLA DE PRECIOS */}
+          <table className="w-full text-xs text-left border-collapse border border-black">
+              <thead className="bg-gray-200"><tr><th className="p-2 border">PROCEDIMIENTO</th><th className="p-2 border text-right">VALOR</th></tr></thead>
+              <tbody>
+                  {analysis.surgery.rhino.price > 0 && <tr><td className="p-2 border">{analysis.surgery.rhino.rx}</td><td className="p-2 border text-right">${analysis.surgery.rhino.price}</td></tr>}
+                  {analysis.surgery.chin.price > 0 && <tr><td className="p-2 border">{analysis.surgery.chin.rx}</td><td className="p-2 border text-right">${analysis.surgery.chin.price}</td></tr>}
+                  {analysis.surgery.bichat.price > 0 && <tr><td className="p-2 border">{analysis.surgery.bichat.rx}</td><td className="p-2 border text-right">${analysis.surgery.bichat.price}</td></tr>}
+                  {analysis.skin.price > 0 && <tr><td className="p-2 border">{analysis.skin.rx}</td><td className="p-2 border text-right">${analysis.skin.price}</td></tr>}
+              </tbody>
+              <tfoot>
+                  <tr className="bg-black text-white"><td className="p-2 font-bold text-right">TOTAL</td><td className="p-2 font-bold text-right">${analysis.total}</td></tr>
+              </tfoot>
+          </table>
+      </div>
+
     </div>
   );
 }
