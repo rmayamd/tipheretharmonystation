@@ -18,52 +18,86 @@ const EBOOK_LINKS = {
 const CONTENT = {
     ES: {
         subtitle: "The Harmony Station", placeholderName: "SU NOMBRE", placeholderAge: "EDAD", enterBtn: "ENTRAR AL ESTUDIO",
-        step1: "Retrato Frontal", step2: "Perfil Derecho", step3: "Perfil Izquierdo", processing: "Procesando Belleza...",
+        step1: "Frente + Escote", step2: "Perfil Derecho", step3: "Perfil Izquierdo", processing: "Escaneando Piel y Estructura...",
         coverTitle: "The Aesthetic Dossier", coverCollection: "Collection", director: "Director Médico", edition: "Edition",
+        
+        // Pág 1: PIEL
         ch1Title: "I. El Lienzo", ch1Sub: "Análisis de Calidad Dérmica", filterVasc: "Filtro Vascular",
         analysisTitle: "Análisis Espectral", analysisText: "Utilizamos Espectrometría de Contraste Vascular. Revela la inflamación crónica silente y el daño solar acumulado.",
         findingTitle: "Hallazgos", findingText: "Se detecta una barrera cutánea con signos de fatiga oxidativa y textura irregular, disminuyendo la luminosidad.",
         dxTitle: "Diagnóstico & Tratamiento", dxText: "Su piel requiere una restauración profunda de la matriz extracelular para recuperar el 'Glow'.", suggestion: "Sugerencia Experta", rx1: "Láser + Bio-Revitalización",
+        
+        // Pág 2: VOLUMEN
         ch2Title: "II. La Escultura", ch2Sub: "Dinámica de Paquetes Grasos", tagCheek: "▲ PÓMULO", tagJowl: "▼ JOWL",
         mapTitle: "Mapeo Volumétrico", mapText: "Visualizamos cómo los compartimentos de soporte se atrofian y los superficiales caen por gravedad.",
         cliTitle: "Hallazgos Clínicos", cliText: "Existe deflación en el tercio medio (pómulos), provocando que la piel pierda su anclaje y descienda.",
         quote: "No es exceso de piel, es falta de soporte.", txVol: "Tratamiento: Reposición Volumétrica",
-        ch3Title: "III. Los Cimientos", ch3Sub: "Análisis del SMAS y Soporte Óseo", smasTitle: "SMAS (Tensión)", smasDx: "Dx: Laxitud ligamentaria y pérdida de tensión muscular.",
-        boneTitle: "Soporte Óseo", boneDx: "Dx: Retracción en la apertura piriforme y mandíbula.",
+        
+        // Pág 3: ESTRUCTURA, CUELLO Y ESCOTE (NUEVO)
+        ch3Title: "III. Cimientos y Escote", ch3Sub: "SMAS, Perfil y Calidad de Cuello",
+        smasTitle: "SMAS (Tensión)", smasDx: "Dx: Laxitud ligamentaria y pérdida de tensión muscular.",
+        boneTitle: "Perfil Cervical", boneDx: "Dx: Pérdida del ángulo de la juventud (90°).",
+        neckTag: "Ángulo Cervical",
+        
+        // NUEVA SECCIÓN ESCOTE
+        decoTitle: "Análisis de Escote (Décolleté)",
+        decoDx: "Dx: Signos de Elastosis Solar y líneas horizontales (Anillos de Venus / Tech-Neck). La piel del cuello muestra adelgazamiento.",
+        decoTx: "Rx: Bio-Estimuladores + Hilos",
+
         planTitle: "Su Plan de Transformación", optA: "Opción A: Médico", optADesc: "Intervención experta en consultorio.", btnBook: "Agendar Cita",
         optB: "Opción B: Casa", optBDesc: "Guía digital de cuidados.", btnBuy: "Comprar Ebook", approved: "Aprobado por", print: "Imprimir PDF", whatsapp: "Hola Dr. Maya, vi mi revista digital y quiero agendar."
     },
     EN: {
         subtitle: "The Harmony Station", placeholderName: "YOUR NAME", placeholderAge: "AGE", enterBtn: "ENTER STUDIO",
-        step1: "Frontal Portrait", step2: "Right Profile", step3: "Left Profile", processing: "Processing Beauty...",
+        step1: "Front + Décolleté", step2: "Right Profile", step3: "Left Profile", processing: "Scanning Skin & Structure...",
         coverTitle: "The Aesthetic Dossier", coverCollection: "Collection", director: "Medical Director", edition: "Edition",
+        
         ch1Title: "I. The Canvas", ch1Sub: "Dermal Quality Analysis", filterVasc: "Vascular Filter",
         analysisTitle: "Spectral Analysis", analysisText: "We use Vascular Contrast Spectrometry. It reveals silent chronic inflammation and accumulated sun damage.",
         findingTitle: "Findings", findingText: "A skin barrier with signs of oxidative fatigue and irregular texture is detected, diminishing luminosity.",
         dxTitle: "Diagnosis & Treatment", dxText: "Your skin requires deep restoration of the extracellular matrix to recover its natural 'Glow'.", suggestion: "Expert Suggestion", rx1: "Laser + Bio-Revitalization",
+        
         ch2Title: "II. The Sculpture", ch2Sub: "Fat Pad Dynamics", tagCheek: "▲ CHEEK", tagJowl: "▼ JOWL",
         mapTitle: "Volumetric Mapping", mapText: "We visualize how support compartments atrophy and superficial ones descend due to gravity.",
         cliTitle: "Clinical Findings", cliText: "There is deflation in the mid-face (cheeks), causing the skin to lose its anchor and descend.",
         quote: "It's not excess skin, it's lack of support.", txVol: "Treatment: Volumetric Repositioning",
-        ch3Title: "III. The Foundation", ch3Sub: "SMAS & Bone Support Analysis", smasTitle: "SMAS (Tension)", smasDx: "Dx: Ligamentous laxity and loss of muscle tension.",
-        boneTitle: "Bone Support", boneDx: "Dx: Retraction in the piriform aperture and mandible.",
+        
+        ch3Title: "III. Foundation & Neck", ch3Sub: "SMAS, Profile & Neck Quality",
+        smasTitle: "SMAS (Tension)", smasDx: "Dx: Ligamentous laxity and loss of muscle tension.",
+        boneTitle: "Cervical Profile", boneDx: "Dx: Loss of the angle of youth (90°).",
+        neckTag: "Cervical Angle",
+        
+        decoTitle: "Décolleté Analysis",
+        decoDx: "Dx: Signs of Solar Elastosis and horizontal lines (Venus Rings / Tech-Neck). Neck skin shows thinning.",
+        decoTx: "Rx: Bio-Stimulators + Threads",
+
         planTitle: "Your Transformation Plan", optA: "Option A: Medical", optADesc: "Expert office intervention.", btnBook: "Book Appointment",
         optB: "Option B: At Home", optBDesc: "Digital care guide.", btnBuy: "Buy Ebook", approved: "Approved by", print: "Print PDF", whatsapp: "Hello Dr. Maya, I saw my digital magazine and I want to book."
     },
     PT: {
         subtitle: "A Estação da Harmonia", placeholderName: "SEU NOME", placeholderAge: "IDADE", enterBtn: "ENTRAR NO ESTÚDIO",
-        step1: "Retrato Frontal", step2: "Perfil Direito", step3: "Perfil Esquerdo", processing: "Processando Beleza...",
+        step1: "Frente + Colo", step2: "Perfil Direito", step3: "Perfil Esquerdo", processing: "Escaneando Pele e Estrutura...",
         coverTitle: "Dossiê Estético", coverCollection: "Coleção", director: "Diretor Médico", edition: "Edição",
+        
         ch1Title: "I. A Tela", ch1Sub: "Análise de Qualidade Dérmica", filterVasc: "Filtro Vascular",
         analysisTitle: "Análise Espectral", analysisText: "Utilizamos Espectrometria de Contraste Vascular. Revela inflamação crônica silenciosa e dano solar acumulado.",
         findingTitle: "Achados", findingText: "Detecta-se uma barreira cutânea com sinais de fadiga oxidativa e textura irregular, diminuindo a luminosidade.",
         dxTitle: "Diagnóstico & Tratamento", dxText: "Sua pele requer uma restauração profunda da matriz extracelular para recuperar o 'Glow' natural.", suggestion: "Sugestão de Especialista", rx1: "Laser + Bio-Revitalização",
+        
         ch2Title: "II. A Escultura", ch2Sub: "Dinâmica dos Compartimentos de Gordura", tagCheek: "▲ MALAR", tagJowl: "▼ JOWL",
         mapTitle: "Mapeamento Volumétrico", mapText: "Visualizamos como os compartimentos de suporte atrofiam e os superficiais descem pela gravidade.",
         cliTitle: "Achados Clínicos", cliText: "Existe deflação no terço médio (maçãs do rosto), fazendo com que a pele perca sua ancoragem e desça.",
         quote: "Não é excesso de pele, é falta de suporte.", txVol: "Tratamento: Reposição Volumétrica",
-        ch3Title: "III. Os Fundamentos", ch3Sub: "Análise do SMAS e Suporte Ósseo", smasTitle: "SMAS (Tensão)", smasDx: "Dx: Laxidez ligamentar e perda de tensão muscular.",
-        boneTitle: "Suporte Ósseo", boneDx: "Dx: Retração na abertura piriforme e mandíbula.",
+        
+        ch3Title: "III. Fundamentos e Colo", ch3Sub: "SMAS, Perfil e Qualidade do Pescoço",
+        smasTitle: "SMAS (Tensão)", smasDx: "Dx: Laxidez ligamentar e perda de tensão muscular.",
+        boneTitle: "Perfil Cervical", boneDx: "Dx: Perda do ângulo da juventude (90°).",
+        neckTag: "Ângulo Cervical",
+        
+        decoTitle: "Análise do Colo (Décolleté)",
+        decoDx: "Dx: Sinais de Elastose Solar e linhas horizontais (Anéis de Vênus / Tech-Neck). A pele do pescoço mostra afinamento.",
+        decoTx: "Rx: Bio-Estimuladores + Fios",
+
         planTitle: "Seu Plano de Transformação", optA: "Opção A: Médico", optADesc: "Intervenção especializada.", btnBook: "Agendar Consulta",
         optB: "Opção B: Em Casa", optBDesc: "Guia digital de cuidados.", btnBuy: "Comprar Ebook", approved: "Aprovado por", print: "Imprimir PDF", whatsapp: "Olá Dr. Maya, vi minha revista digital e quero agendar."
     }
@@ -71,7 +105,7 @@ const CONTENT = {
 
 type LangType = 'ES' | 'EN' | 'PT';
 
-export default function TipherethV950() {
+export default function TipherethV1100() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [lang, setLang] = useState<LangType>('ES');
@@ -197,6 +231,7 @@ export default function TipherethV950() {
         .filter-fat { filter: grayscale(100%) brightness(1.1) contrast(0.9); }
         .filter-smas { filter: grayscale(100%) contrast(1.2); }
         .filter-bone { filter: invert(100%) grayscale(100%); }
+        .filter-deco { filter: contrast(1.4) saturate(1.3) sepia(0.2); }
         @media print { 
             @page { size: A4; margin: 0; } 
             body { background: white; -webkit-print-color-adjust: exact; } 
@@ -315,7 +350,7 @@ export default function TipherethV950() {
                 </div>
             </div>
 
-            {/* HOJA 2: VOLÚMENES (CORREGIDO ANATOMÍA) */}
+            {/* HOJA 2: VOLÚMENES */}
             <div className="w-full md:max-w-[210mm] mx-auto bg-white shadow-2xl page-break">
                 <MagazineHeader />
                 <h2 className="text-3xl md:text-5xl font-serif italic text-center mb-4">{t.ch2Title}</h2>
@@ -323,14 +358,8 @@ export default function TipherethV950() {
                 <div className="relative mb-8 md:mb-12 mx-4 md:mx-8 shadow-2xl">
                      <div className="aspect-video w-full relative overflow-hidden bg-gray-100">
                          {photos.sideR && <img src={photos.sideR} className="w-full h-full object-cover filter-fat opacity-90" />}
-                         
-                         {/* --- MANCHAS CORREGIDAS V950 --- */}
-                         {/* Pómulo: SUBIÓ al 32% (Hueso Cigomático) */}
                          <div className="absolute top-[32%] left-[32%] w-16 h-12 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
-                         
-                         {/* Jowl: BAJÓ al 75% (Mandíbula) */}
                          <div className="absolute top-[75%] left-[38%] w-16 h-14 bg-black/40 rounded-full blur-xl border-2 border-black transform rotate-12"></div>
-                         
                          <div className="absolute top-4 right-4 text-right bg-white/50 p-2 md:p-4 backdrop-blur-sm rounded">
                              <p className="text-[#C4A484] font-bold text-[10px] md:text-xs tracking-widest">{t.tagCheek}</p>
                              <p className="text-black font-bold text-[10px] md:text-xs mt-1 tracking-widest">{t.tagJowl}</p>
@@ -347,29 +376,49 @@ export default function TipherethV950() {
                 </div>
             </div>
 
-            {/* HOJA 3: ESTRUCTURA */}
+            {/* HOJA 3: CIMENTOS, CUELLO Y ESCOTE */}
             <div className="w-full md:max-w-[210mm] mx-auto bg-white shadow-2xl page-break flex flex-col">
                 <MagazineHeader />
                 <h2 className="text-3xl md:text-5xl font-serif italic text-center mb-4">{t.ch3Title}</h2>
                 <p className="text-center text-[10px] md:text-xs uppercase tracking-widest text-gray-500 mb-8">{t.ch3Sub}</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 magazine-col gap-6 md:gap-8 mb-8 mx-4 md:mx-8 flex-grow">
-                    <div className="bg-[#fafafa] p-6 flex flex-col magazine-width">
-                        <h3 className="text-center font-bold text-xs uppercase tracking-widest mb-4">{t.smasTitle}</h3>
-                        <div className="aspect-square relative overflow-hidden mb-4 shadow-lg">
+                
+                {/* FILA SUPERIOR: SMAS y PERFIL */}
+                <div className="grid grid-cols-1 md:grid-cols-2 magazine-col gap-6 md:gap-8 mb-6 mx-4 md:mx-8">
+                    <div className="bg-[#fafafa] p-4 flex flex-col magazine-width">
+                        <h3 className="text-center font-bold text-xs uppercase tracking-widest mb-2">{t.smasTitle}</h3>
+                        <div className="aspect-square relative overflow-hidden mb-2 shadow-lg">
                              {photos.front && <img src={photos.front} className="w-full h-full object-cover filter-smas opacity-80" />}
                              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100"><path d="M30,30 L30,70" stroke="black" strokeWidth="0.8" markerEnd="url(#arrow)" /><path d="M70,30 L70,70" stroke="black" strokeWidth="0.8" markerEnd="url(#arrow)" /><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="black" /></marker></defs></svg>
                         </div>
-                        <p className="text-xs font-serif text-justify mt-auto">{t.smasDx}</p>
+                        <p className="text-[10px] font-serif text-justify mt-auto">{t.smasDx}</p>
                     </div>
-                    <div className="bg-[#fafafa] p-6 flex flex-col magazine-width">
-                        <h3 className="text-center font-bold text-xs uppercase tracking-widest mb-4">{t.boneTitle}</h3>
-                        <div className="aspect-square relative overflow-hidden mb-4 shadow-lg">
+                    <div className="bg-[#fafafa] p-4 flex flex-col magazine-width">
+                        <h3 className="text-center font-bold text-xs uppercase tracking-widest mb-2">{t.boneTitle}</h3>
+                        <div className="aspect-square relative overflow-hidden mb-2 shadow-lg">
                              {photos.sideL ? <img src={photos.sideL} className="w-full h-full object-cover filter-bone" /> : <img src={photos.sideR || ''} className="w-full h-full object-cover filter-bone" />}
-                             <div className="absolute bottom-8 left-8 w-12 h-12 border-l-4 border-b-4 border-white opacity-60"></div>
+                             <div className="absolute bottom-4 left-[35%] w-16 h-1 border-t-2 border-red-500 opacity-60 rotate-12"></div>
+                             <div className="absolute bottom-4 left-[35%] h-16 w-1 border-l-2 border-red-500 opacity-60"></div>
+                             <p className="absolute bottom-16 left-[40%] text-red-500 font-bold text-[9px] uppercase tracking-widest">{t.neckTag}</p>
                         </div>
-                        <p className="text-xs font-serif text-justify mt-auto">{t.boneDx}</p>
+                        <p className="text-[10px] font-serif text-justify mt-auto">{t.boneDx}</p>
                     </div>
                 </div>
+
+                {/* FILA INFERIOR (NUEVA): ESCOTE */}
+                <div className="mx-4 md:mx-8 mb-6">
+                    <h3 className="font-bold uppercase text-xs mb-2 border-b border-black inline-block">{t.decoTitle}</h3>
+                    <div className="flex gap-4 items-center">
+                        <div className="w-1/3 aspect-[4/3] relative overflow-hidden shadow-md">
+                            {/* FOTO FRONTAL ENFOCADA ABAJO (OBJECT POSITION) Y CON FILTRO ROJO */}
+                            {photos.front && <img src={photos.front} className="w-full h-full object-cover filter-deco" style={{objectPosition: '0% 80%'}} />}
+                        </div>
+                        <div className="w-2/3">
+                            <p className="text-[10px] font-serif text-justify leading-relaxed">{t.decoDx}</p>
+                            <p className="text-[10px] font-bold mt-2 uppercase text-red-800">{t.decoTx}</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="bg-black text-white p-6 md:p-8 mx-4 md:mx-8 mb-8">
                     <p className="font-serif italic text-xl md:text-2xl mb-6 text-center">{t.planTitle}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 magazine-col gap-6 border-t border-white/30 pt-6">
