@@ -83,7 +83,6 @@ export default function TipherethBioMetric() {
       };
       
       // Conectar puntos clave (Oval facial, cejas, nariz, labios)
-      // Estos son índices oficiales de MediaPipe
       const points = [
           [10, 338], [338, 297], [297, 332], [332, 284], [284, 251], [251, 389], [389, 356], [356, 454], [454, 323], [323, 361], [361, 288], [288, 397], [397, 365], [365, 379], [379, 378], [378, 400], [400, 377], [377, 152], [152, 148], [148, 176], [176, 149], [149, 150], [150, 136], [136, 172], [172, 58], [58, 132], [132, 93], [93, 234], [234, 127], [127, 162], [162, 21], [21, 54], [54, 103], [103, 67], [67, 109], [109, 10]
       ];
@@ -232,7 +231,8 @@ export default function TipherethBioMetric() {
                     {/* FOTO 3: PÉRDIDA DE VOLUMEN (AZUL) */}
                     <div className="aspect-[4/5] bg-gray-100 relative overflow-hidden border border-gray-300">
                         <span className="absolute top-0 left-0 bg-blue-800 text-white text-[9px] px-2 py-1 font-bold">3. SOPORTE ÓSEO PROFUNDO</span>
-                        {photos.right && <img src={photos.right} className="w-full h-full object-cover grayscale contrast-150" />}
+                        {/* AQUÍ ESTABA EL ERROR, YA LO CORREGÍ A .sideR */}
+                        {photos.sideR && <img src={photos.sideR} className="w-full h-full object-cover grayscale contrast-150" />}
                         {/* Overlay Azul Simulado */}
                         <div className="absolute inset-0 bg-blue-900 mix-blend-soft-light opacity-60"></div>
                         <div className="absolute bottom-2 right-2 text-[8px] text-white bg-black/50 px-1">PERFIL DERECHO</div>
