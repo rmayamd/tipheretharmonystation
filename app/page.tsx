@@ -4,11 +4,12 @@ import Webcam from 'react-webcam';
 import { FaceMesh } from '@mediapipe/face_mesh';
 import { Camera } from '@mediapipe/camera_utils';
 
-// --- CONFIGURACIÓN DE LUJO ---
+// --- CONFIGURACIÓN BLINDADA (MAYÚSCULAS FIJAS) ---
 const WS_NUMBER = "573117936211";
-const DR_NAME = "DR. RICARDO MAYA ROMO";
+const DR_NAME = "DR. RICARDO MAYA ROMO"; 
+const EBOOK_LINK = "https://pay.hotmart.com/tuebookaqui"; // Pon aquí tu link de Hotmart/Stripe
 
-export default function TipherethVogueCover() {
+export default function TipherethV650() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -19,7 +20,27 @@ export default function TipherethVogueCover() {
   const [patient, setPatient] = useState({ name: '', phone: '', age: '' });
   const [cameraLoaded, setCameraLoaded] = useState(false);
 
-  // --- CARGA DATOS ---
+  // --- GESTIÓN DE LEADS (SIN DUPLICADOS) ---
+  const saveLead = (data: any) => {
+      // 1. Guardar sesión actual
+      localStorage.setItem('tiphereth_user', JSON.stringify(data));
+      
+      // 2. Guardar en historial (Base de datos local)
+      const existingLeads = localStorage.getItem('tiphereth_leads');
+      let leads = existingLeads ? JSON.parse(existingLeads) : [];
+      
+      // Buscar si ya existe este teléfono
+      const index = leads.findIndex((l: any) => l.phone === data.phone);
+      
+      if (index >= 0) {
+          leads[index] = data; // Actualizar existente
+      } else {
+          leads.push(data); // Crear nuevo
+      }
+      
+      localStorage.setItem('tiphereth_leads', JSON.stringify(leads));
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem('tiphereth_user');
     if(saved) setPatient(JSON.parse(saved));
@@ -91,23 +112,25 @@ export default function TipherethVogueCover() {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             if(captureStep === 0) ctx.drawImage(canvasRef.current, 0, 0);
             const imgData = finalCanvas.toDataURL('image/jpeg', 1.0);
+            
             if(captureStep === 0) { setPhotos(p=>({...p, front:imgData})); setCaptureStep(1); }
             else if(captureStep === 1) { setPhotos(p=>({...p, sideR:imgData})); setCaptureStep(2); }
             else { 
                 setPhotos(p=>({...p, sideL:imgData})); 
-                localStorage.setItem('tiphereth_user', JSON.stringify(patient));
+                // AQUÍ GUARDAMOS EL LEAD SIN DUPLICAR
+                saveLead(patient);
                 setAppMode('ANALYSIS'); 
                 setTimeout(() => setAppMode('RESULT'), 2500); 
             }
         }
     }
-  }, [webcamRef, captureStep]);
+  }, [webcamRef, captureStep, patient]);
 
-  // --- CABECERA INTERNA ---
+  // --- CABECERA INTERNA REUTILIZABLE ---
   const MagazineHeader = () => (
     <div className="flex justify-between items-end border-b border-black pb-6 mb-10">
         <div>
-            <h1 className="text-3xl font-serif tracking-tight text-black">{DR_NAME}</h1>
+            <h1 className="text-3xl font-serif tracking-tight text-black uppercase">{DR_NAME}</h1>
             <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 mt-2">Haute Couture Aesthetic Medicine</p>
         </div>
         <div className="text-right">
@@ -139,7 +162,7 @@ export default function TipherethVogueCover() {
                  <h1 className="text-6xl font-serif italic mb-2">Tiphereth</h1>
                  <p className="text-xs text-gray-400 tracking-[0.6em] uppercase mb-16">The Harmony Station</p>
                  <div className="space-y-8">
-                    <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-transparent border-b border-white/40 p-3 text-center text-white outline-none placeholder:text-gray-600 font-serif text-2xl" placeholder="Su Nombre" />
+                    <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-transparent border-b border-white/40 p-3 text-center text-white outline-none placeholder:text-gray-600 font-serif text-2xl uppercase" placeholder="SU NOMBRE" />
                     <div className="flex gap-6">
                         <input type="tel" onChange={e => setPatient({...patient, phone: e.target.value})} className="w-2/3 bg-transparent border-b border-white/40 p-3 text-center text-white outline-none placeholder:text-gray-600" placeholder="WhatsApp" />
                         <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-1/3 bg-transparent border-b border-white/40 p-3 text-center text-white outline-none placeholder:text-gray-600" placeholder="Edad" />
@@ -173,9 +196,19 @@ export default function TipherethVogueCover() {
       {/* 4. RESULTADO FINAL (REVISTA CON PORTADA) */}
       {appMode === 'RESULT' && (
         <div className="bg-[#f0f0f0] min-h-screen md:py-10">
-            <div className="fixed bottom-8 right-8 z-50 no-print flex gap-4">
-                 <button onClick={() => window.print()} className="bg-black text-white px-8 py-4 font-serif italic hover:scale-105 transition-transform shadow-2xl">Imprimir Revista PDF</button>
-                 <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, deseo agendar mi transformación basada en mi revista personal.`)} className="bg-white text-black border border-black px-8 py-4 font-serif italic hover:bg-gray-50 transition-colors shadow-xl">Agendar Cita</button>
+            {/* BOTONES FLOTANTES DE VENTA */}
+            <div className="fixed bottom-8 right-8 z-50 no-print flex flex-col gap-3 items-end">
+                 <button onClick={() => window.open(EBOOK_LINK)} className="bg-gray-800 text-white px-6 py-3 font-serif italic text-sm hover:scale-105 transition-transform shadow-xl border border-gray-600">
+                    📚 Comprar Ebook Tratamiento en Casa
+                 </button>
+                 <div className="flex gap-4">
+                    <button onClick={() => window.print()} className="bg-black text-white px-8 py-4 font-serif italic hover:scale-105 transition-transform shadow-2xl">
+                        Imprimir Revista PDF
+                    </button>
+                    <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Hola Dr. Maya, vi mi revista digital y quiero agendar mi transformación.`)} className="bg-white text-black border border-black px-8 py-4 font-serif italic hover:bg-gray-50 transition-colors shadow-xl">
+                        Agendar Cita
+                    </button>
+                 </div>
             </div>
 
             {/* --- HOJA 0: LA PORTADA MÍSTICA --- */}
@@ -186,16 +219,13 @@ export default function TipherethVogueCover() {
                     <div className="w-32 h-1 bg-black mx-auto"></div>
                 </div>
 
-                {/* GRÁFICO ÁRBOL DE LA VIDA (ABSTRACTO/ESFERAS) */}
+                {/* GRÁFICO ÁRBOL DE LA VIDA */}
                 <div className="relative w-64 h-96 my-12 opacity-90">
                     <svg viewBox="0 0 200 300" className="w-full h-full overflow-visible">
-                        {/* Conexiones Doradas */}
                         <path d="M100,50 L100,250 M50,150 L150,150 M75,100 L125,200 M125,100 L75,200" stroke="#C4A484" strokeWidth="1.5" opacity="0.6" />
-                        {/* Esferas Místicas */}
                         <circle cx="100" cy="50" r="20" fill="black" /> <circle cx="100" cy="150" r="25" fill="transparent" stroke="black" strokeWidth="2" /> <circle cx="100" cy="250" r="20" fill="black" />
                         <circle cx="50" cy="100" r="15" fill="gray" opacity="0.5" /> <circle cx="150" cy="100" r="15" fill="gray" opacity="0.5" />
                         <circle cx="50" cy="200" r="15" fill="gray" opacity="0.5" /> <circle cx="150" cy="200" r="15" fill="gray" opacity="0.5" />
-                        {/* Texto Central */}
                         <text x="100" y="155" textAnchor="middle" fontFamily="Playfair Display" fontStyle="italic" fontSize="14" fill="black">Harmony</text>
                     </svg>
                 </div>
@@ -214,9 +244,9 @@ export default function TipherethVogueCover() {
             <div className="max-w-[210mm] mx-auto bg-white shadow-2xl page-break">
                 <MagazineHeader />
                 <h2 className="text-5xl font-serif italic text-center mb-4">I. El Lienzo</h2>
-                <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-12">Análisis de Calidad Dérmica & Luminosidad</p>
+                <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-12">Análisis de Calidad Dérmica</p>
                 <div className="flex gap-12 items-start mb-12 pl-8">
-                    <div className="w-[45%] shadow-xl rotate-[-2deg] transition-transform hover:rotate-0">
+                    <div className="w-[45%] shadow-xl rotate-[-2deg]">
                         <div className="aspect-[3/4] relative overflow-hidden bg-gray-100">
                              {photos.front && <img src={photos.front} className="w-full h-full object-cover filter-vascular" />}
                              <div className="absolute bottom-4 left-0 bg-black text-white px-4 py-2 text-[9px] font-bold tracking-[0.2em] uppercase">Filtro Vascular</div>
@@ -234,7 +264,7 @@ export default function TipherethVogueCover() {
                 </div>
             </div>
 
-            {/* --- HOJA 2: VOLÚMENES --- */}
+            {/* --- HOJA 2: VOLÚMENES (CORREGIDO ANATOMÍA) --- */}
             <div className="max-w-[210mm] mx-auto bg-white shadow-2xl page-break">
                 <MagazineHeader />
                 <h2 className="text-5xl font-serif italic text-center mb-4">II. La Escultura</h2>
@@ -242,9 +272,19 @@ export default function TipherethVogueCover() {
                 <div className="relative mb-12 mx-8 shadow-2xl">
                      <div className="aspect-video w-full relative overflow-hidden bg-gray-100">
                          {photos.sideR && <img src={photos.sideR} className="w-full h-full object-cover filter-fat opacity-90" />}
-                         <div className="absolute top-[35%] left-[40%] w-20 h-16 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
-                         <div className="absolute top-[65%] left-[30%] w-16 h-16 bg-black/30 rounded-full blur-xl border-2 border-black transform translate-y-4"></div>
-                         <div className="absolute top-8 right-8 text-right"><p className="text-[#C4A484] font-bold text-sm tracking-widest">GRASA MALAR (Soporte)</p><p className="text-black font-bold text-sm mt-2 tracking-widest">JOWL / CAÍDA (Peso)</p></div>
+                         
+                         {/* --- CORRECCIONES ANATÓMICAS --- */}
+                         
+                         {/* 1. MANCHA BEIGE (Pérdida Volumen): EN EL PÓMULO/ARCO CIGOMÁTICO (Más arriba y atrás) */}
+                         <div className="absolute top-[38%] left-[25%] w-16 h-12 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
+                         
+                         {/* 2. MANCHA OSCURA (Jowl/Caída): EN LA LÍNEA MANDIBULAR (Más abajo) */}
+                         <div className="absolute top-[65%] left-[35%] w-16 h-14 bg-black/40 rounded-full blur-xl border-2 border-black transform rotate-12"></div>
+                         
+                         <div className="absolute top-8 right-8 text-right bg-white/50 p-4 backdrop-blur-sm">
+                             <p className="text-[#C4A484] font-bold text-xs tracking-widest">▲ PÓMULO (Pérdida Volumen)</p>
+                             <p className="text-black font-bold text-xs mt-2 tracking-widest">▼ JOWL (Grasa Desplazada)</p>
+                         </div>
                      </div>
                 </div>
                 <div className="grid grid-cols-2 gap-12 mb-12 mx-8">
@@ -257,35 +297,58 @@ export default function TipherethVogueCover() {
                 </div>
             </div>
 
-            {/* --- HOJA 3: ESTRUCTURA --- */}
+            {/* --- HOJA 3: ESTRUCTURA + VENTA FINAL --- */}
             <div className="max-w-[210mm] mx-auto bg-white shadow-2xl page-break flex flex-col">
                 <MagazineHeader />
                 <h2 className="text-5xl font-serif italic text-center mb-4">III. Los Cimientos</h2>
-                <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-12">Análisis del SMAS y Soporte Óseo</p>
-                <div className="grid grid-cols-2 gap-8 mb-12 mx-8 flex-grow">
-                    <div className="bg-[#fafafa] p-8 flex flex-col">
-                        <h3 className="text-center font-bold text-sm uppercase tracking-widest mb-6">SMAS (Tensión Muscular)</h3>
-                        <div className="aspect-[3/4] relative overflow-hidden mb-6 shadow-lg rotate-1">
+                <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-8">Análisis del SMAS y Soporte Óseo</p>
+                
+                <div className="grid grid-cols-2 gap-8 mb-8 mx-8 flex-grow">
+                    <div className="bg-[#fafafa] p-6 flex flex-col">
+                        <h3 className="text-center font-bold text-sm uppercase tracking-widest mb-4">SMAS (Tensión)</h3>
+                        <div className="aspect-square relative overflow-hidden mb-4 shadow-lg">
                              {photos.front && <img src={photos.front} className="w-full h-full object-cover filter-smas opacity-80" />}
                              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100"><path d="M30,30 L30,70" stroke="black" strokeWidth="0.8" markerEnd="url(#arrow)" /><path d="M70,30 L70,70" stroke="black" strokeWidth="0.8" markerEnd="url(#arrow)" /><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="black" /></marker></defs></svg>
                         </div>
-                        <p className="text-sm font-serif text-justify leading-relaxed mt-auto"><strong>Diagnóstico:</strong> Laxitud ligamentaria. La malla de soporte muscular ha perdido tensión, cediendo ante la gravedad.</p>
-                        <p className="text-sm font-bold mt-4 text-center uppercase border border-black py-2">Rx: Tensado Ultrasónico</p>
+                        <p className="text-xs font-serif text-justify leading-tight mt-auto"><strong>Diagnóstico:</strong> Laxitud ligamentaria y pérdida de tensión muscular.</p>
                     </div>
-                    <div className="bg-[#fafafa] p-8 flex flex-col">
-                        <h3 className="text-center font-bold text-sm uppercase tracking-widest mb-6">Soporte Óseo (Estructura)</h3>
-                        <div className="aspect-[3/4] relative overflow-hidden mb-6 shadow-lg rotate-[-1deg]">
+                    <div className="bg-[#fafafa] p-6 flex flex-col">
+                        <h3 className="text-center font-bold text-sm uppercase tracking-widest mb-4">Soporte Óseo</h3>
+                        <div className="aspect-square relative overflow-hidden mb-4 shadow-lg">
                              {photos.sideL ? <img src={photos.sideL} className="w-full h-full object-cover filter-bone" /> : <img src={photos.sideR || ''} className="w-full h-full object-cover filter-bone" />}
-                             <div className="absolute bottom-8 left-8 w-16 h-16 border-l-4 border-b-4 border-white opacity-60"></div>
+                             <div className="absolute bottom-8 left-8 w-12 h-12 border-l-4 border-b-4 border-white opacity-60"></div>
                         </div>
-                        <p className="text-sm font-serif text-justify leading-relaxed mt-auto"><strong>Diagnóstico:</strong> Retracción en la apertura piriforme y mandíbula. El "marco" óseo del rostro se está contrayendo.</p>
-                        <p className="text-sm font-bold mt-4 text-center uppercase border border-black py-2">Rx: Bio-Modelación Estructural</p>
+                        <p className="text-xs font-serif text-justify leading-tight mt-auto"><strong>Diagnóstico:</strong> Retracción en la apertura piriforme y mandíbula.</p>
                     </div>
                 </div>
-                <div className="bg-black text-white p-10 text-center mx-8 mb-8">
-                    <p className="font-serif italic text-2xl mb-4">Su Plan de Transformación Personalizada</p>
-                    <p className="text-base font-light mb-8 font-serif leading-relaxed">Hemos decodificado el lenguaje de su rostro. La combinación de <strong>Bio-Estimulación + Soporte Estructural</strong> devolverá la armonía perdida.</p>
-                    <p className="text-base font-bold uppercase tracking-[0.3em] border-2 border-white inline-block px-8 py-3">Aprobado por: Dr. Ricardo Maya Romo</p>
+
+                {/* --- SECCIÓN DE VENTA FINAL (DOBLE OPCIÓN) --- */}
+                <div className="bg-black text-white p-8 mx-8 mb-8">
+                    <p className="font-serif italic text-2xl mb-6 text-center">Su Plan de Transformación Personalizada</p>
+                    
+                    <div className="grid grid-cols-2 gap-8 border-t border-white/30 pt-6">
+                        {/* OPCIÓN A: CITA */}
+                        <div className="text-right border-r border-white/30 pr-8">
+                            <p className="text-xs font-bold uppercase text-[#C4A484] mb-2">Opción A: Tratamiento Médico</p>
+                            <p className="text-sm font-light mb-4">Intervención experta en consultorio.</p>
+                            <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, quiero agendar mi cita médica.`)} className="bg-white text-black px-4 py-2 text-xs font-bold uppercase hover:bg-gray-200">
+                                Agendar Cita
+                            </button>
+                        </div>
+
+                        {/* OPCIÓN B: EBOOK */}
+                        <div className="text-left pl-4">
+                            <p className="text-xs font-bold uppercase text-[#C4A484] mb-2">Opción B: Mantenimiento en Casa</p>
+                            <p className="text-sm font-light mb-4">Guía digital de cuidados y prevención.</p>
+                            <button onClick={() => window.open(EBOOK_LINK)} className="border border-white text-white px-4 py-2 text-xs font-bold uppercase hover:bg-white hover:text-black transition-colors">
+                                Comprar Ebook
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-sm font-bold uppercase tracking-[0.3em] inline-block">Aprobado por: {DR_NAME}</p>
+                    </div>
                 </div>
             </div>
 
