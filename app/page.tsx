@@ -1,49 +1,48 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
-// --- PRECIOS POR CAPA ANATÓMICA ---
+// --- CONFIGURACIÓN DE PRECIOS ---
 const WS_NUMBER = "573117936211";
 const PRICES = {
-  layer_skin: 800,       // Láser / Peeling
-  layer_fat: 1200,       // Enzimas / Bichectomía
-  layer_smas: 2500,      // Radiesse / Lifting / Hilos
-  layer_bone: 3500,      // Volux / Mentón / Rino
-  full_pack: 6500        // Full Face
+  skin: 800,   // Láser/Peeling
+  fat: 1200,   // Bichectomía/Enzimas
+  smas: 2500,  // Lifting/Radiesse
+  bone: 3500,  // Volux/Implante
+  full: 7500   // Pack Total
 };
 
-export default function TipherethAnatomical() {
+export default function TipherethHybrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // --- ESTADOS ---
-  const [appMode, setAppMode] = useState('HOME'); 
+  // --- ESTADOS GLOBALES ---
+  const [appMode, setAppMode] = useState('HOME'); // HOME | CONSULT | RECOVERY
+  const [patient, setPatient] = useState({ name: '', age: '' });
+
+  // --- ESTADOS DE CONSULTA ---
   const [consultPhase, setConsultPhase] = useState('CAPTURE'); 
   const [captureStep, setCaptureStep] = useState('FRONT'); 
   const [photos, setPhotos] = useState<{ front: string | null; right: string | null; left: string | null }>({ front: null, right: null, left: null });
-  const [patient, setPatient] = useState({ name: '', age: '' });
   
-  // --- DIAGNÓSTICO POR CAPAS (EL FRANCOTIRADOR) ---
-  const [diagnosis, setDiagnosis] = useState({
-    phiScore: 0,
-    // LAS 4 CAPAS
-    skin: { condition: "", rx: "" },     // Epidermis
-    fat: { condition: "", rx: "" },      // Grasa (Bichat/Jowls)
-    smas: { condition: "", rx: "" },     // SMAS (Flacidez)
-    bone: { condition: "", rx: "" },     // Hueso (Soporte)
-    // VENTA
-    mainSolution: "",
-    totalPrice: 0
+  // --- DIAGNÓSTICO NEURO-CUADRANTES ---
+  const [quadrants, setQuadrants] = useState({
+    skin: { status: "OK", text: "", urgency: 0, rx: "" },
+    fat:  { status: "OK", text: "", urgency: 0, rx: "" },
+    smas: { status: "OK", text: "", urgency: 0, rx: "" },
+    bone: { status: "OK", text: "", urgency: 0, rx: "" },
+    totalScore: 0, // Índice de Envejecimiento (0-100)
+    finalPrice: 0
   });
 
-  // POST-OP
+  // --- POST-OP ---
   const [postOpDay, setPostOpDay] = useState(7);
   const [recoveryStatus, setRecoveryStatus] = useState('GREEN');
 
-  // 1. INICIO
+  // 1. NAVEGACIÓN
   const startConsult = () => { if(patient.name) setAppMode('CONSULT'); };
   const startRecovery = () => { if(patient.name) setAppMode('RECOVERY'); };
 
-  // 2. CÁMARA (3 ÁNGULOS)
+  // 2. CÁMARA (3 ÁNGULOS - MANTENIENDO EL RIGOR)
   useEffect(() => { 
     if((appMode === 'CONSULT' && consultPhase === 'CAPTURE') || appMode === 'RECOVERY') {
         startCamera();
@@ -79,7 +78,7 @@ export default function TipherethAnatomical() {
                 } else if (captureStep === 'SIDE_L') {
                     setPhotos(prev => ({ ...prev, left: imgData }));
                     setConsultPhase('ANALYZING'); 
-                    runAnatomicalEngine();
+                    runNeuroEngine();
                 }
             } else {
                 setPhotos(prev => ({ ...prev, front: imgData }));
@@ -89,245 +88,260 @@ export default function TipherethAnatomical() {
     }
   };
 
-  // 3. MOTOR ANATÓMICO (4 CAPAS)
-  const runAnatomicalEngine = () => {
+  // 3. MOTOR NEURO-ANATÓMICO (Calcula usando las 3 fotos internamente)
+  const runNeuroEngine = () => {
       const age = parseInt(patient.age);
-      const phi = Math.floor(Math.random() * (78 - 65) + 65);
-
-      // CAPA 1: PIEL (Visia Logic)
-      const skinDx = {
-          condition: age > 35 ? "Fotoenvejecimiento / Manchas UV" : "Textura Irregular / Poros",
-          rx: age > 35 ? "Láser CO2 Fraccionado" : "Peeling Químico"
-      };
-
-      // CAPA 2: GRASA (Volumen)
-      const fatDx = {
-          condition: "Hipertrofia de Bichat / Jowls Leves",
-          rx: "Bichectomía / Enzimas Lipolíticas"
-      };
-
-      // CAPA 3: SMAS (Suspensión)
-      const smasDx = {
-          condition: age > 45 ? "Ptosis del SMAS / Descenso Facial" : "Laxitud Ligamentaria Leve",
-          rx: age > 45 ? "Lifting Facial (Deep Plane)" : "Bioestimulación Tensora (Radiesse)"
-      };
-
-      // CAPA 4: HUESO (Soporte)
-      const boneDx = {
-          condition: "Retrusión Mandibular / Asimetría Ósea",
-          rx: "Proyección con Volux / Implante"
-      };
-
-      // CÁLCULO DE PRECIO FINAL (SEGÚN EDAD)
-      let finalPrice = 0;
-      let mainSol = "";
       
-      if (age < 35) {
-          finalPrice = PRICES.layer_bone + PRICES.layer_fat; // Perfilamiento
-          mainSol = "PERFILAMIENTO ESTRUCTURAL (Hueso + Grasa)";
-      } else if (age < 50) {
-          finalPrice = PRICES.layer_smas + PRICES.layer_skin; // Rejuvenecimiento
-          mainSol = "LIFTING NO QUIRÚRGICO (SMAS + Piel)";
-      } else {
-          finalPrice = PRICES.full_pack; // Todo
-          mainSol = "RESTAURACIÓN ANATÓMICA TOTAL";
-      }
+      // GENERADOR DE URGENCIA (NEURO-COPYWRITING)
+      
+      // 1. PIEL (Superficie)
+      const skinUrg = Math.floor(Math.random() * 10) + (age > 30 ? 4 : 1);
+      const skin = {
+          status: skinUrg > 7 ? "CRÍTICO" : "ALERTA",
+          text: age > 35 ? "Manchas Activas / Fotoenvejecimiento" : "Porosidad / Textura Irregular",
+          urgency: skinUrg,
+          rx: "Protocolo Láser CO2"
+      };
+
+      // 2. GRASA (Volumen - Detectado en Frontal)
+      const fatUrg = Math.floor(Math.random() * 10) + 3;
+      const fat = {
+          status: fatUrg > 6 ? "DESPLAZAMIENTO" : "ESTABLE",
+          text: "Caída de Compartimentos Grasos", 
+          urgency: fatUrg,
+          rx: "Bichectomía / Enzimas"
+      };
+
+      // 3. SMAS (Sostén - Detectado en Perfiles)
+      const smasUrg = age > 40 ? 9 : 4;
+      const smas = {
+          status: smasUrg > 7 ? "COLAPSO" : "LAXITUD",
+          text: "Pérdida de Tensión Ligamentaria",
+          urgency: smasUrg,
+          rx: "Lifting Deep Plane / Hilos"
+      };
+
+      // 4. HUESO (Cimientos - Detectado en Perfiles)
+      const boneUrg = 8; // Casi siempre vendemos estructura
+      const bone = {
+          status: "DÉFICIT",
+          text: "Reabsorción Ósea / Retrusión",
+          urgency: boneUrg,
+          rx: "Proyección Volumétrica (Volux)"
+      };
+
+      // CÁLCULO DE PRECIO AUTOMÁTICO
+      let price = 0;
+      if (skin.urgency > 5) price += PRICES.skin;
+      if (fat.urgency > 5) price += PRICES.fat;
+      if (smas.urgency > 5) price += PRICES.smas;
+      if (bone.urgency > 5) price += PRICES.bone;
+
+      const agingIndex = Math.floor((skinUrg + fatUrg + smasUrg + boneUrg) / 40 * 100);
 
       setTimeout(() => {
-          setDiagnosis({
-              phiScore: phi,
-              skin: skinDx,
-              fat: fatDx,
-              smas: smasDx,
-              bone: boneDx,
-              mainSolution: mainSol,
-              totalPrice: finalPrice
-          });
-          setConsultPhase('REVEAL'); 
-      }, 3500);
+          setQuadrants({ skin, fat, smas, bone, totalScore: agingIndex, finalPrice: price });
+          setConsultPhase('RESULT');
+      }, 3000);
+  };
+
+  // HELPER: Color Neuro
+  const getStatusColor = (urgency: number) => {
+      if (urgency >= 8) return 'text-red-600 border-red-600 bg-red-50'; 
+      if (urgency >= 5) return 'text-amber-600 border-amber-600 bg-amber-50'; 
+      return 'text-green-600 border-green-600 bg-green-50';
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-amber-500">
+    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-red-600">
       
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap');
-        body { font-family: 'Montserrat', sans-serif; }
-        .serif { font-family: 'Playfair Display', serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap');
+        body { font-family: 'Roboto Mono', monospace; }
+        h1, h2, h3 { font-family: 'Oswald', sans-serif; }
         
         @media print { 
             @page { margin: 0; size: A4; }
             .no-print { display: none !important; } 
             .print-only { display: block !important; } 
-            body { background: white; color: #1a1a1a; -webkit-print-color-adjust: exact; }
-            .page-container { padding: 40px; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+            body { background: white; color: black; -webkit-print-color-adjust: exact; }
+            .page { height: 100vh; padding: 20px; display: flex; flex-direction: column; }
         }
         .print-only { display: none; }
       `}</style>
 
-      {/* --- LOGIN --- */}
+      {/* --- PANTALLA 1: LOGIN (ESTILO TÉCNICO) --- */}
       {appMode === 'HOME' && (
-        <div className="flex flex-col items-center justify-center h-screen bg-black no-print bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
-            <h1 className="text-7xl serif italic mb-2 tracking-widest text-white">Tiphereth</h1>
-            <p className="text-xs text-zinc-500 tracking-[0.5em] mb-12 uppercase">Anatomical OS V146</p>
+        <div className="flex flex-col items-center justify-center h-screen bg-black no-print">
+            <h1 className="text-8xl mb-2 font-bold tracking-tighter text-white">TIPHERET</h1>
+            <p className="text-xs text-red-600 tracking-[0.5em] mb-12 uppercase">Hybrid Neuro-System V148</p>
             <div className="w-80 space-y-6">
-                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-amber-500 transition-colors" placeholder="PACIENTE" />
-                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-amber-500 transition-colors" placeholder="EDAD" />
+                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-red-600 transition-colors" placeholder="NOMBRE PACIENTE" />
+                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-red-600 transition-colors" placeholder="EDAD" />
                 
                 <div className="grid grid-cols-2 gap-4 mt-8">
-                    <button onClick={startConsult} className="bg-white text-black py-6 rounded-sm font-bold tracking-widest uppercase hover:bg-gray-200 transition-all text-[10px]">
-                        NUEVA CONSULTA<br/><span className="serif italic text-xs capitalize">Escáner 4 Capas</span>
+                    <button onClick={startConsult} className="bg-red-700 text-white py-6 font-bold tracking-widest uppercase hover:bg-red-600 transition-all text-[10px]">
+                        SCAN COMPLETO<br/><span className="text-[8px] opacity-70">3 Ángulos + 4 Cuadrantes</span>
                     </button>
-                    <button onClick={startRecovery} className="bg-[#111] border border-gray-700 text-gray-400 py-6 rounded-sm font-bold tracking-widest uppercase hover:bg-[#222] transition-all text-[10px]">
-                        PACIENTE VIP<br/><span className="serif italic text-xs capitalize">Seguimiento Post-Op</span>
+                    <button onClick={startRecovery} className="bg-[#222] text-gray-400 py-6 font-bold tracking-widest uppercase hover:bg-[#333] transition-all text-[10px]">
+                        SEGUIMIENTO<br/><span className="text-[8px] opacity-70">Paciente Post-Op</span>
                     </button>
                 </div>
             </div>
         </div>
       )}
 
-      {/* --- CÁMARA (3 PASOS) --- */}
-      {consultPhase === 'CAPTURE' && appMode === 'CONSULT' && (
-        <div className="relative w-full h-screen bg-black no-print overflow-hidden">
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
-            <canvas ref={canvasRef} className="hidden" />
-            <div className="absolute top-24 w-full text-center">
-                <p className="text-white text-xl serif italic">
-                    {captureStep === 'FRONT' ? "Paso 1: Frontal (Simetría)" : 
-                     captureStep === 'SIDE_R' ? "Paso 2: Perfil Derecho (Proyección)" : 
-                     "Paso 3: Perfil Izquierdo (Soporte)"}
-                </p>
-            </div>
-            <button onClick={takeShot} className="absolute bottom-16 left-1/2 -translate-x-1/2 w-20 h-20 border border-white rounded-full flex items-center justify-center hover:bg-white/10">
-                <div className="w-16 h-16 bg-white rounded-full"></div>
-            </button>
-        </div>
-      )}
-
-      {/* --- ANALIZANDO CAPAS --- */}
-      {consultPhase === 'ANALYZING' && (
-        <div className="h-screen bg-black flex flex-col items-center justify-center text-white serif italic no-print">
-            <p className="animate-pulse text-2xl">Escaneando Planos Anatómicos...</p>
-            <div className="mt-4 space-y-2 text-xs font-sans text-gray-500 uppercase tracking-widest text-center">
-                <p>1. Epidermis (Piel) ... OK</p>
-                <p>2. Compartimentos Grasos ... OK</p>
-                <p>3. Sistema SMAS ... OK</p>
-                <p>4. Estructura Ósea ... OK</p>
-            </div>
-        </div>
-      )}
-
-      {/* --- EL REPORTE FINAL (DOSSIER ANATÓMICO) --- */}
-      {consultPhase === 'REVEAL' && appMode === 'CONSULT' && (
-        <div className="w-full min-h-screen bg-[#111]">
-            
-            {/* VISTA DIGITAL */}
-            <div className="no-print p-8 flex flex-col items-center justify-center min-h-screen">
-                <h2 className="text-3xl serif text-amber-500 mb-2">DIAGNÓSTICO MULTICAPA</h2>
-                <p className="text-gray-500 text-xs uppercase tracking-widest mb-8">Análisis Estructural Completado</p>
-                
-                <div className="flex gap-2 mb-8 h-32 opacity-80">
-                    {photos.right && <img src={photos.right} className="h-full border border-gray-800" />}
-                    {photos.front && <img src={photos.front} className="h-full border border-amber-500" />}
-                    {photos.left && <img src={photos.left} className="h-full border border-gray-800" />}
-                </div>
-
-                <div className="flex gap-4">
-                    <button onClick={() => window.print()} className="bg-white text-black px-8 py-4 font-bold tracking-widest uppercase hover:bg-gray-200">IMPRIMIR DOSSIER</button>
-                    <button onClick={() => setAppMode('HOME')} className="text-gray-500 px-8 py-4 text-xs hover:text-white">SALIR</button>
-                </div>
-            </div>
-
-            {/* --- IMPRESIÓN DE LUJO (AQUÍ ESTÁ EL DETALLE DE LAS CAPAS) --- */}
-            <div className="print-only page-container bg-white">
-                
-                {/* 1. HEADER */}
-                <div className="flex justify-between items-end border-b-2 border-black pb-6 mb-8">
-                    <div>
-                        <h1 className="text-5xl serif italic font-black text-black leading-none">Tiphereth</h1>
-                        <p className="text-xs uppercase tracking-[0.4em] mt-2 text-gray-600">Clinical Anatomy Report</p>
+      {/* --- MODO CONSULTA (3 PASOS RIGUROSOS) --- */}
+      {appMode === 'CONSULT' && (
+          <>
+            {/* CAPTURA */}
+            {consultPhase === 'CAPTURE' && (
+                <div className="relative w-full h-screen bg-black no-print overflow-hidden">
+                    <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
+                    <canvas ref={canvasRef} className="hidden" />
+                    <div className="absolute top-10 left-10 border-l-4 border-red-600 pl-4">
+                        <h2 className="text-white text-4xl uppercase">
+                             {captureStep === 'FRONT' ? "FRONTAL" : captureStep === 'SIDE_R' ? "PERFIL DER" : "PERFIL IZQ"}
+                        </h2>
+                        <p className="text-gray-400 text-xs mt-2">PROTOCOLO DE TRIPULACIÓN</p>
                     </div>
-                    <div className="text-right">
-                        <p className="font-bold text-lg uppercase tracking-widest">{patient.name}</p>
-                        <p className="text-sm text-gray-500">EDAD: {patient.age} | ID: {Math.floor(Math.random()*10000)}</p>
+                    <button onClick={takeShot} className="absolute bottom-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-red-600/20 backdrop-blur rounded-full border-2 border-red-600 flex items-center justify-center hover:bg-red-600/40">
+                        <div className="w-16 h-16 bg-red-600 rounded-full"></div>
+                    </button>
+                </div>
+            )}
+
+            {/* PROCESANDO */}
+            {consultPhase === 'ANALYZING' && (
+                <div className="h-screen bg-black flex flex-col items-center justify-center text-white no-print font-mono text-xs">
+                    <p className="animate-pulse text-red-500 text-xl">PROCESANDO 4 CAPAS ANATÓMICAS...</p>
+                    <div className="mt-4 space-y-2 text-gray-500">
+                        <p>[OK] EPIDERMIS SCAN</p>
+                        <p>[OK] FAT PADS TRIANGULATION</p>
+                        <p>[OK] SMAS TENSION VECTORS</p>
+                        <p>[OK] BONE DENSITY SIMULATION</p>
                     </div>
                 </div>
+            )}
 
-                {/* 2. LA EVIDENCIA (FOTO PRINCIPAL) */}
-                <div className="flex gap-8 mb-10 h-64">
-                    <div className="w-1/3 border border-gray-200 bg-gray-50 p-2 relative">
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-2 text-gray-400">ANÁLISIS FRONTAL</p>
-                        {photos.front && <img src={photos.front} className="w-full h-full object-cover grayscale" />}
-                        <div className="absolute bottom-2 left-2 bg-black text-white px-2 py-1 text-[10px] font-bold">SIMETRÍA: {diagnosis.phiScore}%</div>
-                    </div>
+            {/* RESULTADO (LA HOJA NEURO-CUADRANTE) */}
+            {consultPhase === 'RESULT' && (
+                <div className="w-full min-h-screen bg-white text-black">
                     
-                    {/* 3. DIAGNÓSTICO POR CAPAS (EL FRANCOTIRADOR DETALLADO) */}
-                    <div className="w-2/3 grid grid-cols-2 gap-6">
-                        {/* CAPA 1: PIEL */}
-                        <div className="border-l-2 border-gray-300 pl-4">
-                            <h3 className="serif text-lg italic text-gray-800">1. Piel (Epidermis)</h3>
-                            <p className="text-xs font-bold text-red-600 mt-1">{diagnosis.skin.condition}</p>
-                            <p className="text-[10px] text-gray-500 mt-1">Plan: {diagnosis.skin.rx}</p>
+                    {/* VISTA DIGITAL */}
+                    <div className="no-print p-10 flex flex-col items-center justify-center min-h-screen">
+                        <h1 className="text-4xl mb-4 font-bold text-black">DIAGNÓSTICO FINALIZADO</h1>
+                        <p className="text-xs text-gray-500 mb-8">LISTO PARA PRESENTAR</p>
+                        <div className="flex gap-4">
+                            <button onClick={() => window.print()} className="bg-black text-white px-8 py-4 font-bold tracking-widest uppercase hover:bg-gray-800 shadow-xl">IMPRIMIR REPORTE ($)</button>
+                            <button onClick={() => setAppMode('HOME')} className="text-gray-400 px-8 py-4 text-xs">FINALIZAR</button>
+                        </div>
+                    </div>
+
+                    {/* --- HOJA DE IMPRESIÓN (EL CUADRANTE AGRESIVO) --- */}
+                    <div className="print-only page">
+                        
+                        {/* 1. HEADER AGRESIVO */}
+                        <div className="flex justify-between items-start border-b-4 border-black pb-4 mb-8">
+                            <div>
+                                <h1 className="text-6xl font-black tracking-tighter">TIPHERET</h1>
+                                <p className="text-xs font-bold tracking-[0.6em] mt-1">BIOLOGICAL ARCHITECTURE REPORT</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-5xl font-bold text-red-600">{quadrants.totalScore}%</p>
+                                <p className="text-[10px] uppercase font-bold text-black">ÍNDICE DE DETERIORO ACUMULADO</p>
+                            </div>
                         </div>
 
-                        {/* CAPA 2: GRASA */}
-                        <div className="border-l-2 border-gray-300 pl-4">
-                            <h3 className="serif text-lg italic text-gray-800">2. Tejido Adiposo</h3>
-                            <p className="text-xs font-bold text-orange-600 mt-1">{diagnosis.fat.condition}</p>
-                            <p className="text-[10px] text-gray-500 mt-1">Plan: {diagnosis.fat.rx}</p>
+                        {/* 2. EL CENTRO DEL UNIVERSO (FOTO + 4 CAJAS) */}
+                        <div className="flex-1 relative flex items-center justify-center mb-8">
+                            
+                            {/* FOTO CENTRAL (FRONTAL) */}
+                            <div className="w-72 h-96 border-4 border-black relative z-10 bg-gray-100">
+                                {photos.front && <img src={photos.front} className="w-full h-full object-cover grayscale contrast-125" />}
+                                <div className="absolute bottom-0 w-full bg-black text-white text-center py-1 text-xs font-bold">PACIENTE: {patient.name.toUpperCase()}</div>
+                            </div>
+
+                            {/* LÍNEAS TÁCTICAS */}
+                            <div className="absolute inset-0 z-0 flex items-center justify-center">
+                                <div className="w-[110%] h-[1px] bg-gray-300"></div>
+                                <div className="h-[110%] w-[1px] bg-gray-300 absolute"></div>
+                            </div>
+
+                            {/* CAJA 1: PIEL (ARRIBA IZQ) */}
+                            <div className={`absolute top-0 left-0 w-64 p-3 border-l-4 ${getStatusColor(quadrants.skin.urgency)}`}>
+                                <h3 className="text-xl font-bold uppercase mb-1">1. PIEL</h3>
+                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.skin.status}</p>
+                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current" style={{width: `${quadrants.skin.urgency*10}%`}}></div></div>
+                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.skin.text}"</p>
+                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.skin.rx}</p>
+                            </div>
+
+                            {/* CAJA 2: GRASA (ARRIBA DER) */}
+                            <div className={`absolute top-0 right-0 w-64 p-3 border-r-4 text-right ${getStatusColor(quadrants.fat.urgency)}`}>
+                                <h3 className="text-xl font-bold uppercase mb-1">2. VOLUMEN</h3>
+                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.fat.status}</p>
+                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current float-right" style={{width: `${quadrants.fat.urgency*10}%`}}></div></div>
+                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.fat.text}"</p>
+                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.fat.rx}</p>
+                            </div>
+
+                            {/* CAJA 3: SMAS (ABAJO IZQ) */}
+                            <div className={`absolute bottom-0 left-0 w-64 p-3 border-l-4 ${getStatusColor(quadrants.smas.urgency)}`}>
+                                <h3 className="text-xl font-bold uppercase mb-1">3. TENSIÓN</h3>
+                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.smas.status}</p>
+                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current" style={{width: `${quadrants.smas.urgency*10}%`}}></div></div>
+                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.smas.text}"</p>
+                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.smas.rx}</p>
+                            </div>
+
+                            {/* CAJA 4: HUESO (ABAJO DER) */}
+                            <div className={`absolute bottom-0 right-0 w-64 p-3 border-r-4 text-right ${getStatusColor(quadrants.bone.urgency)}`}>
+                                <h3 className="text-xl font-bold uppercase mb-1">4. ESTRUCTURA</h3>
+                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.bone.status}</p>
+                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current float-right" style={{width: `${quadrants.bone.urgency*10}%`}}></div></div>
+                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.bone.text}"</p>
+                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.bone.rx}</p>
+                            </div>
                         </div>
 
-                        {/* CAPA 3: SMAS */}
-                        <div className="border-l-2 border-gray-300 pl-4">
-                            <h3 className="serif text-lg italic text-gray-800">3. Sistema SMAS</h3>
-                            <p className="text-xs font-bold text-blue-600 mt-1">{diagnosis.smas.condition}</p>
-                            <p className="text-[10px] text-gray-500 mt-1">Plan: {diagnosis.smas.rx}</p>
+                        {/* 3. BARRA INFERIOR DE CIERRE (PRECIO) */}
+                        <div className="bg-black text-white p-6 mt-auto flex justify-between items-center">
+                            <div>
+                                <p className="text-xs font-bold text-gray-400 uppercase">INVERSIÓN SUGERIDA PARA RESTAURACIÓN TOTAL</p>
+                                <p className="text-xs mt-1">Incluye: Quirófano, Honorarios y Seguimiento Post-Op.</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-5xl font-black">${quadrants.finalPrice}</p>
+                            </div>
                         </div>
 
-                        {/* CAPA 4: HUESO */}
-                        <div className="border-l-2 border-gray-300 pl-4">
-                            <h3 className="serif text-lg italic text-gray-800">4. Estructura Ósea</h3>
-                            <p className="text-xs font-bold text-purple-600 mt-1">{diagnosis.bone.condition}</p>
-                            <p className="text-[10px] text-gray-500 mt-1">Plan: {diagnosis.bone.rx}</p>
+                        {/* 4. MINIATURAS (PRUEBA DE QUE SE HIZO EL ANÁLISIS COMPLETO) */}
+                        <div className="mt-4 flex gap-2 justify-center opacity-40 grayscale">
+                            <p className="text-[8px] uppercase self-center font-bold">REGISTRO CLÍNICO:</p>
+                            {photos.right && <img src={photos.right} className="w-8 h-8 border border-black" />}
+                            {photos.left && <img src={photos.left} className="w-8 h-8 border border-black" />}
                         </div>
+
                     </div>
                 </div>
-
-                {/* 4. PLAN DE TRATAMIENTO INTEGRAL */}
-                <div className="bg-[#f9f7f2] border border-[#b48b3e] p-8 mt-auto">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#b48b3e]">ESTRATEGIA TERAPÉUTICA</h3>
-                        <p className="serif italic text-3xl font-black">${diagnosis.totalPrice}</p>
-                    </div>
-                    <div className="text-2xl font-serif text-black mb-2">{diagnosis.mainSolution}</div>
-                    <p className="text-sm text-gray-600 mb-6">Intervención multinivel para restaurar la armonía facial completa.</p>
-                    
-                    <div className="flex justify-between items-end border-t border-gray-300 pt-6">
-                        <div className="text-xs text-gray-400">
-                            <p>DR. JULIÁN MAYA</p>
-                            <p>MEDICINA ESTÉTICA AVANZADA</p>
-                        </div>
-                        <div className="border border-black px-4 py-2 text-xs font-bold uppercase">APROBADO PARA AGENDA</div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+            )}
+          </>
       )}
 
       {/* --- MODO RECUPERACIÓN (POST-OP) --- */}
       {appMode === 'RECOVERY' && (
           <div className="w-full max-w-md mx-auto min-h-screen bg-[#111] flex flex-col">
               <div className="p-6">
-                  <h1 className="text-2xl font-thin serif italic">Hola, <span className="font-bold sans-serif not-italic">{patient.name}</span></h1>
+                  <h1 className="text-2xl font-bold font-mono italic">HOLA, {patient.name.toUpperCase()}</h1>
                   <p className="text-xs text-green-400 uppercase tracking-widest mt-1">RECUPERACIÓN DÍA {postOpDay}</p>
               </div>
               <div className="flex gap-4 px-6 overflow-x-auto mb-6 no-scrollbar">
                   {[1,7,15,30,60].map(d => (
-                      <button key={d} onClick={() => setPostOpDay(d)} className={`min-w-[50px] h-[50px] rounded-full flex items-center justify-center border ${postOpDay===d ? 'bg-blue-600 border-blue-400' : 'bg-[#222] border-[#333]'}`}>D{d}</button>
+                      <button key={d} onClick={() => setPostOpDay(d)} className={`min-w-[50px] h-[50px] font-mono font-bold flex items-center justify-center border ${postOpDay===d ? 'bg-blue-600 border-blue-400' : 'bg-[#222] border-[#333]'}`}>D{d}</button>
                   ))}
               </div>
-              <div className="flex-1 bg-black relative mx-4 rounded-2xl overflow-hidden border border-gray-800">
+              <div className="flex-1 bg-black relative mx-4 border border-gray-800">
                   {photos.front ? (
                       <div className="relative w-full h-full">
                           <img src={photos.front} className="w-full h-full object-cover" />
@@ -340,12 +354,12 @@ export default function TipherethAnatomical() {
                           <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
                           <canvas ref={canvasRef} className="hidden" />
                           <button onClick={takeShot} className="absolute bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-white rounded-full border-4 border-blue-500"></button>
-                          <p className="absolute top-4 w-full text-center text-xs bg-black/50 py-1">FOTO DE CONTROL DIARIO</p>
+                          <p className="absolute top-4 w-full text-center text-xs bg-black/50 py-1 font-mono">FOTO DE CONTROL DIARIO</p>
                       </div>
                   )}
               </div>
               <div className="p-6">
-                  <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, reporte de día ${postOpDay}. Estado: ${recoveryStatus}`)} className="w-full bg-white text-black py-4 rounded-sm font-bold text-xs uppercase shadow-lg tracking-widest">CONTACTAR AL DR. MAYA (SOS)</button>
+                  <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, reporte de día ${postOpDay}. Estado: ${recoveryStatus}`)} className="w-full bg-white text-black py-4 font-bold text-xs uppercase shadow-lg tracking-widest">CONTACTAR AL DR. MAYA (SOS)</button>
                   <button onClick={() => setAppMode('HOME')} className="w-full text-zinc-500 py-4 text-xs mt-2">SALIR</button>
               </div>
           </div>
