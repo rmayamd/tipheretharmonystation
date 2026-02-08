@@ -1,48 +1,36 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
-// --- CONFIGURACIÓN DE PRECIOS ---
 const WS_NUMBER = "573117936211";
-const PRICES = {
-  skin: 800,   // Láser/Peeling
-  fat: 1200,   // Bichectomía/Enzimas
-  smas: 2500,  // Lifting/Radiesse
-  bone: 3500,  // Volux/Implante
-  full: 7500   // Pack Total
-};
 
-export default function TipherethHybrid() {
+export default function TipherethVisual() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // --- ESTADOS GLOBALES ---
-  const [appMode, setAppMode] = useState('HOME'); // HOME | CONSULT | RECOVERY
-  const [patient, setPatient] = useState({ name: '', age: '' });
-
-  // --- ESTADOS DE CONSULTA ---
+  // --- ESTADOS ---
+  const [appMode, setAppMode] = useState('HOME'); 
   const [consultPhase, setConsultPhase] = useState('CAPTURE'); 
   const [captureStep, setCaptureStep] = useState('FRONT'); 
   const [photos, setPhotos] = useState<{ front: string | null; right: string | null; left: string | null }>({ front: null, right: null, left: null });
+  const [patient, setPatient] = useState({ name: '', age: '' });
   
-  // --- DIAGNÓSTICO NEURO-CUADRANTES ---
-  const [quadrants, setQuadrants] = useState({
-    skin: { status: "OK", text: "", urgency: 0, rx: "" },
-    fat:  { status: "OK", text: "", urgency: 0, rx: "" },
-    smas: { status: "OK", text: "", urgency: 0, rx: "" },
-    bone: { status: "OK", text: "", urgency: 0, rx: "" },
-    totalScore: 0, // Índice de Envejecimiento (0-100)
-    finalPrice: 0
+  // --- DIAGNÓSTICO DETALLADO ---
+  const [report, setReport] = useState({
+    skin: { title: "Dermis (Superficie)", finding: "", treatment: "" },
+    wrinkles: { title: "Mios (Movimiento)", finding: "", treatment: "" },
+    fat: { title: "Volumen (Grasa)", finding: "", treatment: "" },
+    bone: { title: "Soporte (Hueso)", finding: "", treatment: "" },
   });
 
-  // --- POST-OP ---
+  // POST-OP
   const [postOpDay, setPostOpDay] = useState(7);
   const [recoveryStatus, setRecoveryStatus] = useState('GREEN');
 
-  // 1. NAVEGACIÓN
+  // 1. INICIO
   const startConsult = () => { if(patient.name) setAppMode('CONSULT'); };
   const startRecovery = () => { if(patient.name) setAppMode('RECOVERY'); };
 
-  // 2. CÁMARA (3 ÁNGULOS - MANTENIENDO EL RIGOR)
+  // 2. CÁMARA (3 ÁNGULOS)
   useEffect(() => { 
     if((appMode === 'CONSULT' && consultPhase === 'CAPTURE') || appMode === 'RECOVERY') {
         startCamera();
@@ -78,7 +66,7 @@ export default function TipherethHybrid() {
                 } else if (captureStep === 'SIDE_L') {
                     setPhotos(prev => ({ ...prev, left: imgData }));
                     setConsultPhase('ANALYZING'); 
-                    runNeuroEngine();
+                    runVisualAnalysis();
                 }
             } else {
                 setPhotos(prev => ({ ...prev, front: imgData }));
@@ -88,248 +76,226 @@ export default function TipherethHybrid() {
     }
   };
 
-  // 3. MOTOR NEURO-ANATÓMICO (Calcula usando las 3 fotos internamente)
-  const runNeuroEngine = () => {
+  // 3. MOTOR VISUAL (Genera los hallazgos textuales)
+  const runVisualAnalysis = () => {
       const age = parseInt(patient.age);
       
-      // GENERADOR DE URGENCIA (NEURO-COPYWRITING)
-      
-      // 1. PIEL (Superficie)
-      const skinUrg = Math.floor(Math.random() * 10) + (age > 30 ? 4 : 1);
-      const skin = {
-          status: skinUrg > 7 ? "CRÍTICO" : "ALERTA",
-          text: age > 35 ? "Manchas Activas / Fotoenvejecimiento" : "Porosidad / Textura Irregular",
-          urgency: skinUrg,
-          rx: "Protocolo Láser CO2"
-      };
+      // Lógica simple para generar texto médico persuasivo
+      const skinTxt = age > 30 ? "Se observan léntigos solares y discromías en zona malar." : "Poros dilatados y exceso de producción sebácea en zona T.";
+      const skinRx = age > 30 ? "Láser CO2 Fraccionado" : "Peeling Químico + Hydrafacial";
 
-      // 2. GRASA (Volumen - Detectado en Frontal)
-      const fatUrg = Math.floor(Math.random() * 10) + 3;
-      const fat = {
-          status: fatUrg > 6 ? "DESPLAZAMIENTO" : "ESTABLE",
-          text: "Caída de Compartimentos Grasos", 
-          urgency: fatUrg,
-          rx: "Bichectomía / Enzimas"
-      };
+      const wrinkleTxt = age > 35 ? "Líneas estáticas visibles en frente y patas de gallo (fractura dérmica)." : "Líneas dinámicas al movimiento (inicio de marcación).";
+      const wrinkleRx = "Toxina Botulínica (Botox) + Revitalización";
 
-      // 3. SMAS (Sostén - Detectado en Perfiles)
-      const smasUrg = age > 40 ? 9 : 4;
-      const smas = {
-          status: smasUrg > 7 ? "COLAPSO" : "LAXITUD",
-          text: "Pérdida de Tensión Ligamentaria",
-          urgency: smasUrg,
-          rx: "Lifting Deep Plane / Hilos"
-      };
+      const fatTxt = age > 40 ? "Desplazamiento descendente de cojinetes grasos (Jowls)." : "Hipertrofia de bolsas de Bichat (Rostro redondo).";
+      const fatRx = age > 40 ? "Enzimas Recombinantes / Hilos" : "Bichectomía / Lipólisis";
 
-      // 4. HUESO (Cimientos - Detectado en Perfiles)
-      const boneUrg = 8; // Casi siempre vendemos estructura
-      const bone = {
-          status: "DÉFICIT",
-          text: "Reabsorción Ósea / Retrusión",
-          urgency: boneUrg,
-          rx: "Proyección Volumétrica (Volux)"
-      };
-
-      // CÁLCULO DE PRECIO AUTOMÁTICO
-      let price = 0;
-      if (skin.urgency > 5) price += PRICES.skin;
-      if (fat.urgency > 5) price += PRICES.fat;
-      if (smas.urgency > 5) price += PRICES.smas;
-      if (bone.urgency > 5) price += PRICES.bone;
-
-      const agingIndex = Math.floor((skinUrg + fatUrg + smasUrg + boneUrg) / 40 * 100);
+      const boneTxt = "Retrusión del mentón y falta de definición mandibular.";
+      const boneRx = "Proyección Estructural con Volux";
 
       setTimeout(() => {
-          setQuadrants({ skin, fat, smas, bone, totalScore: agingIndex, finalPrice: price });
+          setReport({
+            skin: { title: "1. CALIDAD DE PIEL", finding: skinTxt, treatment: skinRx },
+            wrinkles: { title: "2. ARRUGAS & EXPRESIÓN", finding: wrinkleTxt, treatment: wrinkleRx },
+            fat: { title: "3. VOLUMEN & CONTORNO", finding: fatTxt, treatment: fatRx },
+            bone: { title: "4. SOPORTE ÓSEO", finding: boneTxt, treatment: boneRx },
+          });
           setConsultPhase('RESULT');
       }, 3000);
   };
 
-  // HELPER: Color Neuro
-  const getStatusColor = (urgency: number) => {
-      if (urgency >= 8) return 'text-red-600 border-red-600 bg-red-50'; 
-      if (urgency >= 5) return 'text-amber-600 border-amber-600 bg-amber-50'; 
-      return 'text-green-600 border-green-600 bg-green-50';
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-red-600">
+    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-amber-500">
       
+      {/* ESTILOS DE IMPRESIÓN LIMPIOS Y ELEGANTES */}
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap');
-        body { font-family: 'Roboto Mono', monospace; }
-        h1, h2, h3 { font-family: 'Oswald', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+        body { font-family: 'Lato', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
         
         @media print { 
             @page { margin: 0; size: A4; }
             .no-print { display: none !important; } 
             .print-only { display: block !important; } 
-            body { background: white; color: black; -webkit-print-color-adjust: exact; }
-            .page { height: 100vh; padding: 20px; display: flex; flex-direction: column; }
+            body { background: white; color: #333; -webkit-print-color-adjust: exact; }
+            .page { padding: 40px; }
+            .section-break { page-break-inside: avoid; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
         }
         .print-only { display: none; }
       `}</style>
 
-      {/* --- PANTALLA 1: LOGIN (ESTILO TÉCNICO) --- */}
+      {/* --- PANTALLA 1: LOGIN --- */}
       {appMode === 'HOME' && (
         <div className="flex flex-col items-center justify-center h-screen bg-black no-print">
-            <h1 className="text-8xl mb-2 font-bold tracking-tighter text-white">TIPHERET</h1>
-            <p className="text-xs text-red-600 tracking-[0.5em] mb-12 uppercase">Hybrid Neuro-System V148</p>
+            <h1 className="text-6xl mb-2 font-serif italic text-amber-500">Tiphereth</h1>
+            <p className="text-xs text-gray-500 tracking-[0.4em] mb-12 uppercase">Visual Evidence System V149</p>
             <div className="w-80 space-y-6">
-                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-red-600 transition-colors" placeholder="NOMBRE PACIENTE" />
-                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-red-600 transition-colors" placeholder="EDAD" />
+                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-amber-500 transition-colors" placeholder="NOMBRE PACIENTE" />
+                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-amber-500 transition-colors" placeholder="EDAD" />
                 
                 <div className="grid grid-cols-2 gap-4 mt-8">
-                    <button onClick={startConsult} className="bg-red-700 text-white py-6 font-bold tracking-widest uppercase hover:bg-red-600 transition-all text-[10px]">
-                        SCAN COMPLETO<br/><span className="text-[8px] opacity-70">3 Ángulos + 4 Cuadrantes</span>
+                    <button onClick={startConsult} className="bg-white text-black py-4 font-bold tracking-widest uppercase hover:bg-gray-200 text-[10px]">
+                        ANÁLISIS VISUAL<br/><span className="lowercase italic opacity-70">3 Ángulos + Reporte</span>
                     </button>
-                    <button onClick={startRecovery} className="bg-[#222] text-gray-400 py-6 font-bold tracking-widest uppercase hover:bg-[#333] transition-all text-[10px]">
-                        SEGUIMIENTO<br/><span className="text-[8px] opacity-70">Paciente Post-Op</span>
+                    <button onClick={startRecovery} className="bg-[#222] text-gray-400 py-4 font-bold tracking-widest uppercase hover:bg-[#333] text-[10px]">
+                        SEGUIMIENTO<br/><span className="lowercase italic opacity-70">Paciente Post-Op</span>
                     </button>
                 </div>
             </div>
         </div>
       )}
 
-      {/* --- MODO CONSULTA (3 PASOS RIGUROSOS) --- */}
-      {appMode === 'CONSULT' && (
-          <>
-            {/* CAPTURA */}
-            {consultPhase === 'CAPTURE' && (
-                <div className="relative w-full h-screen bg-black no-print overflow-hidden">
-                    <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
-                    <canvas ref={canvasRef} className="hidden" />
-                    <div className="absolute top-10 left-10 border-l-4 border-red-600 pl-4">
-                        <h2 className="text-white text-4xl uppercase">
-                             {captureStep === 'FRONT' ? "FRONTAL" : captureStep === 'SIDE_R' ? "PERFIL DER" : "PERFIL IZQ"}
-                        </h2>
-                        <p className="text-gray-400 text-xs mt-2">PROTOCOLO DE TRIPULACIÓN</p>
-                    </div>
-                    <button onClick={takeShot} className="absolute bottom-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-red-600/20 backdrop-blur rounded-full border-2 border-red-600 flex items-center justify-center hover:bg-red-600/40">
-                        <div className="w-16 h-16 bg-red-600 rounded-full"></div>
-                    </button>
-                </div>
-            )}
-
-            {/* PROCESANDO */}
-            {consultPhase === 'ANALYZING' && (
-                <div className="h-screen bg-black flex flex-col items-center justify-center text-white no-print font-mono text-xs">
-                    <p className="animate-pulse text-red-500 text-xl">PROCESANDO 4 CAPAS ANATÓMICAS...</p>
-                    <div className="mt-4 space-y-2 text-gray-500">
-                        <p>[OK] EPIDERMIS SCAN</p>
-                        <p>[OK] FAT PADS TRIANGULATION</p>
-                        <p>[OK] SMAS TENSION VECTORS</p>
-                        <p>[OK] BONE DENSITY SIMULATION</p>
-                    </div>
-                </div>
-            )}
-
-            {/* RESULTADO (LA HOJA NEURO-CUADRANTE) */}
-            {consultPhase === 'RESULT' && (
-                <div className="w-full min-h-screen bg-white text-black">
-                    
-                    {/* VISTA DIGITAL */}
-                    <div className="no-print p-10 flex flex-col items-center justify-center min-h-screen">
-                        <h1 className="text-4xl mb-4 font-bold text-black">DIAGNÓSTICO FINALIZADO</h1>
-                        <p className="text-xs text-gray-500 mb-8">LISTO PARA PRESENTAR</p>
-                        <div className="flex gap-4">
-                            <button onClick={() => window.print()} className="bg-black text-white px-8 py-4 font-bold tracking-widest uppercase hover:bg-gray-800 shadow-xl">IMPRIMIR REPORTE ($)</button>
-                            <button onClick={() => setAppMode('HOME')} className="text-gray-400 px-8 py-4 text-xs">FINALIZAR</button>
-                        </div>
-                    </div>
-
-                    {/* --- HOJA DE IMPRESIÓN (EL CUADRANTE AGRESIVO) --- */}
-                    <div className="print-only page">
-                        
-                        {/* 1. HEADER AGRESIVO */}
-                        <div className="flex justify-between items-start border-b-4 border-black pb-4 mb-8">
-                            <div>
-                                <h1 className="text-6xl font-black tracking-tighter">TIPHERET</h1>
-                                <p className="text-xs font-bold tracking-[0.6em] mt-1">BIOLOGICAL ARCHITECTURE REPORT</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-5xl font-bold text-red-600">{quadrants.totalScore}%</p>
-                                <p className="text-[10px] uppercase font-bold text-black">ÍNDICE DE DETERIORO ACUMULADO</p>
-                            </div>
-                        </div>
-
-                        {/* 2. EL CENTRO DEL UNIVERSO (FOTO + 4 CAJAS) */}
-                        <div className="flex-1 relative flex items-center justify-center mb-8">
-                            
-                            {/* FOTO CENTRAL (FRONTAL) */}
-                            <div className="w-72 h-96 border-4 border-black relative z-10 bg-gray-100">
-                                {photos.front && <img src={photos.front} className="w-full h-full object-cover grayscale contrast-125" />}
-                                <div className="absolute bottom-0 w-full bg-black text-white text-center py-1 text-xs font-bold">PACIENTE: {patient.name.toUpperCase()}</div>
-                            </div>
-
-                            {/* LÍNEAS TÁCTICAS */}
-                            <div className="absolute inset-0 z-0 flex items-center justify-center">
-                                <div className="w-[110%] h-[1px] bg-gray-300"></div>
-                                <div className="h-[110%] w-[1px] bg-gray-300 absolute"></div>
-                            </div>
-
-                            {/* CAJA 1: PIEL (ARRIBA IZQ) */}
-                            <div className={`absolute top-0 left-0 w-64 p-3 border-l-4 ${getStatusColor(quadrants.skin.urgency)}`}>
-                                <h3 className="text-xl font-bold uppercase mb-1">1. PIEL</h3>
-                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.skin.status}</p>
-                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current" style={{width: `${quadrants.skin.urgency*10}%`}}></div></div>
-                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.skin.text}"</p>
-                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.skin.rx}</p>
-                            </div>
-
-                            {/* CAJA 2: GRASA (ARRIBA DER) */}
-                            <div className={`absolute top-0 right-0 w-64 p-3 border-r-4 text-right ${getStatusColor(quadrants.fat.urgency)}`}>
-                                <h3 className="text-xl font-bold uppercase mb-1">2. VOLUMEN</h3>
-                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.fat.status}</p>
-                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current float-right" style={{width: `${quadrants.fat.urgency*10}%`}}></div></div>
-                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.fat.text}"</p>
-                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.fat.rx}</p>
-                            </div>
-
-                            {/* CAJA 3: SMAS (ABAJO IZQ) */}
-                            <div className={`absolute bottom-0 left-0 w-64 p-3 border-l-4 ${getStatusColor(quadrants.smas.urgency)}`}>
-                                <h3 className="text-xl font-bold uppercase mb-1">3. TENSIÓN</h3>
-                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.smas.status}</p>
-                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current" style={{width: `${quadrants.smas.urgency*10}%`}}></div></div>
-                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.smas.text}"</p>
-                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.smas.rx}</p>
-                            </div>
-
-                            {/* CAJA 4: HUESO (ABAJO DER) */}
-                            <div className={`absolute bottom-0 right-0 w-64 p-3 border-r-4 text-right ${getStatusColor(quadrants.bone.urgency)}`}>
-                                <h3 className="text-xl font-bold uppercase mb-1">4. ESTRUCTURA</h3>
-                                <p className="text-[10px] font-bold uppercase mb-1">{quadrants.bone.status}</p>
-                                <div className="h-1 w-full bg-gray-200 mb-2"><div className="h-full bg-current float-right" style={{width: `${quadrants.bone.urgency*10}%`}}></div></div>
-                                <p className="text-xs leading-tight font-bold mb-1">"{quadrants.bone.text}"</p>
-                                <p className="text-[10px] bg-black text-white inline-block px-1 mt-1">PLAN: {quadrants.bone.rx}</p>
-                            </div>
-                        </div>
-
-                        {/* 3. BARRA INFERIOR DE CIERRE (PRECIO) */}
-                        <div className="bg-black text-white p-6 mt-auto flex justify-between items-center">
-                            <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase">INVERSIÓN SUGERIDA PARA RESTAURACIÓN TOTAL</p>
-                                <p className="text-xs mt-1">Incluye: Quirófano, Honorarios y Seguimiento Post-Op.</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-5xl font-black">${quadrants.finalPrice}</p>
-                            </div>
-                        </div>
-
-                        {/* 4. MINIATURAS (PRUEBA DE QUE SE HIZO EL ANÁLISIS COMPLETO) */}
-                        <div className="mt-4 flex gap-2 justify-center opacity-40 grayscale">
-                            <p className="text-[8px] uppercase self-center font-bold">REGISTRO CLÍNICO:</p>
-                            {photos.right && <img src={photos.right} className="w-8 h-8 border border-black" />}
-                            {photos.left && <img src={photos.left} className="w-8 h-8 border border-black" />}
-                        </div>
-
-                    </div>
-                </div>
-            )}
-          </>
+      {/* --- MODO CONSULTA (3 PASOS) --- */}
+      {consultPhase === 'CAPTURE' && appMode === 'CONSULT' && (
+        <div className="relative w-full h-screen bg-black no-print overflow-hidden">
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
+            <canvas ref={canvasRef} className="hidden" />
+            <div className="absolute top-10 left-10 border-l-4 border-amber-500 pl-4">
+                <h2 className="text-white text-3xl italic">
+                     {captureStep === 'FRONT' ? "Vista Frontal" : captureStep === 'SIDE_R' ? "Perfil Derecho" : "Perfil Izquierdo"}
+                </h2>
+                <p className="text-gray-400 text-xs mt-1">PROTOCOLO FOTOGRÁFICO</p>
+            </div>
+            <button onClick={takeShot} className="absolute bottom-12 left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-white rounded-full flex items-center justify-center hover:bg-white/10">
+                <div className="w-16 h-16 bg-white rounded-full"></div>
+            </button>
+        </div>
       )}
 
-      {/* --- MODO RECUPERACIÓN (POST-OP) --- */}
+      {/* --- PROCESANDO --- */}
+      {consultPhase === 'ANALYZING' && (
+        <div className="h-screen bg-black flex flex-col items-center justify-center text-white no-print">
+            <h2 className="text-3xl font-serif italic text-amber-500 animate-pulse">Generando Evidencia Visual...</h2>
+            <p className="text-xs text-gray-500 mt-4 uppercase tracking-widest">Mapeando lesiones, arrugas y volúmenes.</p>
+        </div>
+      )}
+
+      {/* --- RESULTADO (EL DOSSIER VISUAL) --- */}
+      {consultPhase === 'RESULT' && (
+        <div className="w-full min-h-screen bg-white text-black">
+            
+            {/* PREVIA DIGITAL */}
+            <div className="no-print p-10 flex flex-col items-center justify-center min-h-screen">
+                <h1 className="text-3xl mb-2 font-serif italic">ANÁLISIS COMPLETADO</h1>
+                <p className="text-xs text-gray-500 mb-8 uppercase">El reporte está listo para impresión.</p>
+                <div className="flex gap-4">
+                    <button onClick={() => window.print()} className="bg-black text-white px-8 py-4 font-bold tracking-widest uppercase hover:bg-gray-800 shadow-xl">IMPRIMIR REPORTE VISUAL</button>
+                    <button onClick={() => setAppMode('HOME')} className="text-gray-400 px-8 py-4 text-xs">FINALIZAR</button>
+                </div>
+            </div>
+
+            {/* --- HOJA DE IMPRESIÓN (EL REPORTE PEDAGÓGICO) --- */}
+            <div className="print-only page">
+                
+                {/* 1. HEADER ELEGANTE */}
+                <div className="flex justify-between items-end border-b-2 border-black pb-4 mb-8">
+                    <div>
+                        <h1 className="text-5xl font-serif italic font-bold">Tiphereth</h1>
+                        <p className="text-xs uppercase tracking-[0.3em] mt-2 text-gray-500">Advanced Aesthetic Planning</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="font-bold text-lg uppercase">{patient.name}</p>
+                        <p className="text-xs text-gray-500">{new Date().toLocaleDateString()} | EDAD: {patient.age}</p>
+                    </div>
+                </div>
+
+                {/* 2. INTRODUCCIÓN VISUAL */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-bold uppercase mb-4 border-l-4 border-black pl-3">REGISTRO FOTOGRÁFICO</h2>
+                    <div className="flex gap-4 h-48">
+                        {photos.front && <img src={photos.front} className="h-full object-cover border border-gray-200" />}
+                        {photos.right && <img src={photos.right} className="h-full object-cover border border-gray-200" />}
+                        {photos.left && <img src={photos.left} className="h-full object-cover border border-gray-200" />}
+                    </div>
+                </div>
+
+                {/* 3. DESGLOSE CAPA POR CAPA (CON EVIDENCIA VISUAL) */}
+                
+                {/* CAPA 1: PIEL (FOTO CON FILTRO DE CONTRASTE SIMULADO) */}
+                <div className="section-break flex gap-6">
+                    <div className="w-1/3">
+                        {photos.front && (
+                            <div className="relative h-48 w-full overflow-hidden border border-gray-300">
+                                <img src={photos.front} className="w-full h-full object-cover" style={{filter: 'contrast(1.5) grayscale(1)'}} />
+                                <div className="absolute top-2 left-2 bg-black text-white text-[10px] px-2 py-1 font-bold">FILTRO: MANCHAS/POROS</div>
+                                {/* Puntero simulado */}
+                                <div className="absolute top-1/2 left-1/2 w-8 h-8 border-2 border-red-500 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+                                <div className="absolute top-1/2 left-1/2 w-20 h-[1px] bg-red-500 rotate-45 origin-left"></div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="w-2/3">
+                        <h3 className="text-lg font-bold text-amber-600 mb-2">{report.skin.title}</h3>
+                        <p className="text-sm font-bold text-gray-800 mb-1">HALLAZGO:</p>
+                        <p className="text-sm text-gray-600 mb-4 italic">"{report.skin.finding}"</p>
+                        <p className="text-sm font-bold text-gray-800 mb-1">SOLUCIÓN MÉDICA:</p>
+                        <p className="text-sm font-bold text-black border-b border-gray-200 inline-block pb-1">{report.skin.treatment}</p>
+                    </div>
+                </div>
+
+                {/* CAPA 2: ARRUGAS (FOTO B/N) */}
+                <div className="section-break flex gap-6">
+                    <div className="w-1/3">
+                        {photos.front && (
+                            <div className="relative h-48 w-full overflow-hidden border border-gray-300">
+                                <img src={photos.front} className="w-full h-full object-cover grayscale" />
+                                <div className="absolute top-2 left-2 bg-black text-white text-[10px] px-2 py-1 font-bold">FILTRO: LÍNEAS DE EXPRESIÓN</div>
+                                {/* Puntero en ojos */}
+                                <div className="absolute top-[40%] left-[30%] w-6 h-6 border border-red-500 rounded-full"></div>
+                                <div className="absolute top-[40%] right-[30%] w-6 h-6 border border-red-500 rounded-full"></div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="w-2/3">
+                        <h3 className="text-lg font-bold text-amber-600 mb-2">{report.wrinkles.title}</h3>
+                        <p className="text-sm font-bold text-gray-800 mb-1">HALLAZGO:</p>
+                        <p className="text-sm text-gray-600 mb-4 italic">"{report.wrinkles.finding}"</p>
+                        <p className="text-sm font-bold text-gray-800 mb-1">SOLUCIÓN MÉDICA:</p>
+                        <p className="text-sm font-bold text-black border-b border-gray-200 inline-block pb-1">{report.wrinkles.treatment}</p>
+                    </div>
+                </div>
+
+                {/* CAPA 3: PERFIL/HUESO (FOTO LATERAL) */}
+                <div className="section-break flex gap-6">
+                    <div className="w-1/3">
+                        {photos.right ? (
+                            <div className="relative h-48 w-full overflow-hidden border border-gray-300">
+                                <img src={photos.right} className="w-full h-full object-cover" />
+                                <div className="absolute top-2 left-2 bg-black text-white text-[10px] px-2 py-1 font-bold">FILTRO: PERFILOMETRÍA</div>
+                                {/* Línea de perfil */}
+                                <div className="absolute top-[30%] right-[30%] w-[1px] h-20 bg-red-500"></div>
+                            </div>
+                        ) : <div className="h-48 bg-gray-100 flex items-center justify-center text-xs">PERFIL NO DISPONIBLE</div>}
+                    </div>
+                    <div className="w-2/3">
+                        <h3 className="text-lg font-bold text-amber-600 mb-2">{report.bone.title}</h3>
+                        <p className="text-sm font-bold text-gray-800 mb-1">HALLAZGO:</p>
+                        <p className="text-sm text-gray-600 mb-4 italic">"{report.bone.finding}"</p>
+                        <p className="text-sm font-bold text-gray-800 mb-1">SOLUCIÓN MÉDICA:</p>
+                        <p className="text-sm font-bold text-black border-b border-gray-200 inline-block pb-1">{report.bone.treatment}</p>
+                    </div>
+                </div>
+
+                {/* 4. CIERRE DE VENTA (EL LIBRO) */}
+                <div className="mt-8 bg-black text-white p-8 text-center">
+                    <h3 className="text-2xl font-serif italic mb-2">Comienza Tu Transformación</h3>
+                    <p className="text-sm text-gray-300 mb-4">El presupuesto detallado se entrega en consulta personalizada.</p>
+                    <div className="border border-white/30 p-4 inline-block">
+                        <p className="text-xs font-bold uppercase tracking-widest mb-1">RECOMENDACIÓN INICIAL</p>
+                        <p className="text-lg font-bold">ADQUIRIR EL LIBRO: "LA CIENCIA DE LA BELLEZA"</p>
+                        <p className="text-[10px] text-gray-400 mt-1">Disponible en recepción.</p>
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-white/20 flex justify-between text-[10px] text-gray-500 uppercase">
+                        <span>DR. JULIÁN MAYA</span>
+                        <span>MEDICINA ESTÉTICA AVANZADA</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+      )}
+
+      {/* --- MODO RECUPERACIÓN (MANTENIDO IGUAL) --- */}
       {appMode === 'RECOVERY' && (
           <div className="w-full max-w-md mx-auto min-h-screen bg-[#111] flex flex-col">
               <div className="p-6">
