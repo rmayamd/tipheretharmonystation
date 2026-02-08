@@ -1,45 +1,57 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
 
-// --- BILLETERA (PRECIOS) ---
+// --- CONFIGURACIÓN DE PRECIOS Y CONTACTO ---
 const WS_NUMBER = "573117936211";
 const PRICES = {
-  skin_protocol: 800,       // Solo Piel
-  structural_lift: 3500,    // Solo Hueso
-  total_harmonization: 4500 // El paquete completo
+  skin_protocol: 800,
+  structural_lift: 3500,
+  total_harmonization: 4500
 };
 
-export default function TipherethNeuroSmart() {
+export default function TipherethUltimate() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // --- ESTADOS ---
-  const [phase, setPhase] = useState('LOGIN'); 
-  const [captureStep, setCaptureStep] = useState('FRONT'); 
-  const [photos, setPhotos] = useState<{ front: string | null; right: string | null }>({ front: null, right: null });
+  // --- ESTADOS GLOBALES ---
+  const [appMode, setAppMode] = useState('HOME'); // HOME | CONSULT | RECOVERY
   const [patient, setPatient] = useState({ name: '', age: '' });
+
+  // --- ESTADOS DE CONSULTA ---
+  const [consultPhase, setConsultPhase] = useState('CAPTURE'); 
+  const [captureStep, setCaptureStep] = useState('FRONT'); 
+  // Corrección de tipos para fotos
+  const [photos, setPhotos] = useState<{ front: string | null; right: string | null }>({ front: null, right: null });
   
-  // --- EL CEREBRO OMNIPOTENTE ---
+  // --- DATA DEL CEREBRO (DIAGNÓSTICO) ---
   const [diagnosis, setDiagnosis] = useState({
-    phiScore: 0,        // Estética Matemática
-    skinAge: 0,         // Estética Biológica (EL DATO DE PIEL)
-    mainPain: "",       // El "Dolor" principal (Ej: Manchas + Mentón)
-    solution: "",       // La "Cura"
+    phiScore: 0,
+    skinAge: 0,
+    mainPain: "",
+    solution: "",
     price: 0,
-    details: {          // Data dura oculta (para el médico)
-        spots: 0,
-        wrinkles: 0,
-        uv: 0
-    }
+    details: { spots: 0, uv: 0 }
   });
 
-  const [isDreamMode, setIsDreamMode] = useState(false); // Switch Antes/Después
+  const [isDreamMode, setIsDreamMode] = useState(false); // Neuro-Switch
 
-  // 1. INICIO
-  const startSystem = () => { if(patient.name) setPhase('CAPTURE'); };
+  // --- ESTADOS DE RECUPERACIÓN (POST-OP) ---
+  const [postOpDay, setPostOpDay] = useState(7);
+  const [recoveryStatus, setRecoveryStatus] = useState('GREEN'); // GREEN | YELLOW | RED
 
-  // 2. CÁMARA
-  useEffect(() => { if(phase === 'CAPTURE') startCamera(); }, [phase, captureStep]);
+  // ---------------------------------------------------------
+  // MÓDULO 1: NAVEGACIÓN
+  // ---------------------------------------------------------
+  const startConsult = () => { if(patient.name) setAppMode('CONSULT'); };
+  const startRecovery = () => { if(patient.name) setAppMode('RECOVERY'); };
+
+  // ---------------------------------------------------------
+  // MÓDULO 2: CÁMARA
+  // ---------------------------------------------------------
+  useEffect(() => { 
+    if(appMode === 'CONSULT' && consultPhase === 'CAPTURE') startCamera(); 
+    if(appMode === 'RECOVERY') startCamera();
+  }, [appMode, consultPhase, captureStep]);
 
   const startCamera = async () => {
     try {
@@ -56,51 +68,53 @@ export default function TipherethNeuroSmart() {
         cvs.height = vid.videoHeight;
         const ctx = cvs.getContext('2d');
         if(ctx) {
-            if (captureStep === 'FRONT') { ctx.translate(cvs.width, 0); ctx.scale(-1, 1); }
+            // Espejo solo en frontal o recuperación
+            if (captureStep === 'FRONT' || appMode === 'RECOVERY') { ctx.translate(cvs.width, 0); ctx.scale(-1, 1); }
             ctx.drawImage(vid, 0, 0, cvs.width, cvs.height);
             const imgData = cvs.toDataURL('image/jpeg', 0.9);
 
-            if (captureStep === 'FRONT') {
-                setPhotos(prev => ({ ...prev, front: imgData }));
-                setCaptureStep('PROFILE');
+            if (appMode === 'CONSULT') {
+                if (captureStep === 'FRONT') {
+                    setPhotos(prev => ({ ...prev, front: imgData }));
+                    setCaptureStep('PROFILE');
+                } else {
+                    setPhotos(prev => ({ ...prev, right: imgData }));
+                    setConsultPhase('ANALYZING'); 
+                    runSmartAnalysis();
+                }
             } else {
-                setPhotos(prev => ({ ...prev, right: imgData }));
-                setPhase('ANALYZING'); 
-                runSmartAnalysis();
+                // Modo Recovery
+                setPhotos(prev => ({ ...prev, front: imgData }));
+                setRecoveryStatus(Math.random() > 0.8 ? 'YELLOW' : 'GREEN');
             }
         }
     }
   };
 
-  // 3. EL MOTOR INTELIGENTE (PIEL + ESTRUCTURA)
+  // ---------------------------------------------------------
+  // MÓDULO 3: INTELIGENCIA SILENCIOSA (PIEL + HUESO)
+  // ---------------------------------------------------------
   const runSmartAnalysis = () => {
       const realAge = parseInt(patient.age);
-      
-      // A. CÁLCULO DE PIEL (RECUPERADO PERO SILENCIOSO)
-      // Generamos data biológica
+      // Simulación de datos biológicos
       const spots = Math.floor(Math.random() * 50 + 10);
       const uvDamage = Math.floor(Math.random() * 60 + 20);
-      // Calculamos "Edad de Piel" basada en daño
-      const bioAge = realAge + (uvDamage > 40 ? 6 : 2);
+      const bioAge = realAge + (uvDamage > 40 ? 6 : 2); // Edad Piel
+      const phi = Math.floor(Math.random() * (75 - 60) + 60); // Simetría
 
-      // B. CÁLCULO ESTRUCTURAL
-      const phi = Math.floor(Math.random() * (75 - 60) + 60); // 60-75%
-
-      // C. GENERADOR DE "DOLOR" (NEUROVENTAS)
       let painText = "";
       let solText = "";
       let finalPrice = 0;
 
+      // Lógica de Neuroventas
       if (bioAge > realAge + 4) {
-          // Si la piel está muy mal, el diagnóstico se enfoca en "Envejecimiento Prematuro"
-          painText = `Envejecimiento Prematuro: Tu piel refleja ${bioAge} años (Manchas UV activas) + Pérdida de soporte óseo.`;
-          solText = "PROTOCOLO REJUVENECIMIENTO TOTAL (Láser + Volux)";
+          painText = "Fotoenvejecimiento Acelerado + Pérdida de Soporte.";
+          solText = "REJUVENECIMIENTO TOTAL (Láser + Volux)";
           finalPrice = PRICES.total_harmonization;
       } else {
-          // Si la piel está bien, nos enfocamos en estructura
-          painText = "Déficit Estructural: Falta de proyección en mentón y porosidad visible en zona T.";
-          solText = "PERFILAMIENTO ÁUREO + PIEL DE PORCELANA";
-          finalPrice = PRICES.structural_lift + 500; // Estructura + Peeling
+          painText = "Déficit de Proyección Anterior (Mentón).";
+          solText = "PERFILAMIENTO ÁUREO";
+          finalPrice = PRICES.structural_lift;
       }
 
       setTimeout(() => {
@@ -110,184 +124,232 @@ export default function TipherethNeuroSmart() {
               mainPain: painText,
               solution: solText,
               price: finalPrice,
-              details: { spots, wrinkles: 0, uv: uvDamage }
+              details: { spots, uv: uvDamage }
           });
-          setPhase('REVEAL'); 
-      }, 4000);
+          setConsultPhase('REVEAL'); 
+      }, 3000);
   };
 
-  // 4. EL FILTRO NEURO (PIEL PERFECTA + ESTRUCTURA)
-  const getNeuroFilter = () => {
-      if (!isDreamMode) return 'none';
-      return 'contrast(1.1) brightness(1.15) saturate(1.1) blur(0.5px)'; // Piel de bebé
-  };
-
+  // ---------------------------------------------------------
+  // RENDERIZADO
+  // ---------------------------------------------------------
   return (
-    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-cyan-500">
+    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-amber-500">
       
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap');
-        body { font-family: 'Lato', sans-serif; }
-        h1, h2 { font-family: 'Cinzel', serif; }
-        .neon-text { text-shadow: 0 0 10px rgba(0,255,255,0.5); }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap');
         
-        @media print { .no-print { display: none !important; } .print-only { display: block !important; } body { background: white; color: black; } }
+        body { font-family: 'Montserrat', sans-serif; }
+        .serif { font-family: 'Playfair Display', serif; }
+        
+        @media print { 
+            @page { margin: 0; size: A4; }
+            .no-print { display: none !important; } 
+            .print-only { display: block !important; } 
+            body { background: white; color: #1a1a1a; -webkit-print-color-adjust: exact; }
+            .page-container { padding: 40px; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+            .gold-accent { color: #b48b3e !important; border-color: #b48b3e !important; }
+            .bg-gold { background-color: #f9f7f2 !important; }
+        }
         .print-only { display: none; }
       `}</style>
 
-      {/* --- LOGIN --- */}
-      {phase === 'LOGIN' && (
-        <div className="flex flex-col items-center justify-center h-screen bg-black no-print">
-            <h1 className="text-6xl mb-4 text-cyan-500 neon-text tracking-widest">TIPHERET</h1>
-            <p className="text-xs text-zinc-500 tracking-[0.5em] mb-12 uppercase">Bio-Structural System V142</p>
+      {/* --- PANTALLA 1: LOGIN (EL HUB) --- */}
+      {appMode === 'HOME' && (
+        <div className="flex flex-col items-center justify-center h-screen bg-black no-print bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+            <h1 className="text-7xl serif italic mb-2 tracking-widest text-white">Tiphereth</h1>
+            <p className="text-xs text-zinc-500 tracking-[0.5em] mb-12 uppercase">Ultimate OS V144</p>
             <div className="w-80 space-y-6">
-                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-cyan-500 transition-colors" placeholder="PACIENTE" />
-                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-cyan-500 transition-colors" placeholder="EDAD REAL" />
-                <button onClick={startSystem} className="w-full bg-cyan-900/40 border border-cyan-500 text-cyan-400 font-bold py-4 rounded tracking-widest uppercase hover:bg-cyan-500 hover:text-black transition-all">INICIAR BIO-ESCÁNER</button>
-            </div>
-        </div>
-      )}
-
-      {/* --- CÁMARA --- */}
-      {phase === 'CAPTURE' && (
-        <div className="relative w-full h-screen bg-black no-print overflow-hidden">
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
-            <canvas ref={canvasRef} className="hidden" />
-            <div className="absolute top-24 w-full text-center">
-                <p className="text-cyan-200/70 text-sm font-light tracking-[0.3em] uppercase bg-black/50 inline-block px-4 py-1 rounded">
-                    {captureStep === 'FRONT' ? "Escaneando Dermis y Simetría" : "Escaneando Proyección Ósea"}
-                </p>
-            </div>
-            <button onClick={takeShot} className="absolute bottom-16 left-1/2 -translate-x-1/2 w-20 h-20 bg-cyan-500/20 backdrop-blur rounded-full border border-cyan-500/50 flex items-center justify-center hover:bg-cyan-500/40">
-                <div className="w-14 h-14 bg-cyan-400 rounded-full shadow-[0_0_20px_rgba(34,211,238,0.6)]"></div>
-            </button>
-        </div>
-      )}
-
-      {/* --- CÁLCULO SILENCIOSO (PERO MUESTRA QUE TRABAJA) --- */}
-      {phase === 'ANALYZING' && (
-        <div className="h-screen bg-black flex flex-col items-center justify-center text-cyan-500 font-mono text-xs no-print">
-            <div className="w-64 h-1 bg-gray-800 rounded mb-4 overflow-hidden">
-                <div className="h-full bg-cyan-500 animate-[width_4s_ease-out_forwards]" style={{width:'100%'}}></div>
-            </div>
-            <p className="animate-pulse">ANALIZANDO TEXTURA DÉRMICA (POROS/MANCHAS)...</p>
-            <p className="animate-pulse delay-100 mt-2">CALCULANDO TRIÁNGULO DE LA JUVENTUD...</p>
-            <p className="animate-pulse delay-200 mt-2">PROYECTANDO SIMETRÍA ÁUREA...</p>
-        </div>
-      )}
-
-      {/* --- LA REVELACIÓN (NEUROVENTAS) --- */}
-      {phase === 'REVEAL' && (
-        <div className="w-full min-h-screen bg-[#050505] flex flex-col no-print">
-            
-            {/* HEADER DE IMPACTO */}
-            <div className="h-24 bg-black/80 backdrop-blur border-b border-white/5 flex justify-between items-center px-6 fixed top-0 w-full z-10">
-                <div>
-                    <h2 className="text-xl font-bold text-white tracking-widest">{patient.name}</h2>
-                    <p className="text-[10px] text-gray-400">INFORME BIO-ESTRUCTURAL</p>
-                </div>
+                <input onChange={e => setPatient({...patient, name: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-amber-500 transition-colors" placeholder="NOMBRE PACIENTE" />
+                <input type="number" onChange={e => setPatient({...patient, age: e.target.value})} className="w-full bg-[#111] border-b border-gray-700 p-4 text-center text-white outline-none focus:border-amber-500 transition-colors" placeholder="EDAD" />
                 
-                {/* LOS NÚMEROS QUE DUELEN */}
-                <div className="flex gap-6 text-right">
-                    <div>
-                        <p className="text-[9px] text-gray-500 uppercase">EDAD PIEL</p>
-                        <p className={`text-xl font-bold ${diagnosis.skinAge > parseInt(patient.age) ? 'text-red-500' : 'text-green-500'}`}>
-                            {diagnosis.skinAge} <span className="text-[10px] text-gray-500">AÑOS</span>
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[9px] text-gray-500 uppercase">SIMETRÍA</p>
-                        <p className="text-xl font-bold text-amber-500">
-                            {isDreamMode ? '98' : diagnosis.phiScore}<span className="text-[10px] text-gray-500">%</span>
-                        </p>
-                    </div>
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                    <button onClick={startConsult} className="bg-white text-black py-6 rounded-sm font-bold tracking-widest uppercase hover:bg-gray-200 transition-all text-[10px]">
+                        NUEVA CONSULTA<br/><span className="serif italic text-xs capitalize">Diagnóstico & Venta</span>
+                    </button>
+                    <button onClick={startRecovery} className="bg-[#111] border border-gray-700 text-gray-400 py-6 rounded-sm font-bold tracking-widest uppercase hover:bg-[#222] transition-all text-[10px]">
+                        PACIENTE VIP<br/><span className="serif italic text-xs capitalize">Seguimiento Post-Op</span>
+                    </button>
                 </div>
             </div>
+        </div>
+      )}
 
-            <div className="flex flex-1 flex-col lg:flex-row pt-24 overflow-hidden h-screen">
-                
-                {/* VISOR CENTRAL */}
-                <div className="flex-1 relative bg-black flex items-center justify-center overflow-hidden cursor-pointer group"
-                     onMouseDown={() => setIsDreamMode(true)}
-                     onMouseUp={() => setIsDreamMode(false)}
-                     onTouchStart={() => setIsDreamMode(true)}
-                     onTouchEnd={() => setIsDreamMode(false)}
-                >
-                    <div className="relative w-full h-full max-w-5xl">
-                        {photos.front && (
-                            <img 
-                                src={photos.front} 
-                                className="w-full h-full object-contain transition-all duration-700"
-                                style={{ filter: getNeuroFilter() }}
-                            />
-                        )}
-                        
-                        {/* MÁSCARA DORADA (Solo en modo sueño) */}
-                        <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-700 ${isDreamMode ? 'opacity-30' : 'opacity-0'}`}>
-                            <svg viewBox="0 0 200 300" className="w-[80%] h-[80%] drop-shadow-[0_0_10px_gold]">
-                                <path d="M10,50 Q100,0 190,50 Q200,150 100,280 Q0,150 10,50" fill="none" stroke="#FFD700" strokeWidth="1" />
-                                <line x1="10" y1="120" x2="190" y2="120" stroke="#FFD700" strokeWidth="1" strokeDasharray="5,5" />
-                            </svg>
-                        </div>
-
-                        {/* TEXTO FLOTANTE */}
-                        <div className={`absolute bottom-10 w-full text-center transition-all duration-500 ${isDreamMode ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                            <p className="text-2xl font-black text-amber-500 tracking-[0.2em] shadow-black drop-shadow-lg">POTENCIAL ALCANZADO</p>
-                        </div>
+      {/* --- MODO CONSULTA --- */}
+      {appMode === 'CONSULT' && (
+          <>
+            {/* CAPTURA */}
+            {consultPhase === 'CAPTURE' && (
+                <div className="relative w-full h-screen bg-black no-print overflow-hidden">
+                    <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover opacity-80" />
+                    <canvas ref={canvasRef} className="hidden" />
+                    <div className="absolute top-24 w-full text-center">
+                        <p className="text-white text-xl serif italic">{captureStep === 'FRONT' ? "Análisis Frontal" : "Análisis de Perfil"}</p>
                     </div>
+                    <button onClick={takeShot} className="absolute bottom-16 left-1/2 -translate-x-1/2 w-20 h-20 border border-white rounded-full flex items-center justify-center hover:bg-white/10">
+                        <div className="w-16 h-16 bg-white rounded-full"></div>
+                    </button>
                 </div>
+            )}
 
-                {/* PANEL DE VENTA */}
-                <div className="w-full lg:w-96 bg-[#0a0a0a] border-l border-white/10 p-8 flex flex-col justify-center relative">
-                    
-                    {/* EL DIAGNÓSTICO (DOLOR) */}
-                    <div className="mb-6">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                            <h3 className="text-red-500 text-xs font-bold uppercase tracking-widest">HALLAZGOS CLÍNICOS</h3>
-                        </div>
-                        <p className="text-white text-lg font-light leading-snug">
-                            "{diagnosis.mainPain}"
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                            Detectamos {diagnosis.details.spots} manchas profundas y daño UV acumulado.
-                        </p>
-                    </div>
+            {/* PROCESANDO */}
+            {consultPhase === 'ANALYZING' && (
+                <div className="h-screen bg-black flex flex-col items-center justify-center text-white serif italic no-print">
+                    <p className="animate-pulse text-2xl">Calibrando Proporciones...</p>
+                    <p className="text-xs font-sans mt-4 text-gray-500 uppercase tracking-widest">Escaneando Dermis & Estructura</p>
+                </div>
+            )}
 
-                    {/* BOTÓN INTERACTIVO */}
-                    <div className="my-6">
-                         <button 
-                            className="w-full py-5 bg-[#111] border border-amber-600/50 rounded-xl text-amber-500 font-bold tracking-widest hover:bg-amber-900/20 transition-all shadow-[0_0_15px_rgba(245,158,11,0.1)] group"
-                            onMouseDown={() => setIsDreamMode(true)} 
-                            onMouseUp={() => setIsDreamMode(false)}
-                            onTouchStart={() => setIsDreamMode(true)}
-                            onTouchEnd={() => setIsDreamMode(false)}
-                        >
-                            <span className="group-hover:hidden">MANTENER PARA VER FUTURO</span>
-                            <span className="hidden group-hover:inline">SOLTAR PARA VOLVER</span>
-                        </button>
-                    </div>
-
-                    {/* LA SOLUCIÓN (PRECIO) */}
-                    <div className="mt-auto bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 border border-white/10">
-                        <h3 className="text-cyan-500 text-xs font-bold uppercase tracking-widest mb-1">PLAN SUGERIDO</h3>
-                        <p className="text-xl font-bold text-white mb-4">{diagnosis.solution}</p>
+            {/* REVEAL (PANTALLA DIGITAL + BOTÓN IMPRIMIR) */}
+            {consultPhase === 'REVEAL' && (
+                <div className="w-full min-h-screen bg-[#111]">
+                    <div className="no-print p-8 flex flex-col items-center justify-center min-h-screen">
+                        <h2 className="text-3xl serif text-amber-500 mb-2">ANÁLISIS COMPLETADO</h2>
+                        <p className="text-gray-500 text-xs uppercase tracking-widest mb-8">Diagnóstico Inteligente Listo</p>
                         
-                        <div className="flex justify-between items-end border-t border-white/10 pt-4">
-                            <div>
-                                <p className="text-[10px] text-gray-500">INVERSIÓN TOTAL</p>
-                                <p className="text-2xl font-bold text-white">${diagnosis.price}</p>
+                        {/* PREVISUALIZACIÓN */}
+                        <div className="flex gap-4 mb-8">
+                            <div className="w-48 h-64 bg-gray-900 border border-gray-800 relative">
+                                <p className="absolute top-2 left-2 text-[8px] text-gray-500 uppercase">ACTUAL</p>
+                                {photos.front && <img src={photos.front} className="w-full h-full object-cover opacity-80" />}
                             </div>
-                            <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, mi edad biológica es ${diagnosis.skinAge}. Quiero el plan ${diagnosis.solution} de $${diagnosis.price}.`)} className="bg-white text-black px-6 py-3 rounded font-bold text-xs hover:bg-cyan-500 hover:text-white transition-all shadow-lg">
-                                LO QUIERO
-                            </button>
+                            <div className="w-48 h-64 bg-gray-900 border border-amber-900 relative">
+                                <p className="absolute top-2 left-2 text-[8px] text-amber-500 uppercase">PROYECCIÓN</p>
+                                {photos.front && <img src={photos.front} className="w-full h-full object-cover mix-blend-overlay" style={{filter: 'contrast(1.2) brightness(1.2)'}} />}
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button onClick={() => window.print()} className="bg-white text-black px-8 py-4 font-bold tracking-widest uppercase hover:bg-gray-200">IMPRIMIR DOSSIER</button>
+                            <button onClick={() => setAppMode('HOME')} className="text-gray-500 px-8 py-4 text-xs hover:text-white">FINALIZAR</button>
                         </div>
                     </div>
 
+                    {/* --- EL DOSSIER DE MILLÓN DE DÓLARES (IMPRESIÓN) --- */}
+                    <div className="print-only page-container bg-white">
+                        {/* 1. HEADER */}
+                        <div className="flex justify-between items-end border-b-2 border-black pb-6 mb-8">
+                            <div>
+                                <h1 className="text-5xl serif italic font-black text-black leading-none">Tiphereth</h1>
+                                <p className="text-xs uppercase tracking-[0.4em] mt-2 text-gray-600">Advanced Aesthetic Planning</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="font-bold text-lg uppercase tracking-widest">{patient.name}</p>
+                                <p className="text-sm text-gray-500">ID: {Math.floor(Math.random()*10000)} | {new Date().toLocaleDateString()}</p>
+                            </div>
+                        </div>
+
+                        {/* 2. EVIDENCIA VISUAL */}
+                        <div className="grid grid-cols-2 gap-8 mb-10 h-80">
+                            <div className="relative border border-gray-200 bg-gray-50 p-2">
+                                <p className="text-xs font-bold uppercase tracking-widest mb-2 text-gray-400">ESTADO ACTUAL</p>
+                                <div className="w-full h-full overflow-hidden grayscale">
+                                    {photos.front && <img src={photos.front} className="w-full h-full object-cover" />}
+                                </div>
+                                <div className="absolute bottom-4 left-4 bg-black text-white px-2 py-1 text-xs font-bold">SIMETRÍA: {diagnosis.phiScore}%</div>
+                            </div>
+                            <div className="relative border-2 border-[#b48b3e] p-2">
+                                <p className="text-xs font-bold uppercase tracking-widest mb-2 gold-accent">PROYECCIÓN ÁUREA</p>
+                                <div className="w-full h-full overflow-hidden relative">
+                                    {photos.front && <img src={photos.front} className="w-full h-full object-cover" style={{filter: 'contrast(1.1) brightness(1.1) blur(0.2px)'}} />}
+                                    <div className="absolute inset-0 border border-[#b48b3e] opacity-30 rounded-full scale-90"></div>
+                                </div>
+                                <div className="absolute bottom-4 left-4 bg-[#b48b3e] text-white px-2 py-1 text-xs font-bold">POTENCIAL: 98%</div>
+                            </div>
+                        </div>
+
+                        {/* 3. DIAGNÓSTICO INTELIGENTE */}
+                        <div className="grid grid-cols-2 gap-12 mb-10">
+                            <div>
+                                <h3 className="serif text-2xl italic border-b border-gray-300 pb-2 mb-4">Análisis Biológico</h3>
+                                <div className="mb-6">
+                                    <div className="flex justify-between text-xs font-bold mb-1">
+                                        <span>EDAD REAL: {patient.age}</span>
+                                        <span className="text-red-600">EDAD PIEL: {diagnosis.skinAge}</span>
+                                    </div>
+                                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div className="h-full bg-black" style={{width: `${(parseInt(patient.age)/100)*100}%`}}></div>
+                                        <div className="h-full bg-red-500 opacity-50 -mt-2" style={{width: `${(diagnosis.skinAge/100)*100}%`}}></div>
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-2 italic">Brecha biológica activa por daño solar acumulado.</p>
+                                </div>
+                                <ul className="text-sm space-y-2 text-gray-700">
+                                    <li><strong>• Pigmentación:</strong> {diagnosis.details.spots} lesiones visibles.</li>
+                                    <li><strong>• Daño UV:</strong> Nivel {diagnosis.details.uv}/100.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 className="serif text-2xl italic border-b border-gray-300 pb-2 mb-4">Dictamen Estructural</h3>
+                                <p className="text-lg font-bold text-gray-800 mb-2 leading-tight">"{diagnosis.mainPain}"</p>
+                                <p className="text-sm text-gray-600 text-justify">El análisis de vectores revela pérdida de soporte estructural. Se requiere intervención para restaurar la proporción áurea facial.</p>
+                            </div>
+                        </div>
+
+                        {/* 4. PLAN DE TRATAMIENTO */}
+                        <div className="bg-[#f9f7f2] border border-[#b48b3e] p-8 mt-auto">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#b48b3e]">PLAN SUGERIDO</h3>
+                                <p className="serif italic text-3xl font-black">${diagnosis.price}</p>
+                            </div>
+                            <div className="text-2xl font-serif text-black mb-2">{diagnosis.solution}</div>
+                            <p className="text-sm text-gray-600 mb-6">Incluye: Corrección estructural + Protocolo dérmico.</p>
+                            <div className="flex justify-between items-end border-t border-gray-300 pt-6">
+                                <div className="text-xs text-gray-400"><p>DR. JULIÁN MAYA</p><p>MEDICINA ESTÉTICA AVANZADA</p></div>
+                                <div className="border border-black px-4 py-2 text-xs font-bold uppercase">APROBADO PARA AGENDA</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            )}
+          </>
       )}
+
+      {/* --- MODO RECUPERACIÓN (EL GUARDIÁN) --- */}
+      {appMode === 'RECOVERY' && (
+          <div className="w-full max-w-md mx-auto min-h-screen bg-[#111] flex flex-col">
+              <div className="p-6 bg-gradient-to-b from-blue-900/20 to-transparent">
+                  <h1 className="text-2xl font-thin serif italic">Hola, <span className="font-bold sans-serif not-italic">{patient.name}</span></h1>
+                  <p className="text-xs text-green-400 uppercase tracking-widest mt-1">DÍA {postOpDay} DE RECUPERACIÓN</p>
+              </div>
+
+              {/* LÍNEA DE TIEMPO */}
+              <div className="flex gap-4 px-6 overflow-x-auto mb-6 no-scrollbar">
+                  {[1,7,15,30,60].map(d => (
+                      <button key={d} onClick={() => setPostOpDay(d)} className={`min-w-[50px] h-[50px] rounded-full flex items-center justify-center border ${postOpDay===d ? 'bg-blue-600 border-blue-400' : 'bg-[#222] border-[#333]'}`}>
+                          D{d}
+                      </button>
+                  ))}
+              </div>
+
+              {/* FOTO EVOLUCIÓN */}
+              <div className="flex-1 bg-black relative mx-4 rounded-2xl overflow-hidden border border-gray-800">
+                  {photos.front ? (
+                      <div className="relative w-full h-full">
+                          <img src={photos.front} className="w-full h-full object-cover" />
+                          <div className={`absolute bottom-0 inset-x-0 p-4 ${recoveryStatus==='GREEN'?'bg-green-900/90':'bg-yellow-900/90'}`}>
+                              <p className="font-bold text-white">{recoveryStatus==='GREEN'?'EVOLUCIÓN CORRECTA':'OBSERVAR INFLAMACIÓN'}</p>
+                              <p className="text-xs text-gray-300">Análisis IA completado.</p>
+                          </div>
+                      </div>
+                  ) : (
+                      <div className="absolute inset-0">
+                          <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                          <canvas ref={canvasRef} className="hidden" />
+                          <button onClick={takeShot} className="absolute bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-white rounded-full border-4 border-blue-500"></button>
+                          <p className="absolute top-4 w-full text-center text-xs bg-black/50 py-1">FOTO DE CONTROL DIARIO</p>
+                      </div>
+                  )}
+              </div>
+
+              <div className="p-6">
+                  <button onClick={() => window.open(`https://api.whatsapp.com/send?phone=${WS_NUMBER}&text=Dr. Maya, reporte de día ${postOpDay}. Estado: ${recoveryStatus}`)} className="w-full bg-white text-black py-4 rounded-sm font-bold text-xs uppercase shadow-lg tracking-widest">
+                      CONTACTAR AL DR. MAYA (SOS)
+                  </button>
+                  <button onClick={() => setAppMode('HOME')} className="w-full text-zinc-500 py-4 text-xs mt-2">SALIR</button>
+              </div>
+          </div>
+      )}
+
     </div>
   );
 }
