@@ -4,12 +4,12 @@ import Webcam from 'react-webcam';
 import { FaceMesh } from '@mediapipe/face_mesh';
 import { Camera } from '@mediapipe/camera_utils';
 
-// --- CONFIGURACIÓN BLINDADA (MAYÚSCULAS FIJAS) ---
+// --- CONFIGURACIÓN BLINDADA ---
 const WS_NUMBER = "573117936211";
 const DR_NAME = "DR. RICARDO MAYA ROMO"; 
-const EBOOK_LINK = "https://pay.hotmart.com/tuebookaqui"; // Pon aquí tu link de Hotmart/Stripe
+const EBOOK_LINK = "https://pay.hotmart.com/tuebookaqui"; // TU LINK AQUÍ
 
-export default function TipherethV650() {
+export default function TipherethV700() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -20,25 +20,29 @@ export default function TipherethV650() {
   const [patient, setPatient] = useState({ name: '', phone: '', age: '' });
   const [cameraLoaded, setCameraLoaded] = useState(false);
 
-  // --- GESTIÓN DE LEADS (SIN DUPLICADOS) ---
+  // --- GESTIÓN DE LEADS (ANTI-DUPLICADOS ACTIVADO) ---
   const saveLead = (data: any) => {
-      // 1. Guardar sesión actual
-      localStorage.setItem('tiphereth_user', JSON.stringify(data));
-      
-      // 2. Guardar en historial (Base de datos local)
+      // 1. Obtener leads existentes
       const existingLeads = localStorage.getItem('tiphereth_leads');
       let leads = existingLeads ? JSON.parse(existingLeads) : [];
       
-      // Buscar si ya existe este teléfono
+      // 2. Buscar si este teléfono ya existe
       const index = leads.findIndex((l: any) => l.phone === data.phone);
       
       if (index >= 0) {
-          leads[index] = data; // Actualizar existente
+          // SI EXISTE: Actualizamos sus datos (nombre/edad) pero no creamos uno nuevo
+          leads[index] = data; 
+          console.log("Lead actualizado:", data.phone);
       } else {
-          leads.push(data); // Crear nuevo
+          // NO EXISTE: Lo agregamos como nuevo
+          leads.push(data); 
+          console.log("Nuevo lead creado:", data.phone);
       }
       
+      // 3. Guardar la lista actualizada
       localStorage.setItem('tiphereth_leads', JSON.stringify(leads));
+      // Guardar sesión actual
+      localStorage.setItem('tiphereth_user', JSON.stringify(data));
   };
 
   useEffect(() => {
@@ -117,7 +121,7 @@ export default function TipherethV650() {
             else if(captureStep === 1) { setPhotos(p=>({...p, sideR:imgData})); setCaptureStep(2); }
             else { 
                 setPhotos(p=>({...p, sideL:imgData})); 
-                // AQUÍ GUARDAMOS EL LEAD SIN DUPLICAR
+                // GUARDAR LEAD (Función anti-duplicados)
                 saveLead(patient);
                 setAppMode('ANALYSIS'); 
                 setTimeout(() => setAppMode('RESULT'), 2500); 
@@ -126,7 +130,7 @@ export default function TipherethV650() {
     }
   }, [webcamRef, captureStep, patient]);
 
-  // --- CABECERA INTERNA REUTILIZABLE ---
+  // --- CABECERA INTERNA (NOMBRE PACIENTE EN MAYÚSCULAS) ---
   const MagazineHeader = () => (
     <div className="flex justify-between items-end border-b border-black pb-6 mb-10">
         <div>
@@ -134,7 +138,8 @@ export default function TipherethV650() {
             <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 mt-2">Haute Couture Aesthetic Medicine</p>
         </div>
         <div className="text-right">
-            <p className="font-serif text-xl italic text-black">{patient.name}</p>
+            {/* AQUI ESTÁ LA CORRECCIÓN: uppercase */}
+            <p className="font-serif text-xl italic text-black uppercase">{patient.name}</p>
             <p className="text-[9px] uppercase tracking-widest text-gray-400">ID: {patient.phone}</p>
         </div>
     </div>
@@ -193,10 +198,10 @@ export default function TipherethV650() {
         </div>
       )}
 
-      {/* 4. RESULTADO FINAL (REVISTA CON PORTADA) */}
+      {/* 4. RESULTADO FINAL */}
       {appMode === 'RESULT' && (
         <div className="bg-[#f0f0f0] min-h-screen md:py-10">
-            {/* BOTONES FLOTANTES DE VENTA */}
+            {/* BOTONES FLOTANTES */}
             <div className="fixed bottom-8 right-8 z-50 no-print flex flex-col gap-3 items-end">
                  <button onClick={() => window.open(EBOOK_LINK)} className="bg-gray-800 text-white px-6 py-3 font-serif italic text-sm hover:scale-105 transition-transform shadow-xl border border-gray-600">
                     📚 Comprar Ebook Tratamiento en Casa
@@ -211,7 +216,7 @@ export default function TipherethV650() {
                  </div>
             </div>
 
-            {/* --- HOJA 0: LA PORTADA MÍSTICA --- */}
+            {/* --- HOJA 0: LA PORTADA (NOMBRE PACIENTE EN MAYÚSCULAS) --- */}
             <div className="max-w-[210mm] mx-auto bg-[#fafafa] shadow-2xl page-break flex flex-col justify-between items-center text-center py-24 px-12 border-[20px] border-white outline outline-1 outline-gray-200">
                 <div>
                     <p className="text-xs uppercase tracking-[0.6em] text-gray-400 mb-6">The Aesthetic Dossier</p>
@@ -219,7 +224,6 @@ export default function TipherethV650() {
                     <div className="w-32 h-1 bg-black mx-auto"></div>
                 </div>
 
-                {/* GRÁFICO ÁRBOL DE LA VIDA */}
                 <div className="relative w-64 h-96 my-12 opacity-90">
                     <svg viewBox="0 0 200 300" className="w-full h-full overflow-visible">
                         <path d="M100,50 L100,250 M50,150 L150,150 M75,100 L125,200 M125,100 L75,200" stroke="#C4A484" strokeWidth="1.5" opacity="0.6" />
@@ -231,7 +235,8 @@ export default function TipherethV650() {
                 </div>
 
                 <div>
-                    <p className="font-serif italic text-3xl mb-3 text-gray-800">The {patient.name || "Patient"} Edition</p>
+                    {/* AQUI ESTÁ LA CORRECCIÓN: uppercase */}
+                    <p className="font-serif italic text-3xl mb-3 text-gray-800 uppercase">The {patient.name || "Patient"} Edition</p>
                     <p className="text-[10px] uppercase tracking-[0.4em] text-black mb-10">{new Date().getFullYear()} Collection</p>
                     <div className="border-t-2 border-black pt-6 inline-block px-16">
                         <p className="text-base font-bold uppercase tracking-widest">{DR_NAME}</p>
@@ -264,7 +269,7 @@ export default function TipherethV650() {
                 </div>
             </div>
 
-            {/* --- HOJA 2: VOLÚMENES (CORREGIDO ANATOMÍA) --- */}
+            {/* --- HOJA 2: VOLÚMENES (CORREGIDO POSICIÓN MANCHAS) --- */}
             <div className="max-w-[210mm] mx-auto bg-white shadow-2xl page-break">
                 <MagazineHeader />
                 <h2 className="text-5xl font-serif italic text-center mb-4">II. La Escultura</h2>
@@ -273,13 +278,12 @@ export default function TipherethV650() {
                      <div className="aspect-video w-full relative overflow-hidden bg-gray-100">
                          {photos.sideR && <img src={photos.sideR} className="w-full h-full object-cover filter-fat opacity-90" />}
                          
-                         {/* --- CORRECCIONES ANATÓMICAS --- */}
+                         {/* --- CORRECCIONES DE POSICIÓN --- */}
+                         {/* MANCHA BEIGE (Pérdida Volumen): Más arriba y centrada (Pómulo) */}
+                         <div className="absolute top-[30%] left-[35%] w-16 h-12 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
                          
-                         {/* 1. MANCHA BEIGE (Pérdida Volumen): EN EL PÓMULO/ARCO CIGOMÁTICO (Más arriba y atrás) */}
-                         <div className="absolute top-[38%] left-[25%] w-16 h-12 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
-                         
-                         {/* 2. MANCHA OSCURA (Jowl/Caída): EN LA LÍNEA MANDIBULAR (Más abajo) */}
-                         <div className="absolute top-[65%] left-[35%] w-16 h-14 bg-black/40 rounded-full blur-xl border-2 border-black transform rotate-12"></div>
+                         {/* MANCHA OSCURA (Jowl): Más arriba, en la línea mandibular */}
+                         <div className="absolute top-[60%] left-[40%] w-16 h-14 bg-black/40 rounded-full blur-xl border-2 border-black transform rotate-12"></div>
                          
                          <div className="absolute top-8 right-8 text-right bg-white/50 p-4 backdrop-blur-sm">
                              <p className="text-[#C4A484] font-bold text-xs tracking-widest">▲ PÓMULO (Pérdida Volumen)</p>
@@ -336,7 +340,7 @@ export default function TipherethV650() {
                             </button>
                         </div>
 
-                        {/* OPCIÓN B: EBOOK */}
+                        {/* OPCIÓN B: EBOOK (LINK CONFIGURABLE ARRIBA) */}
                         <div className="text-left pl-4">
                             <p className="text-xs font-bold uppercase text-[#C4A484] mb-2">Opción B: Mantenimiento en Casa</p>
                             <p className="text-sm font-light mb-4">Guía digital de cuidados y prevención.</p>
