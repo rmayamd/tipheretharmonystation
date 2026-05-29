@@ -24,7 +24,7 @@ export default function ModeSelectorPage() {
         </div>
         
         {/* Selector de Modos */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Modo Paciente */}
           <Link href="/patient-app">
             <div className="group bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 cursor-pointer border-4 border-transparent hover:border-luxury-accent">
@@ -79,6 +79,23 @@ export default function ModeSelectorPage() {
             </div>
           </Link>
           
+          {/* Captura clínica VISIA */}
+          <Link href="/clinical-scan" className="md:col-span-2">
+            <div className="group bg-gradient-to-r from-cyan-900 to-zinc-900 rounded-3xl p-6 shadow-2xl border-2 border-cyan-500/50 hover:border-cyan-400 transition-all">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-white">
+                <div className="text-left">
+                  <h2 className="text-2xl font-bold mb-1">Captura clínica VISIA™</h2>
+                  <p className="text-sm text-cyan-100/80">
+                    Kit consultorio: 5 fotos estandarizadas (luz clínica, polarizada, Wood, perfiles) + informe PDF
+                  </p>
+                </div>
+                <span className="bg-cyan-500 text-black px-6 py-3 rounded-xl font-bold text-sm whitespace-nowrap">
+                  Abrir protocolo →
+                </span>
+              </div>
+            </div>
+          </Link>
+
           {/* Modo Doctor */}
           <Link href="/dashboard">
             <div className="group bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 cursor-pointer border-4 border-transparent hover:border-zen-primary">

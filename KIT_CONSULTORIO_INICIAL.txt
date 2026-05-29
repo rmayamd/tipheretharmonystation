@@ -1,0 +1,129 @@
+========================================
+KIT INICIAL CONSULTORIO — ESTILO VISIA
+Tipheret Harmony Station · Dr. Ricardo Maya Romo
+========================================
+
+OBJETIVO
+--------
+Mismas fotos, misma distancia, mismas luces = comparación válida
+entre pacientes y antes/después (como VISIA / Canfield).
+
+NO necesitas comprar un VISIA (USD 25.000+).
+SÍ necesitas este kit fijo + la app en:
+  https://tiphereth-harmony-station.vercel.app/clinical-scan
+
+========================================
+LISTA DE COMPRAS (KIT INICIAL)
+========================================
+
+OBLIGATORIO
+-----------
+1. Trípode para celular (altura regulable)
+   → Altura: ojos del paciente al centro de la pantalla
+
+2. Soporte / pinza para celular en el trípode
+   → Que no se mueva al disparar
+
+3. Cinta métrica + marca en el piso
+   → 60 cm desde el lente del celular al mentón del paciente
+
+4. Fondo neutro mate (gris claro o blanco roto)
+   → Lienzo 1,5 x 2 m o pared pintada sin brillo
+
+5. Luz LED blanca 5000–5500 K (anel o panel)
+   → Misma potencia siempre. Sin mezclar con luz amarilla de techo.
+
+6. Celular con buena cámara frontal (2019 o más reciente)
+   → Desactivar "belleza" / filtros en la cámara nativa
+
+RECOMENDADO (para acercarse a VISIA)
+------------------------------------
+7. Dos filtros polarizadores lineales (PL)
+   → Uno en la lámpara, uno pegado al celular
+   → Orientación CRUZADA (90°) = modo "polarizada" VISIA
+
+8. Lámpara de Wood (UV-A) que ya tienes en consultorio
+   → Solo para el paso 3 del protocolo (cabina oscura)
+
+9. Cortina opaca o cabina sin ventana directa
+   → Imprescindible para Wood
+
+10. Tarjeta gris 18% (opcional, ~$30 USD)
+    → Una foto de calibración al inicio del día
+
+OPCIONAL FASE 2
+---------------
+11. Tablet o iPad en trípode (pantalla más grande para revisar)
+12. PC + webcam Logitech Brio 4K fija (misma posición siempre)
+13. Aro LED con brazo articulado (marca Neewer, Godox ML60)
+
+PRESUPUESTO APROXIMADO COLOMBIA (2026)
+--------------------------------------
+Kit mínimo (ítems 1–6):        $180.000 – $350.000 COP
++ Polarizadores (7):           $80.000 – $200.000 COP
++ Fondo / cortina (3,9):       $100.000 – $400.000 COP
+TOTAL kit útil tipo VISIA:     $400.000 – $900.000 COP
+
+========================================
+MONTAJE EN LA CABINA (5 MINUTOS)
+========================================
+
+    [ FONDO GRIS ]
+         |
+    [ PACIENTE ] ←—— 60 cm ——→ [ CELULAR en trípode ]
+         |                           |
+    [ LED anel ]                  altura ojos
+
+PASO A PASO
+1. Marcar 60 cm en el suelo con cinta.
+2. Trípode alineado al centro del fondo.
+3. Paciente sentado, espalda recta, mentón paralelo al piso.
+4. Apagar luces de techo durante captura (solo LED anel).
+5. Abrir en el celular: /clinical-scan
+
+========================================
+PROTOCOLO DE 5 FOTOS (APP)
+========================================
+
+Paso 1 — LUZ CLÍNICA ESTÁNDAR (obligatoria, a color)
+Paso 2 — POLARIZADA CRUZADA (filtros PL lámpara + celular)
+Paso 3 — WOOD UV (apagar todo, solo Wood, habitación oscura)
+Paso 4 — PERFIL DERECHO (volver luz clínica)
+Paso 5 — PERFIL IZQUIERDO
+
+La app muestra óvalo verde cuando el encuadre es correcto.
+NO dispare si está ámbar.
+
+========================================
+QUÉ OBTIENES EN EL INFORME
+========================================
+
+- Cuadrícula 5 fotos etiquetadas (como panel VISIA)
+- Mapas digitales: color, eritema, melanina, textura
+- Análisis Wood (fluorescencia estimada)
+- Medidas: simetría, laxitud, volumen cc, Golden Ratio
+- Microneedling personalizado según piel
+- PDF imprimible
+
+========================================
+LIMITACIONES HONESTAS
+========================================
+
+Esto NO es un VISIA certificado de fábrica.
+SÍ es un protocolo clínico repetible con TUS lámparas reales.
+
+Para certificación tipo FDA del equipo, necesitarías VISIA/Canfield.
+Para consulta diaria y marketing médico serio, este kit + app es viable.
+
+========================================
+SOPORTE TÉCNICO
+========================================
+
+App local:  npm run dev  →  http://localhost:3000/clinical-scan
+Desde celular en WiFi: ver docs/ACCESO_DESDE_CELULAR.md
+
+Subir actualizaciones:
+  ACTUALIZAR_Y_SUBIR_WEB.bat
+  o git push origin main
+
+========================================

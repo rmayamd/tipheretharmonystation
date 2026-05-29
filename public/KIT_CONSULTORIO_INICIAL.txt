@@ -1,0 +1,15 @@
+========================================
+KIT INICIAL CONSULTORIO — ESTILO VISIA
+Tipheret Harmony Station · Dr. Ricardo Maya Romo
+========================================
+
+Ver archivo completo en la raíz del proyecto o abrir:
+https://tiphereth-harmony-station.vercel.app/clinical-scan
+
+LISTA RÁPIDA: trípode + soporte celular + marca 60 cm + fondo gris +
+luz LED 5500K + polarizadores (lámpara + celular) + lámpara Wood +
+cabina oscura.
+
+APP: /clinical-scan — 5 pasos guiados, óvalo verde = encuadre OK.
+
+========================================
