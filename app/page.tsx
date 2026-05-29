@@ -9,6 +9,20 @@ import {
   getSkinFindings,
   type SkinAnalysisResult,
 } from '@/lib/maya-vision/simple-skin-analysis';
+import {
+  buildFacialReport,
+  getEvidenceDisclaimer,
+  getStructureReport,
+  getVolumeReport,
+  type FacialAnalysisReport,
+  type LandmarkPoint,
+} from '@/lib/maya-vision/real-facial-analysis';
+
+const CAPTURE_HINTS = {
+  ES: ['Rostro frontal, hombros visibles, luz al frente', 'Gire 90° — perfil derecho puro', 'Perfil izquierdo puro'],
+  EN: ['Front face, shoulders visible, even light', 'Turn 90° — pure right profile', 'Pure left profile'],
+  PT: ['Rosto frontal, ombros visíveis, luz frontal', 'Gire 90° — perfil direito', 'Perfil esquerdo'],
+};
 
 // --- CONFIGURACIÓN BLINDADA ---
 const WS_NUMBER = "573117936211";
@@ -120,10 +134,34 @@ export default function TipherethV1100() {
   const [photos, setPhotos] = useState<{front:string|null; sideR:string|null; sideL:string|null}>({front:null, sideR:null, sideL:null});
   const [patient, setPatient] = useState({ name: '', phone: '', age: '' });
   const [skinReport, setSkinReport] = useState<SkinAnalysisResult | null>(null);
+  const [facialReport, setFacialReport] = useState<FacialAnalysisReport | null>(null);
+  const latestLandmarksRef = useRef<LandmarkPoint[] | null>(null);
+  const capturedLandmarksRef = useRef<{
+    front: LandmarkPoint[] | null;
+    sideR: LandmarkPoint[] | null;
+    sideL: LandmarkPoint[] | null;
+  }>({ front: null, sideR: null, sideL: null });
+  const cameraRef = useRef<Camera | null>(null);
 
   const t = CONTENT[lang];
   const skinCopy = skinReport ? getSkinFindings(skinReport, lang) : null;
   const skinRx = skinReport ? getMicroneedlingRx(skinReport.score, lang) : t.rx1;
+  const volumeCopy = facialReport ? getVolumeReport(facialReport.mesh, lang) : null;
+  const structureCopy = facialReport
+    ? getStructureReport(facialReport.mesh, facialReport.golden, lang)
+    : null;
+  const evidenceNote = getEvidenceDisclaimer(lang);
+
+  const cloneLandmarks = (raw: LandmarkPoint[]): LandmarkPoint[] =>
+    raw.map((p) => ({ x: p.x, y: p.y, z: p.z }));
+
+  const storeLandmarkSnapshot = (step: number) => {
+    if (!latestLandmarksRef.current?.length) return;
+    const snap = cloneLandmarks(latestLandmarksRef.current);
+    if (step === 0) capturedLandmarksRef.current.front = snap;
+    else if (step === 1) capturedLandmarksRef.current.sideR = snap;
+    else capturedLandmarksRef.current.sideL = snap;
+  };
 
   const saveLead = (data: any) => {
       const existingLeads = localStorage.getItem('tiphereth_leads');
@@ -149,28 +187,50 @@ export default function TipherethV1100() {
     if (ctx) {
       ctx.save();
       ctx.clearRect(0, 0, videoWidth, videoHeight);
-      if (results.multiFaceLandmarks) {
-        for (const landmarks of results.multiFaceLandmarks) {
-          drawConnectors(ctx, landmarks);
-        }
+      if (results.multiFaceLandmarks?.[0]) {
+        const lm = results.multiFaceLandmarks[0];
+        latestLandmarksRef.current = lm.map((p: { x: number; y: number; z?: number }) => ({
+          x: p.x,
+          y: p.y,
+          z: p.z ?? 0,
+        }));
+        drawConnectors(ctx, lm);
       }
       ctx.restore();
     }
   }, [appMode]);
 
   useEffect(() => {
-    if(appMode === 'CAPTURE') {
-        const faceMesh = new FaceMesh({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`});
-        faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
-        faceMesh.onResults(onResults);
-        if (webcamRef.current?.video) {
-            const camera = new Camera(webcamRef.current.video, {
-                onFrame: async () => { if(webcamRef.current?.video) await faceMesh.send({image: webcamRef.current.video}); },
-                width: 1280, height: 720
-            });
-            camera.start();
-        }
+    if (appMode !== 'CAPTURE') {
+      cameraRef.current?.stop();
+      cameraRef.current = null;
+      return;
     }
+    const faceMesh = new FaceMesh({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+    });
+    faceMesh.setOptions({
+      maxNumFaces: 1,
+      refineLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+    faceMesh.onResults(onResults);
+    const video = webcamRef.current?.video;
+    if (!video) return;
+    const camera = new Camera(video, {
+      onFrame: async () => {
+        if (webcamRef.current?.video) await faceMesh.send({ image: webcamRef.current.video });
+      },
+      width: 1280,
+      height: 720,
+    });
+    cameraRef.current = camera;
+    camera.start();
+    return () => {
+      camera.stop();
+      cameraRef.current = null;
+    };
   }, [appMode, onResults]);
 
   const drawConnectors = (ctx: CanvasRenderingContext2D, landmarks: any[]) => {
@@ -201,22 +261,54 @@ export default function TipherethV1100() {
             ctx.translate(finalCanvas.width, 0); ctx.scale(-1, 1);
             ctx.drawImage(webcamRef.current.video!, 0, 0);
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            if(captureStep === 0) ctx.drawImage(canvasRef.current, 0, 0);
-            const imgData = finalCanvas.toDataURL('image/jpeg', 1.0);
-            if(captureStep === 0) { setPhotos(p=>({...p, front:imgData})); setCaptureStep(1); }
-            else if(captureStep === 1) { setPhotos(p=>({...p, sideR:imgData})); setCaptureStep(2); }
-            else { 
-                const frontPhoto = photos.front;
-                setPhotos(p=>({...p, sideL:imgData})); 
-                saveLead(patient);
-                setAppMode('ANALYSIS');
-                const ageNum = patient.age ? parseInt(patient.age, 10) : undefined;
-                const runAnalysis = frontPhoto
-                  ? analyzeSkinFromImageDataUrl(frontPhoto, ageNum).then(setSkinReport).catch(() => setSkinReport(null))
-                  : Promise.resolve();
-                runAnalysis.finally(() => {
-                  setTimeout(() => setAppMode('RESULT'), 2500);
-                });
+            // No guardar la malla MediaPipe en la foto: distorsiona el análisis de piel
+            const imgData = finalCanvas.toDataURL('image/jpeg', 0.92);
+            const vw = webcamRef.current.video!.videoWidth;
+            const vh = webcamRef.current.video!.videoHeight;
+            storeLandmarkSnapshot(captureStep);
+
+            if (captureStep === 0) {
+              setPhotos((p) => ({ ...p, front: imgData }));
+              setCaptureStep(1);
+            } else if (captureStep === 1) {
+              setPhotos((p) => ({ ...p, sideR: imgData }));
+              setCaptureStep(2);
+            } else {
+              const frontPhoto = photos.front;
+              const lm = capturedLandmarksRef.current;
+              setPhotos((p) => ({ ...p, sideL: imgData }));
+              saveLead(patient);
+              setAppMode('ANALYSIS');
+              const ageNum = patient.age ? parseInt(patient.age, 10) : undefined;
+
+              const runAnalysis = async () => {
+                let skin: SkinAnalysisResult | null = null;
+                if (frontPhoto) {
+                  try {
+                    skin = await analyzeSkinFromImageDataUrl(frontPhoto, ageNum);
+                    setSkinReport(skin);
+                  } catch {
+                    setSkinReport(null);
+                  }
+                }
+                const report = buildFacialReport(
+                  lm.front,
+                  lm.sideR,
+                  lm.sideL,
+                  skin,
+                  {
+                    age: ageNum,
+                    ethnicity: 'latino',
+                    gender: 'M',
+                    imageSize: { w: vw, h: vh },
+                  }
+                );
+                setFacialReport(report);
+              };
+
+              runAnalysis().finally(() => {
+                setTimeout(() => setAppMode('RESULT'), 2800);
+              });
             }
         }
     }
@@ -286,9 +378,31 @@ export default function TipherethV1100() {
       {/* 2. CÁMARA */}
       {appMode === 'CAPTURE' && (
         <div className="relative w-full h-screen bg-black">
-            <Webcam ref={webcamRef} className="w-full h-full object-cover opacity-90" mirrored={true} />
+            <Webcam
+              ref={webcamRef}
+              className="w-full h-full object-cover opacity-90"
+              mirrored={true}
+              screenshotFormat="image/jpeg"
+              videoConstraints={{
+                facingMode: 'user',
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+              }}
+            />
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />
-            <div className="absolute top-12 left-0 w-full text-center"><p className="text-white font-serif italic text-2xl md:text-3xl drop-shadow-lg">{captureStep === 0 ? t.step1 : captureStep === 1 ? t.step2 : t.step3}</p></div>
+            <div className="absolute top-8 left-0 w-full text-center px-4">
+              <p className="text-white font-serif italic text-xl md:text-3xl drop-shadow-lg">
+                {captureStep === 0 ? t.step1 : captureStep === 1 ? t.step2 : t.step3}
+              </p>
+              <p className="text-[10px] text-white/70 uppercase tracking-widest mt-2">
+                {CAPTURE_HINTS[lang][captureStep]}
+              </p>
+              <p className="text-[9px] text-emerald-300/90 mt-1">
+                {latestLandmarksRef.current
+                  ? '● 468 puntos faciales activos'
+                  : '○ Centre el rostro en el óvalo'}
+              </p>
+            </div>
             <button onClick={capture} className="absolute bottom-20 left-1/2 -translate-x-1/2 w-20 h-20 border border-white/50 rounded-full flex items-center justify-center hover:bg-white/10 transition-all"><div className="w-16 h-16 bg-white/90 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.6)]"></div></button>
         </div>
       )}
@@ -304,6 +418,28 @@ export default function TipherethV1100() {
       {/* 4. RESULTADO */}
       {appMode === 'RESULT' && (
         <div className="bg-[#f0f0f0] min-h-screen md:py-10">
+            {!facialReport && (
+              <div className="w-full md:max-w-[210mm] mx-auto mb-4 px-4 bg-amber-100 border border-amber-500 text-amber-900 text-xs p-3 rounded no-print">
+                No se guardaron los 468 puntos faciales. Repita el escaneo con rostro centrado y buena luz (vea el indicador verde durante la captura).
+              </div>
+            )}
+            {facialReport && (
+              <div className="w-full md:max-w-[210mm] mx-auto mb-4 px-4 no-print">
+                <div className="bg-black text-white text-[10px] p-4 rounded-lg border border-gray-700">
+                  <p className="font-bold uppercase tracking-widest mb-2">Auditoría Tipheret™ — mediciones reales</p>
+                  <p className="text-gray-300 mb-2">{evidenceNote}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
+                    <div><span className="text-gray-500 block">Φ Áurea</span><span className="text-lg font-serif">{facialReport.mesh.goldenRatioScore}</span></div>
+                    <div><span className="text-gray-500 block">Simetría</span><span className="text-lg font-serif">{facialReport.mesh.leftRightSymmetry}</span></div>
+                    <div><span className="text-gray-500 block">Laxitud</span><span className="text-lg font-serif">{facialReport.mesh.laxityScore}</span></div>
+                    <div><span className="text-gray-500 block">Volumen ~cc</span><span className="text-lg font-serif">{facialReport.mesh.volumeDeficitCc}</span></div>
+                  </div>
+                  {facialReport.captureQuality.messages[0] && (
+                    <p className="text-amber-300 mt-2">{facialReport.captureQuality.messages.join(' ')}</p>
+                  )}
+                </div>
+              </div>
+            )}
             <div className="fixed bottom-6 right-6 z-50 no-print flex flex-col gap-3 items-end">
                  <button onClick={() => window.open(EBOOK_LINKS[lang])} className="bg-gray-800 text-white px-4 py-2 font-serif italic text-xs hover:scale-105 shadow-xl border border-gray-600">
                     📚 {t.btnBuy}
@@ -362,6 +498,7 @@ export default function TipherethV1100() {
                         )}
                     </div>
                 </div>
+                <p className="text-[8px] text-gray-500 mx-4 md:mx-8 mb-4 uppercase tracking-wide print:block hidden md:block">{evidenceNote}</p>
                 <div className="bg-[#fafafa] p-6 md:p-8 border-l-4 border-black mx-4 md:mx-8">
                     <h3 className="font-serif text-xl md:text-2xl italic mb-4">{t.dxTitle}</h3>
                     <p className="text-sm md:text-base text-gray-700 mb-4 font-serif">{skinCopy?.dxText ?? t.dxText}</p>
@@ -377,8 +514,13 @@ export default function TipherethV1100() {
                 <div className="relative mb-8 md:mb-12 mx-4 md:mx-8 shadow-2xl">
                      <div className="aspect-video w-full relative overflow-hidden bg-gray-100">
                          {photos.sideR && <img src={photos.sideR} className="w-full h-full object-cover filter-fat opacity-90" />}
-                         <div className="absolute top-[32%] left-[32%] w-16 h-12 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
-                         <div className="absolute top-[75%] left-[38%] w-16 h-14 bg-black/40 rounded-full blur-xl border-2 border-black transform rotate-12"></div>
+                         <div className="absolute top-[28%] left-[30%] w-14 h-11 bg-[#C4A484]/50 rounded-full blur-md border-2 border-[#C4A484]"></div>
+                         <div className="absolute top-[72%] left-[36%] w-14 h-12 bg-black/40 rounded-full blur-xl border-2 border-black transform rotate-12"></div>
+                         {volumeCopy && (
+                           <div className="absolute bottom-2 left-2 right-2 bg-white/90 text-[9px] p-2 font-mono">
+                             ΔV estimado: {volumeCopy.volumeCc} cc · Jowl {facialReport?.mesh.jowlSeverity}/100
+                           </div>
+                         )}
                          <div className="absolute top-4 right-4 text-right bg-white/50 p-2 md:p-4 backdrop-blur-sm rounded">
                              <p className="text-[#C4A484] font-bold text-[10px] md:text-xs tracking-widest">{t.tagCheek}</p>
                              <p className="text-black font-bold text-[10px] md:text-xs mt-1 tracking-widest">{t.tagJowl}</p>
@@ -386,12 +528,12 @@ export default function TipherethV1100() {
                      </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 magazine-col gap-6 md:gap-12 mb-8 mx-4 md:mx-8">
-                    <div className="magazine-width"><h3 className="font-bold uppercase text-xs mb-2 border-b-2 border-black inline-block pb-1">{t.mapTitle}</h3><p className="text-sm font-serif leading-relaxed text-gray-700">{t.mapText}</p></div>
-                    <div className="magazine-width"><h3 className="font-bold uppercase text-xs mb-2 border-b-2 border-black inline-block pb-1">{t.cliTitle}</h3><p className="text-sm font-serif leading-relaxed text-gray-700">{t.cliText}</p></div>
+                    <div className="magazine-width"><h3 className="font-bold uppercase text-xs mb-2 border-b-2 border-black inline-block pb-1">{t.mapTitle}</h3><p className="text-sm font-serif leading-relaxed text-gray-700">{volumeCopy?.mapText ?? t.mapText}</p></div>
+                    <div className="magazine-width"><h3 className="font-bold uppercase text-xs mb-2 border-b-2 border-black inline-block pb-1">{t.cliTitle}</h3><p className="text-sm font-serif leading-relaxed text-gray-700">{volumeCopy?.cliText ?? t.cliText}</p></div>
                 </div>
                 <div className="text-center border-y-2 border-black py-6 md:py-8 mx-4 md:mx-8">
-                    <p className="font-serif italic text-xl md:text-3xl mb-2">"{t.quote}"</p>
-                    <p className="text-[10px] md:text-sm uppercase tracking-[0.2em] font-bold">{t.txVol}</p>
+                    <p className="font-serif italic text-xl md:text-3xl mb-2">"{volumeCopy?.quote ?? t.quote}"</p>
+                    <p className="text-[10px] md:text-sm uppercase tracking-[0.2em] font-bold">{volumeCopy?.txVol ?? t.txVol}</p>
                 </div>
             </div>
 
@@ -409,7 +551,7 @@ export default function TipherethV1100() {
                              {photos.front && <img src={photos.front} className="w-full h-full object-cover filter-smas opacity-80" />}
                              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100"><path d="M30,30 L30,70" stroke="black" strokeWidth="0.8" markerEnd="url(#arrow)" /><path d="M70,30 L70,70" stroke="black" strokeWidth="0.8" markerEnd="url(#arrow)" /><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="black" /></marker></defs></svg>
                         </div>
-                        <p className="text-[10px] font-serif text-justify mt-auto">{t.smasDx}</p>
+                        <p className="text-[10px] font-serif text-justify mt-auto">{structureCopy?.smasDx ?? t.smasDx}</p>
                     </div>
                     <div className="bg-[#fafafa] p-4 flex flex-col magazine-width">
                         <h3 className="text-center font-bold text-xs uppercase tracking-widest mb-2">{t.boneTitle}</h3>
@@ -419,7 +561,7 @@ export default function TipherethV1100() {
                              <div className="absolute bottom-4 left-[35%] h-16 w-1 border-l-2 border-red-500 opacity-60"></div>
                              <p className="absolute bottom-16 left-[40%] text-red-500 font-bold text-[9px] uppercase tracking-widest">{t.neckTag}</p>
                         </div>
-                        <p className="text-[10px] font-serif text-justify mt-auto">{t.boneDx}</p>
+                        <p className="text-[10px] font-serif text-justify mt-auto">{structureCopy?.boneDx ?? t.boneDx}</p>
                     </div>
                 </div>
 
@@ -432,8 +574,8 @@ export default function TipherethV1100() {
                             {photos.front && <img src={photos.front} className="w-full h-full object-cover filter-deco" style={{objectPosition: '0% 80%'}} />}
                         </div>
                         <div className="w-2/3">
-                            <p className="text-[10px] font-serif text-justify leading-relaxed">{t.decoDx}</p>
-                            <p className="text-[10px] font-bold mt-2 uppercase text-red-800">{t.decoTx}</p>
+                            <p className="text-[10px] font-serif text-justify leading-relaxed">{structureCopy?.decoDx ?? t.decoDx}</p>
+                            <p className="text-[10px] font-bold mt-2 uppercase text-red-800">{structureCopy?.decoTx ?? t.decoTx}</p>
                         </div>
                     </div>
                 </div>
