@@ -67,7 +67,7 @@ function angleAt(
   const m1 = Math.hypot(v1.x, v1.y)
   const m2 = Math.hypot(v2.x, v2.y)
   if (m1 * m2 === 0) return 95
-  return (Math.acos(Math.max(-1, Math.min(1, dot / (m1 * m2))) * 180) / Math.PI
+  return (Math.acos(Math.max(-1, Math.min(1, dot / (m1 * m2)))) * 180) / Math.PI
 }
 
 export function measureFromLandmarks(
