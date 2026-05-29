@@ -518,22 +518,22 @@ export class IntegratedRecommendationsEngine {
       references: ['Zein Obagi - Art of Skin Health Restoration']
     })
     
-    // Resurfacing si piel < 60
+    // Microneedling si piel < 60 (sustituye láser CO2)
     if (analysis.frontal.skin_quality < 60) {
       recommendations.push({
-        id: 'obagi_resurfacing',
+        id: 'obagi_microneedling',
         category: 'DERMATOLOGICAL',
         subcategory: 'obagi',
-        procedure: 'Laser CO2 Fraccional + Blue Peel',
-        description: `1-2 sesiones laser CO2 (1-1.5mm) + 1 Blue Peel TCA 20-30% anual`,
-        why: `Renovación dérmica profunda para textura perfecta y reflejos óptimos`,
-        duration_months: 18,
-        recovery_weeks: 2,
-        cost_cop: { min: 5_000_000, max: 10_000_000 },
+        procedure: 'Microneedling médico + Bio-Revitalización',
+        description: `3-4 sesiones microneedling (0.5-1.5 mm según zona) + PRP o factores de crecimiento; mantenimiento Obagi tópico`,
+        why: `Neocolagénesis controlada y mejora de textura sin ablación con láser CO2`,
+        duration_months: 12,
+        recovery_weeks: 0.5,
+        cost_cop: { min: 2_500_000, max: 6_000_000 },
         priority: 2,
         age_appropriate: profile.age >= 25,
         evidence_level: 'A',
-        references: ['Obagi Resurfacing Protocols']
+        references: ['Obagi Skin Health + Microneedling collagen induction']
       })
     }
     

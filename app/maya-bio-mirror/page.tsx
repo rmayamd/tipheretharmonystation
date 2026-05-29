@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
+import { analyzeSkinFromImageDataUrl } from '@/lib/maya-vision/simple-skin-analysis';
 
 // CONSTANTES
 const WS_BUSINESS = "573117936211";
@@ -16,6 +17,8 @@ export default function TipherethV75() {
   const [loading, setLoading] = useState(false);
   const [bioAge, setBioAge] = useState(0);
   const [sliderVal, setSliderVal] = useState(50);
+  const [glogauLabel, setGlogauLabel] = useState('Glogau II');
+  const [skinTherapy, setSkinTherapy] = useState('Microneedling + Bio-Revitalización');
 
   useEffect(() => {
     if (step === 'scanning') {
@@ -50,10 +53,28 @@ export default function TipherethV75() {
 
   const syncLead = async () => {
     setLoading(true);
+    let diagnosisSkin = 'Microneedling + Bio-Revitalización';
+    let glogau = 'Glogau II';
+    if (photos[0]) {
+      try {
+        const skin = await analyzeSkinFromImageDataUrl(photos[0]);
+        glogau = `Glogau ${skin.glogau}`;
+        diagnosisSkin =
+          skin.score >= 78
+            ? 'Microneedling suave + Bio-Revitalización'
+            : skin.score >= 58
+              ? 'Microneedling médico (Dermapen) + PRP'
+              : 'Microneedling profundo + factores de crecimiento';
+        setGlogauLabel(glogau);
+        setSkinTherapy(diagnosisSkin);
+      } catch {
+        /* mantener valores por defecto */
+      }
+    }
     try {
       await fetch(GOOGLE_SHEET_URL, {
         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, diagnosis: `TIPHERET V75: Glogau III / +318.5cc / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ ...user, diagnosis: `TIPHERET V75: ${glogau} / ${diagnosisSkin} / BioAge ${bioAge}`, timestamp: new Date().toISOString() })
       });
     } catch (e) { console.error("Sync Error"); }
     setLoading(false);
@@ -192,7 +213,7 @@ export default function TipherethV75() {
                 </li>
                 <li className="flex items-start gap-3 border-b border-white/5 pb-2">
                     <span className="text-cyan-500 font-bold">B.</span>
-                    <span><strong className="text-white">SUPERFICIE:</strong> Reversión de daño Glogau III.</span>
+                    <span><strong className="text-white">SUPERFICIE:</strong> {glogauLabel} — {skinTherapy}.</span>
                 </li>
             </ul>
             <button onClick={() => {

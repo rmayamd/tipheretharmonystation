@@ -3,6 +3,12 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { FaceMesh } from '@mediapipe/face_mesh';
 import { Camera } from '@mediapipe/camera_utils';
+import {
+  analyzeSkinFromImageDataUrl,
+  getMicroneedlingRx,
+  getSkinFindings,
+  type SkinAnalysisResult,
+} from '@/lib/maya-vision/simple-skin-analysis';
 
 // --- CONFIGURACIÓN BLINDADA ---
 const WS_NUMBER = "573117936211";
@@ -25,7 +31,7 @@ const CONTENT = {
         ch1Title: "I. El Lienzo", ch1Sub: "Análisis de Calidad Dérmica", filterVasc: "Filtro Vascular",
         analysisTitle: "Análisis Espectral", analysisText: "Utilizamos Espectrometría de Contraste Vascular. Revela la inflamación crónica silente y el daño solar acumulado.",
         findingTitle: "Hallazgos", findingText: "Se detecta una barrera cutánea con signos de fatiga oxidativa y textura irregular, disminuyendo la luminosidad.",
-        dxTitle: "Diagnóstico & Tratamiento", dxText: "Su piel requiere una restauración profunda de la matriz extracelular para recuperar el 'Glow'.", suggestion: "Sugerencia Experta", rx1: "Láser + Bio-Revitalización",
+        dxTitle: "Diagnóstico & Tratamiento", dxText: "Su piel requiere una restauración profunda de la matriz extracelular para recuperar el 'Glow'.", suggestion: "Sugerencia Experta", rx1: "Microneedling + Bio-Revitalización",
         
         // Pág 2: VOLUMEN
         ch2Title: "II. La Escultura", ch2Sub: "Dinámica de Paquetes Grasos", tagCheek: "▲ PÓMULO", tagJowl: "▼ JOWL",
@@ -55,7 +61,7 @@ const CONTENT = {
         ch1Title: "I. The Canvas", ch1Sub: "Dermal Quality Analysis", filterVasc: "Vascular Filter",
         analysisTitle: "Spectral Analysis", analysisText: "We use Vascular Contrast Spectrometry. It reveals silent chronic inflammation and accumulated sun damage.",
         findingTitle: "Findings", findingText: "A skin barrier with signs of oxidative fatigue and irregular texture is detected, diminishing luminosity.",
-        dxTitle: "Diagnosis & Treatment", dxText: "Your skin requires deep restoration of the extracellular matrix to recover its natural 'Glow'.", suggestion: "Expert Suggestion", rx1: "Laser + Bio-Revitalization",
+        dxTitle: "Diagnosis & Treatment", dxText: "Your skin requires deep restoration of the extracellular matrix to recover its natural 'Glow'.", suggestion: "Expert Suggestion", rx1: "Microneedling + Bio-Revitalization",
         
         ch2Title: "II. The Sculpture", ch2Sub: "Fat Pad Dynamics", tagCheek: "▲ CHEEK", tagJowl: "▼ JOWL",
         mapTitle: "Volumetric Mapping", mapText: "We visualize how support compartments atrophy and superficial ones descend due to gravity.",
@@ -82,7 +88,7 @@ const CONTENT = {
         ch1Title: "I. A Tela", ch1Sub: "Análise de Qualidade Dérmica", filterVasc: "Filtro Vascular",
         analysisTitle: "Análise Espectral", analysisText: "Utilizamos Espectrometria de Contraste Vascular. Revela inflamação crônica silenciosa e dano solar acumulado.",
         findingTitle: "Achados", findingText: "Detecta-se uma barreira cutânea com sinais de fadiga oxidativa e textura irregular, diminuindo a luminosidade.",
-        dxTitle: "Diagnóstico & Tratamento", dxText: "Sua pele requer uma restauração profunda da matriz extracelular para recuperar o 'Glow' natural.", suggestion: "Sugestão de Especialista", rx1: "Laser + Bio-Revitalização",
+        dxTitle: "Diagnóstico & Tratamento", dxText: "Sua pele requer uma restauração profunda da matriz extracelular para recuperar o 'Glow' natural.", suggestion: "Sugestão de Especialista", rx1: "Microneedling + Bio-Revitalização",
         
         ch2Title: "II. A Escultura", ch2Sub: "Dinâmica dos Compartimentos de Gordura", tagCheek: "▲ MALAR", tagJowl: "▼ JOWL",
         mapTitle: "Mapeamento Volumétrico", mapText: "Visualizamos como os compartimentos de suporte atrofiam e os superficiais descem pela gravidade.",
@@ -113,8 +119,11 @@ export default function TipherethV1100() {
   const [captureStep, setCaptureStep] = useState(0); 
   const [photos, setPhotos] = useState<{front:string|null; sideR:string|null; sideL:string|null}>({front:null, sideR:null, sideL:null});
   const [patient, setPatient] = useState({ name: '', phone: '', age: '' });
+  const [skinReport, setSkinReport] = useState<SkinAnalysisResult | null>(null);
 
   const t = CONTENT[lang];
+  const skinCopy = skinReport ? getSkinFindings(skinReport, lang) : null;
+  const skinRx = skinReport ? getMicroneedlingRx(skinReport.score, lang) : t.rx1;
 
   const saveLead = (data: any) => {
       const existingLeads = localStorage.getItem('tiphereth_leads');
@@ -197,10 +206,17 @@ export default function TipherethV1100() {
             if(captureStep === 0) { setPhotos(p=>({...p, front:imgData})); setCaptureStep(1); }
             else if(captureStep === 1) { setPhotos(p=>({...p, sideR:imgData})); setCaptureStep(2); }
             else { 
+                const frontPhoto = photos.front;
                 setPhotos(p=>({...p, sideL:imgData})); 
                 saveLead(patient);
-                setAppMode('ANALYSIS'); 
-                setTimeout(() => setAppMode('RESULT'), 2500); 
+                setAppMode('ANALYSIS');
+                const ageNum = patient.age ? parseInt(patient.age, 10) : undefined;
+                const runAnalysis = frontPhoto
+                  ? analyzeSkinFromImageDataUrl(frontPhoto, ageNum).then(setSkinReport).catch(() => setSkinReport(null))
+                  : Promise.resolve();
+                runAnalysis.finally(() => {
+                  setTimeout(() => setAppMode('RESULT'), 2500);
+                });
             }
         }
     }
@@ -339,14 +355,17 @@ export default function TipherethV1100() {
                         </div>
                     </div>
                     <div className="w-full md:w-[55%] magazine-width flex flex-col justify-center pt-4 md:pt-8 md:pr-8">
-                        <div className="mb-6 md:mb-8"><h3 className="font-bold uppercase text-xs md:text-sm mb-2 border-b-2 border-black inline-block pb-1">{t.analysisTitle}</h3><p className="text-sm md:text-base font-serif leading-relaxed text-gray-700">{t.analysisText}</p></div>
-                        <div className="mb-6 md:mb-8"><h3 className="font-bold uppercase text-xs md:text-sm mb-2 border-b-2 border-black inline-block pb-1">{t.findingTitle}</h3><p className="text-sm md:text-base font-serif leading-relaxed text-gray-700">{t.findingText}</p></div>
+                        <div className="mb-6 md:mb-8"><h3 className="font-bold uppercase text-xs md:text-sm mb-2 border-b-2 border-black inline-block pb-1">{t.analysisTitle}</h3><p className="text-sm md:text-base font-serif leading-relaxed text-gray-700">{skinCopy?.analysisText ?? t.analysisText}</p></div>
+                        <div className="mb-6 md:mb-8"><h3 className="font-bold uppercase text-xs md:text-sm mb-2 border-b-2 border-black inline-block pb-1">{t.findingTitle}</h3><p className="text-sm md:text-base font-serif leading-relaxed text-gray-700">{skinCopy?.findingText ?? t.findingText}</p></div>
+                        {skinReport && (
+                          <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-6">Calidad dérmica estimada: {skinReport.score}/100 · Glogau {skinReport.glogau}</p>
+                        )}
                     </div>
                 </div>
                 <div className="bg-[#fafafa] p-6 md:p-8 border-l-4 border-black mx-4 md:mx-8">
                     <h3 className="font-serif text-xl md:text-2xl italic mb-4">{t.dxTitle}</h3>
-                    <p className="text-sm md:text-base text-gray-700 mb-4 font-serif">{t.dxText}</p>
-                    <div className="flex justify-between items-center border-t border-gray-300 pt-4"><span className="font-bold text-xs uppercase tracking-widest">{t.suggestion}:</span><span className="font-serif italic text-lg md:text-2xl">{t.rx1}</span></div>
+                    <p className="text-sm md:text-base text-gray-700 mb-4 font-serif">{skinCopy?.dxText ?? t.dxText}</p>
+                    <div className="flex justify-between items-center border-t border-gray-300 pt-4"><span className="font-bold text-xs uppercase tracking-widest">{t.suggestion}:</span><span className="font-serif italic text-lg md:text-2xl">{skinRx}</span></div>
                 </div>
             </div>
 

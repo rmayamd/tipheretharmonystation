@@ -321,13 +321,13 @@ export class RealCameraAnalyzer {
       recommendations.push('✅ Sin laxitud significativa - Mantenimiento preventivo')
     }
     
-    // Piel (Obagi)
+    // Piel (Obagi + microneedling, sin láser CO2)
     if (skin < 60) {
-      recommendations.push('🧪 Blue Peel (Obagi) - Restauración profunda de piel')
-      recommendations.push('🧪 Protocolo de Vitamina C + Retinol 12 semanas')
+      recommendations.push('🧪 Microneedling médico (Dermapen) + PRP — 3-4 sesiones')
+      recommendations.push('🧪 Protocolo Obagi: Vitamina C + Retinol 12 semanas')
     } else if (skin < 80) {
+      recommendations.push('🧪 Microneedling suave + Bio-Revitalización')
       recommendations.push('🧪 Retinol Protocol 0.1% (Obagi)')
-      recommendations.push('🧪 Hidroquinona 4% para hiperpigmentación')
     } else {
       recommendations.push('🧪 Mantenimiento con antioxidantes tópicos')
     }
